@@ -1,0 +1,18 @@
+.data
+	    .float   .float_const_0, 0.01
+	   .global          main_fp, 4, 4
+.text
+	.frame main, 44 
+		# block.rpo = 1:
+			# block.rpo = 2:
+			  addI    %vr0, -4     => %vr5
+			  call    init, %vr5
+				# block.rpo = 3:
+				  ret
+	.frame init, 20 , %vr10
+		# block.rpo = 4:
+			# block.rpo = 5:
+			  loadI   42             -> %vr13
+			  storeAI %vr13         => %vr10,     -32
+				# block.rpo = 6:
+				  ret

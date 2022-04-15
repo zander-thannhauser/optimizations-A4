@@ -1,0 +1,101 @@
+.data
+	   .string     .int_wformat, "%d\12"
+	   .string   .float_wformat, "%f\12"
+	   .string    .char_wformat, "%c\12"
+	   .string  .string_wformat, "%s\12"
+	   .string     .int_rformat, "%d"
+	   .string   .float_rformat, "%f"
+	   .string    .char_rformat, "%c"
+	   .string  .string_rformat, "%s"
+	    .float   .float_const_0, 0.01
+	   .global          main_fp, 4, 4
+.text
+	.frame main, 44 
+		# block.rpo = 2:
+		  loadI   main_fp             -> %vr5
+		  store   %vr0         => %vr5
+		  addI    %vr0, -4     => %vr7
+		  call    init, %vr7
+		  call    writearray, %vr7
+		  loadI   1             -> %vr8
+		  i2i     %vr8         => %vr4
+		# block.rpo = 3:
+		.L1:
+		  multI   %vr4, -4     => %vr16
+		  add     %vr0, %vr16 => %vr17
+		  loadAO  %vr0, %vr16 => %vr18
+		  mult    %vr18, %vr4 => %vr19
+		  storeAO %vr19         => %vr0, %vr16
+		  call    inc, %vr17
+		  addI    %vr4, 1     => %vr20
+		  loadI   9             -> %vr21
+		  cmp_LE  %vr4, %vr21 => %vr23
+		  i2i     %vr20         => %vr4
+		  cbr     %vr23         -> .L1
+		# block.rpo = 4:
+		.L0:
+		  call    writearray, %vr7
+		# block.rpo = 5:
+		.return1:
+		  ret
+	.frame init, 0 , %vr4
+		# block.rpo = 2:
+		  loadI   1             -> %vr7
+		  loadI   10             -> %vr8
+		  i2i     %vr8         => %vr5
+		  i2i     %vr7         => %vr6
+		# block.rpo = 3:
+		.L3:
+		  i2f     %vr6         => %vr11
+		  loadI   .float_const_0             -> %vr12
+		  fload   %vr12         => %vr13
+		  fmult   %vr11, %vr13 => %vr14
+		  i2f     %vr5         => %vr15
+		  fadd    %vr14, %vr15 => %vr16
+		  f2i     %vr16         => %vr17
+		  multI   %vr6, -4     => %vr22
+		  add     %vr4, %vr22 => %vr23
+		  storeAI %vr17         => %vr23,     4
+		  addI    %vr6, 1     => %vr25
+		  addI    %vr5, 1     => %vr26
+		  loadI   9             -> %vr27
+		  cmp_LE  %vr6, %vr27 => %vr29
+		  i2i     %vr26         => %vr5
+		  i2i     %vr25         => %vr6
+		  cbr     %vr29         -> .L3
+		# block.rpo = 5:
+		.return2:
+		  ret
+	.frame writearray, 0 , %vr4
+		# block.rpo = 2:
+		  load    %vr4         => %vr8
+		  iwrite  %vr8              
+		  loadAI  %vr4, -4     => %vr11
+		  iwrite  %vr11              
+		  loadAI  %vr4, -8     => %vr15
+		  iwrite  %vr15              
+		  loadAI  %vr4, -12     => %vr18
+		  iwrite  %vr18              
+		  loadAI  %vr4, -16     => %vr22
+		  iwrite  %vr22              
+		  loadAI  %vr4, -20     => %vr26
+		  iwrite  %vr26              
+		  loadAI  %vr4, -24     => %vr30
+		  iwrite  %vr30              
+		  loadAI  %vr4, -28     => %vr33
+		  iwrite  %vr33              
+		  loadAI  %vr4, -32     => %vr37
+		  iwrite  %vr37              
+		  loadAI  %vr4, -36     => %vr41
+		  iwrite  %vr41              
+		# block.rpo = 3:
+		.return3:
+		  ret
+	.frame inc, 0 , %vr4
+		# block.rpo = 2:
+		  load    %vr4         => %vr5
+		  addI    %vr5, 1     => %vr7
+		  store   %vr7         => %vr4
+		# block.rpo = 3:
+		.return4:
+		  ret

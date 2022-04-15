@@ -1,0 +1,10 @@
+.data
+	   .string  .string_const_0, "Hello world!"
+.text
+	.frame main, 42 
+		# block.rpo = 2:
+		  loadI   .string_const_0             -> %vr4
+		  swrite  %vr4              
+		# block.rpo = 3:
+		.return:
+		  ret

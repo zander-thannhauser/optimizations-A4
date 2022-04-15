@@ -1,0 +1,3 @@
+.data
+.text
+	.frame pre_example, 4 

@@ -1,0 +1,3 @@
+.data
+.text
+	.frame main, 42 , %vr4, %vr5
