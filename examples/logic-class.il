@@ -43,6 +43,19 @@
 	comp t1, t3 => t4
 	testeq t4 => t5
 	assert t5
+	
+	not d => nd
+	
+	# !((a && b) || (c && d)) == (!a || !b) && (!c || !d)
+	and c, d => cnd
+	or anb, cnd => t1
+	not t1 => t2
+	or na, nb => t3
+	or nc, nd => t4
+	and t3, t4 => t5
+	comp t2, t5 => t6
+	testeq t6 => t7
+	assert t7
 
 .frame main, 0
 	call test 1 2 3 4

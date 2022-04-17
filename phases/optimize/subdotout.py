@@ -22,10 +22,14 @@ digraph mygraph {
 	
 	""", file = stream);
 	
+	print(f"""
+		label = "{str(instruction)}";
+	""", file = stream);
+	
 	print("subgraph cluster_vr {", file = stream)
 	
 	print(f"""
-		label = "{str(instruction)}";
+		label = "";
 	""", file = stream);
 	
 	for vr in vrtovn.keys():
@@ -46,14 +50,13 @@ digraph mygraph {
 			ex.dotout(stream, drawn = drawn, et = expression_table);
 			drawn.add(vn);
 		print(f"""
-			"{vr}":s -> "{vn}":n;
+			"{vn}":s -> "{vr}":n [dir=back];
 		""", file = stream);
 	
 	last = None;
 	denominator = expression_table.valcounter;
 	
 	for inst in order_sensitive_instructions:
-		
 		for vn in inst.ins:
 			if vn not in drawn:
 				ex = expression_table.vntoex(vn);
