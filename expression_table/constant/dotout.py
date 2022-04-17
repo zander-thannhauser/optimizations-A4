@@ -1,17 +1,12 @@
 
 from debug import *;
 
-from expression_table.self import expression_table;
-
-def constant_dotout(self, stream, vn, **_):
-	enter("constant_dotout");
+def constant_dotout(self, stream, et, **_):
+	hue = self.valnum / et.valcounter;
 	print(f"""
-		"{vn}" [
+		"{self.valnum}" [
 			shape = circle
 			label = "{self.value}"
-			color = "{vn / expression_table.valcounter} 1 1"
-			fillcolor = "{vn / expression_table.valcounter} 1 1"
+			color = "{hue} 1 1"
 		];
 	""", file = stream);
-	exit();
-

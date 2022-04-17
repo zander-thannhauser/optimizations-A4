@@ -22,7 +22,7 @@ def post_dominators_phase_process(self, all_blocks, **_):
 		case _:
 			successors_post_dominators = [p.post_dominators for p in block.successors];
 			post_dominators = set.intersection(*successors_post_dominators);
-			block.post_immediate_dominator = max(post_dominators, key = lambda b: b.po);
+			block.post_immediate_dominator = min(post_dominators, key = lambda b: b.rpo);
 			new_post_dominance_frontier = set.symmetric_difference(*successors_post_dominators);
 	
 	if block.post_dominance_frontier != new_post_dominance_frontier:

@@ -27,7 +27,7 @@ digraph mygraph {
 		
 		print(f"""
 			"{bid}" [
-				label="po = {block.po}"
+				label="rpo = {block.rpo}"
 				color="{block.hue} 1 1"
 				{"style=bold" if block == self.block else ""}
 			];
@@ -38,19 +38,19 @@ digraph mygraph {
 		
 		for d in block.post_dominators:
 			print(f"""
-				"{bid}" ->
-				"{id(d)}" [
+				"{bid}" -> "{id(d)}" [
 					color="{d.hue} 1 1"
+					constraint = false
 					{"style=bold" if d == block.post_immediate_dominator else ""}
 				]
 			""", file = stream);
 		
 		for f in block.post_dominance_frontier:
 			print(f"""
-				"{bid}" ->
-				"{id(f)}" [
-					color="{f.hue} 1 1"
-					style=dashed
+				"{bid}" -> "{id(f)}" [
+					color = "{f.hue} 1 1"
+					style = dashed
+					constraint = false
 				]
 			""", file = stream);
 		

@@ -4,7 +4,7 @@ def dominators_phase_lt(self, other):
 		return True;
 	elif self.kind > other.kind:
 		return False;
-	elif self.block.po > other.block.po:
+	elif self.block.rpo < other.block.rpo:
 		return True;
 
 

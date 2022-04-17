@@ -1,16 +1,12 @@
 
 from debug import *;
 
-from expression_table.self import expression_table;
-
-def parameter_dotout(self, stream, vn, **_):
-	# enter("parameter_dotout");
+def parameter_dotout(self, stream, et, **_):
+	hue = self.valnum / et.valcounter;
 	print(f"""
-		"{vn}" [
+		"{self.valnum}" [
 			shape = diamond
 			label = "{self.register}"
-			color = "{vn / expression_table.valcounter} 1 1"
+			color = "{hue} 1 1"
 		];
 	""", file = stream);
-	# exit();
-

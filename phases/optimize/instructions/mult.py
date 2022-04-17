@@ -2,26 +2,31 @@
 from debug import *;
 
 from expression_table.constant.self import constant;
+from expression_table.multiplicity.self import multiplicity;
 from expression_table.expression.self import expression;
 
-from .common import consider, load_literal;
+from .common import load_literal;
+from .common import consider_multi;
 
-def optimize_mult_vr(ops, et, lvn, rvn, out = None):
+def optimize_mult_vr(vrtovn, et, lvn, rvn, out = None):
 	enter(f"optimize_mult_vr(lvn = {lvn}, rvn = {rvn}, out = {out})");
 	
 	match (et.vntoex(lvn), et.vntoex(rvn)):
 		# constant-folding:
 		case (constant(value = a), constant(value = b)):
-			valnum = load_literal(ops, et, a * b, out);
+			# valnum = load_literal(ops, et, a * b, out);
+			assert(not "TODO");
 			
 		# identities:
 		# 0 * X = 0
 		case (constant(value = 0), _):
-			assert(not "TODO");
+			valnum = load_literal(vrtovn, et, 0, out);
+		
 		# 1 * X = X
 		case (constant(value = 1), _):
 			# avrwvn(out, rvn);
 			assert(not "TODO");
+		
 		# -1 * X = -X
 		case (constant(value = -1), _):
 			# avrwvn(out, rvn);
@@ -29,22 +34,28 @@ def optimize_mult_vr(ops, et, lvn, rvn, out = None):
 		
 		# X * 0 = 0
 		case (_, constant(value = 0)):
-			assert(not "TODO");
+			valnum = load_literal(vrtovn, et, 0, out);
+		
 		# X * 1 = X
 		case (_, constant(value = 1)):
 			assert(not "TODO");
+		
 		# X * -1 = -X
 		case (_, constant(value = -1)):
 			assert(not "TODO");
 		
+		case (_, _) if lvn == rvn:
+			valnum = consider_multi(vrtovn, et, "product", [(lvn, 2)], out);
+		
 #		# substitutions:
 		# (addI X, a) * b => addI (multI X, b), (a * b)
 		case (expression(op = "addI", ins = [X], const = a), constant(value = b)):
-			if a * b:
-				subvn = consider(ops, et, "multI", ins = (X, ), const = b);
-				valnum = consider(ops, et, "addI", ins = (subvn, ), const = (a * b), out = out);
-			else:
-				assert(not "TODO");
+#			if a * b:
+#				subvn = consider(ops, et, "multI", ins = (X, ), const = b);
+#				valnum = consider(ops, et, "addI", ins = (subvn, ), const = (a * b), out = out);
+#			else:
+#				assert(not "TODO");
+			assert(not "TODO");
 		
 		# a * (addI X, b) => addI (multI X, a), (a * b)
 		case (constant(value = a), expression(op = "addI", ins = [X], const = b)):
@@ -64,6 +75,24 @@ def optimize_mult_vr(ops, et, lvn, rvn, out = None):
 		      expression(op = "multI", ins = [Y], const = b)):
 			assert(not "TODO");
 		
+		case (multiplicity(op = "product", ins = A),
+		      multiplicity(op = "product", ins = B)):
+			assert(not "TODO");
+		
+		case (multiplicity(op = "product", ins = A), _):
+			union = multiplicity.union(A, [(rvn, 1)]);
+			if len(union) == 1:
+				assert(not "TODO");
+			else:
+				valnum = consider_multi(vrtovn, et, "product", union, out);
+			
+		case (_, multiplicity(op = "product", ins = A)):
+			union = multiplicity.union([(lvn, 1)], A);
+			if len(union) == 1:
+				assert(not "TODO");
+			else:
+				valnum = consider_multi(vrtovn, et, "product", union, out);
+		
 		# mult X, c => multI X, c:
 		case (_, constant(value = c)):
 #			consider(ops, et, "multI", (lvn, c), out);
@@ -76,21 +105,23 @@ def optimize_mult_vr(ops, et, lvn, rvn, out = None):
 		
 #		# default:
 		case (lex, rex):
-#			print(f"lex, rex = {lex}, {rex}");
-#			consider(ops, et, "mult", (lvn, rvn), out);
-			assert(not "TODO");
+			valnum = consider_multi(vrtovn, et, "product", sorted([(lvn, 1), (rvn, 1)]), out);
 	
 	exit(f"return {valnum};");
 	return valnum;
 
-def optimize_mult(ops, ins, out, expression_table, **_):
+def optimize_mult(vrtovn, ins, out, expression_table, **_):
 	enter(f"optimize_mult(ins = {ins}, out = {out})");
 	
-	lvn, rvn = expression_table.vrtovn(ins[0]), expression_table.vrtovn(ins[1])
+	lvn, rvn = vrtovn[ins[0]], vrtovn[ins[1]]
 	
-	optimize_mult_vr(ops, expression_table, lvn, rvn, out);
+	optimize_mult_vr(vrtovn, expression_table, lvn, rvn, out);
 	
 	exit("return;");
 	return [];
+
+
+
+
 
 

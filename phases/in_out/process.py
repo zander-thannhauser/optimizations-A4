@@ -38,11 +38,11 @@ def in_out_phase_process(self, all_blocks, parameters, phase_counters, **_):
 		
 		new_instructions = [];
 		
-		for inst in block.instructions[::-1]:
+		for inst in block.original_instructions[::-1]:
 			dprint(f"inst = {inst}");
 			
 			if (inst.out in ins) or inst.op in \
-					["i2i", "iwrite", "iread", "store", "ret", "swrite", "call"]:
+					["i2i", "iwrite", "iread", "store", "assert", "ret", "swrite", "call"]:
 				# (either it's useful or protected)
 				
 				# is it publishing something?

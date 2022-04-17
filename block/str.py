@@ -1,6 +1,6 @@
 
 def block_str(self):
-	return f"Block(po = {self.po})";
+	return f"Block(rpo = {self.rpo})";
 
 
 

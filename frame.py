@@ -32,24 +32,19 @@ def setup_start_block(t, p, et):
 	framesize = next(t);
 	
 	vr_args = [];
+	vn_args = [];
+	parameters = [];
 	
 	while next(t) == ",":
 		reg = next(t);
-		assert(reg[:3] == "%vr");
 		vr_args.append(reg);
 	
-	vn_args = [];
-	
 	givens = ["%vr0", "%vr1", "%vr2", "%vr3"] + vr_args;
-#	givens = ["%vr0"] + vr_args;
-	
-	parameters = [];
 	
 	for register in givens:
 		param = parameter(register);
-		result = et.extovn(param);
-		vn_args.append(result.valnum);
-		et.avrwvn(register, result.valnum);
+		valnum = et.extovn(param);
+		vn_args.append(valnum);
 		parameters.append(param);
 	
 	p.printf(".frame %s, %s %s", name, framesize, \
@@ -110,12 +105,20 @@ def resolve_references(all_blocks):
 	
 	exit("return;");
 
-def postorder_rank(b, x, n):
+def postorder_rank(b, x):
 	if b.po: return x;
 	b.po = 1;
-	for c in b.successors: x = postorder_rank(c, x, n);
+	for c in b.successors: x = postorder_rank(c, x);
 	b.po = x;
-	b.hue = x / n;
+	x += 1;
+	return x;
+
+def reverse_postorder_rank(b, x, n):
+	if b.rpo: return x;
+	b.rpo = 1;
+	for c in b.predecessors: x = reverse_postorder_rank(c, x, n);
+	b.rpo = x;
+	b.hue = (x - 1) / n;
 	x += 1;
 	return x;
 
@@ -123,10 +126,9 @@ def process_frame(t, p):
 	
 	enter("process_frame");
 	
-	expression_table.valcounter = 0;
-	instruction.counter = 0;
-	
 	et = expression_table();
+	
+	instruction.counter = 0;
 	
 	start, parameters = setup_start_block(t, p, et);
 	
@@ -136,7 +138,9 @@ def process_frame(t, p):
 	
 	resolve_references(all_blocks);
 	
-	postorder_rank(start, 1, len(all_blocks));
+	postorder_rank(start, 1);
+	
+	reverse_postorder_rank(end, 1, len(all_blocks));
 	
 	todo = [
 		reset_dominators_phase(start),    # top-down*
@@ -147,6 +151,10 @@ def process_frame(t, p):
 		inheritance_phase(start),         # top-down
 		phi_phase(start),                 # top-down*
 		optimize_phase(start),            # top-down
+		# loop-depth phase(start)
+		# find used unorders, find subsets in common
+		# find used multiplicities, find subsets in common
+		## position_expressions()
 		## critical(),                    # bottom-up
 		dead_code_phase(start),           # top-down*
 		
@@ -166,7 +174,6 @@ def process_frame(t, p):
 			"in-out": 1,
 			"inheritance": 1,
 			"phi": 1,
-			"optimize": 1,
 			"dead-code": 1,
 		},
 	};

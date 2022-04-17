@@ -7,7 +7,7 @@ def reset_post_dominators_phase_dotout(self, all_blocks, **_):
 	
 	enter("reset_post_dominators_phase_dotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}.reset-post-dominators.txt", "w");
 	
 	print("""
 digraph mygraph {
@@ -27,7 +27,7 @@ digraph mygraph {
 		
 		print(f"""
 			"{bid}" [
-				label="po = {block.po}"
+				label="rpo = {block.rpo}"
 				color="{block.hue} 1 1"
 				{"style=bold" if block == self.block else ""}
 			];
@@ -37,7 +37,12 @@ digraph mygraph {
 			print(f"\"{bid}\":s -> \"{id(s)}\":n [style=bold]", file = stream);
 		
 		for d in block.post_dominators:
-			print(f"\"{bid}\" -> \"{id(d)}\" [color=\"{d.hue} 1 1\"]", file = stream);
+			print(f"""
+				"{bid}" -> "{id(d)}" [
+					color = "{d.hue} 1 1"
+					constraint = false
+				]
+			""", file = stream);
 		
 	print("""
 }

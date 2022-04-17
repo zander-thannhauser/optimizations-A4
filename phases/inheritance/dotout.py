@@ -7,7 +7,7 @@ def inheritance_phase_dotout(self, all_blocks, **_):
 	
 	enter("inheritance_phase_dotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-inheritance.txt", "w");
 	
 	print("""
 digraph mygraph {
@@ -46,8 +46,11 @@ digraph mygraph {
 			for feeder in feeders:
 				print(f"""
 					"{id(feeder)}":"out_{register[1:]}":s ->
-					"{id(block)}": "in_{register[1:]}":n
-					 [style=dashed color="{feeder.hue} 1 1"]
+					"{id(block)}": "in_{register[1:]}":n [
+						style = dashed
+						constraint = false
+						color = "{feeder.hue} 1 1"
+					]
 				""", file = stream);
 		
 	print("""

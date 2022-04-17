@@ -27,7 +27,7 @@ digraph mygraph {
 		
 		print(f"""
 			"{bid}" [
-				label="po = {block.po}"
+				label="rpo = {block.rpo}"
 				color="{block.hue} 1 1"
 				{"style=bold" if block == self.block else ""}
 			];
@@ -41,6 +41,7 @@ digraph mygraph {
 				"{id(d)}" ->
 				"{bid}" [
 					color="{d.hue} 1 1"
+					constraint = false
 					{"style=bold" if d == block.immediate_dominator else ""}
 				]
 			""", file = stream);

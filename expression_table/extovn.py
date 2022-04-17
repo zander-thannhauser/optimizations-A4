@@ -21,6 +21,7 @@ def expression_table_extovn(self, expression):
 		is_new = True;
 		self._extovn[expression] = valnum;
 		self._vntoex[valnum] = expression;
+		expression.valnum = valnum;
 		expression_table.valcounter += 1;
 	
 	retval = expression_table_extovn_retval(valnum, is_new);

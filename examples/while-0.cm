@@ -1,0 +1,23 @@
+
+linked fn write<T>(_: T);
+
+fn test(x: int)
+{
+	let i = x;
+	
+	write(7 + x - 5);
+	
+	while (i < 10)
+	{
+		write(i);
+		
+		write(2 * (i + 1) - i);
+		
+		i = 10;
+	}
+}
+
+fn main()
+{
+	test(0);
+}

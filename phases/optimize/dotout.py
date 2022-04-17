@@ -10,7 +10,6 @@ def optimize_phase_dotout(self, all_blocks, expression_table, parameters, phase_
 	enter("optimize_phase_dotout()");
 	
 	dprint(f"phase.frame_counter = {phase.frame_counter}");
-	dprint(f"self.frame_counter  = {self.frame_counter}");
 	
 	stream = open(f"dot/{phase.frame_counter}-optimize.txt", "w");
 	
@@ -29,28 +28,13 @@ digraph mygraph {
 	
 	""", file = stream);
 	
-	drawn_phis = set();
-	
-	for vn, param in enumerate(parameters):
-		param.dotout(stream, vn);
-	
 	headtails = dict();
 	
 	for block in all_blocks:
-		for valnum in block.incoming_phis.values():
-			if valnum not in drawn_phis:
-				phi = expression_table.vntoex(valnum);
-				phi.dotout(stream, valnum, done = drawn_phis, expression_table = expression_table);
-				drawn_phis.add(valnum);
-		
-		if block.phase_counters["optimize"] == phase_counters["optimize"]:
-			callme = instruction.newdotout;
-		else:
-			callme = instruction.dotout;
 		
 		head, tail = None, None;
-		for inst in block.instructions + ([block.jump] if block.jump else []):
-			current = callme(inst, stream);
+		for inst in block.order_sensitive_instructions:
+			current = inst.newdotout(stream);
 			if tail:
 				print(f"""
 					"{tail}" -> "{current}" [style=bold];
@@ -60,9 +44,9 @@ digraph mygraph {
 			tail = current;
 		
 		if not head:
-			assert(block.label);
-			head = block.label;
-			tail = block.label;
+			label = f"rpo = {block.rpo}";
+			head = label;
+			tail = label;
 		
 		headtails[id(block)] = (head, tail);
 	

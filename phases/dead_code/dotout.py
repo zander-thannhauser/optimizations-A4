@@ -22,49 +22,51 @@ digraph mygraph {
 	
 	""", file = stream);
 	
-	drawn_phis = set();
+	assert(not "TODO");
 	
-	for vn, param in enumerate(parameters):
-		param.dotout(stream, vn);
-	
-	headtails = dict();
-	
-	for block in all_blocks:
-		for valnum in block.incoming_phis.values():
-			if valnum not in drawn_phis:
-				phi = expression_table.vntoex(valnum);
-				phi.dotout(stream, valnum);
-				drawn_phis.add(valnum);
-		
-		head, tail = None, None;
-		for inst in block.instructions + ([block.jump] if block.jump else []):
-			current = inst.newdotout(stream);
-			if tail:
-				print(f"""
-					"{tail}" -> "{current}" [style=bold];
-				""", file = stream);
-			else:
-				head = current;
-			tail = current;
-		
-		if not head:
-			if block.label:
-				label = block.label;
-			else:
-				label = f"po = {block.po}";
-			head = label;
-			tail = label;
-		
-		headtails[id(block)] = (head, tail);
-	
-	for block in all_blocks:
-		dprint(f"block.po = {block.po}");
-		head, tail = headtails[id(block)];
-		for s in block.successors:
-			dprint(f"s.po = {s.po}")
-			print(f"""
-				"{tail}" -> "{headtails[id(s)][0]}" [color="white:black:white" style=bold];
-			""", file = stream);
+#	drawn_phis = set();
+#	
+#	for vn, param in enumerate(parameters):
+#		param.dotout(stream, vn);
+#	
+#	headtails = dict();
+#	
+#	for block in all_blocks:
+#		for valnum in block.incoming_phis.values():
+#			if valnum not in drawn_phis:
+#				phi = expression_table.vntoex(valnum);
+#				phi.dotout(stream, valnum);
+#				drawn_phis.add(valnum);
+#		
+#		head, tail = None, None;
+#		for inst in block.instructions + ([block.jump] if block.jump else []):
+#			current = inst.newdotout(stream);
+#			if tail:
+#				print(f"""
+#					"{tail}" -> "{current}" [style=bold];
+#				""", file = stream);
+#			else:
+#				head = current;
+#			tail = current;
+#		
+#		if not head:
+#			if block.label:
+#				label = block.label;
+#			else:
+#				label = f"po = {block.po}";
+#			head = label;
+#			tail = label;
+#		
+#		headtails[id(block)] = (head, tail);
+#	
+#	for block in all_blocks:
+#		dprint(f"block.po = {block.po}");
+#		head, tail = headtails[id(block)];
+#		for s in block.successors:
+#			dprint(f"s.po = {s.po}")
+#			print(f"""
+#				"{tail}" -> "{headtails[id(s)][0]}" [color="white:black:white" style=bold];
+#			""", file = stream);
 	
 	print("""
 }
