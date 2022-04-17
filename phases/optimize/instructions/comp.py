@@ -21,15 +21,15 @@ def optimize_comp_vn(vrtovn, et, lvn, rvn, out = None):
 	
 	match (et.vntoex(lvn), et.vntoex(rvn)):
 		
-		# identities:
-		# comp(X, X) = 0
-		case (_, _) if lvn == rvn:
-			valnum = load_literal(vrtovn, et, 0, out);
-		
 		# constant-fold:
 		case (constant(value = a), constant(value = b)):
 			# valnum = load_literal(ops, et, comp(a, b), out);
 			assert(not "TODO");
+		
+		# identities:
+		# comp(X, X) = 0
+		case (_, _) if lvn == rvn:
+			valnum = load_literal(vrtovn, et, 0, out);
 		
 		# substitutions:
 		# (addI X, a) vs b => X vs (b - a)

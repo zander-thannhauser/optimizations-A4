@@ -26,32 +26,7 @@ digraph mygraph {
 		label = "{str(instruction)}";
 	""", file = stream);
 	
-	print("subgraph cluster_vr {", file = stream)
-	
-	print(f"""
-		label = "";
-	""", file = stream);
-	
-	for vr in vrtovn.keys():
-		print(f"""
-			"{vr}" [
-				label="{vr}"
-				{"style=bold" if vr == instruction.out else ""}
-			];
-		""", file = stream);
-	
-	print("}", file = stream)
-	
 	drawn = set();
-	
-	for vr, vn in vrtovn.items():
-		if vn not in drawn:
-			ex = expression_table.vntoex(vn);
-			ex.dotout(stream, drawn = drawn, et = expression_table);
-			drawn.add(vn);
-		print(f"""
-			"{vn}":s -> "{vr}":n [dir=back];
-		""", file = stream);
 	
 	last = None;
 	denominator = expression_table.valcounter;
@@ -60,16 +35,33 @@ digraph mygraph {
 		for vn in inst.ins:
 			if vn not in drawn:
 				ex = expression_table.vntoex(vn);
-				ex.dotout(stream, vn, drawn = drawn, et = expression_table);
+				ex.dotout(stream, drawn = drawn, et = expression_table);
 				drawn.add(vn);
 		
-		label = inst.newdotout();
+		label = inst.newdotout(stream, constraint = True);
 		
 		if last:
 			print(f"""
 				"{last}":s -> "{label}":n [style=bold];
 			""", file = stream);
 		last = label;
+	
+	for vn in vrtovn.values():
+		if vn not in drawn:
+			ex = expression_table.vntoex(vn);
+			ex.dotout(stream, drawn = drawn, et = expression_table);
+			drawn.add(vn);
+	
+	for vr, vn in vrtovn.items():
+		print(f"""
+			"{vn}":s -> "{vr}":n [dir=back];
+		""", file = stream);
+		print(f"""
+			"{vr}" [
+				label="{vr}"
+				{"style=bold" if vr == instruction.out else ""}
+			];
+		""", file = stream);
 	
 	print("""
 }

@@ -5,7 +5,9 @@ from expression_table.constant.self import constant;
 from expression_table.expression.self import expression;
 from expression_table.multiplicity.self import multiplicity;
 
+from .common import consider_exp;
 from .common import consider_multi;
+from .common import load_literal;
 
 from .add import optimize_add_vr;
 from .mult import optimize_mult_vr;
@@ -16,12 +18,13 @@ def optimize_sub_vr(vrtovn, et, lvn, rvn, out = None):
 	match (et.vntoex(lvn), et.vntoex(rvn)):
 		# constant-folding:
 		case (constant(value = a), constant(value = b)):
-			valnum = load_literal(ops, et, a - b, out);
+			valnum = load_literal(vrtovn, et, a - b, out);
 		
 		# identities:
 		# X - 0 = X
 		case (_, constant(value = 0)):
-			valnum = et.avrwvn(out, lvn);
+			vrtovn[out] = lvn;
+			valnum = lvn;
 		
 		# 0 - X = -X
 		case (constant(value = 0), _):
@@ -32,6 +35,16 @@ def optimize_sub_vr(vrtovn, et, lvn, rvn, out = None):
 			assert(not "TODO");
 		
 		# substitutions:
+		# (addI X, a) - b => X
+		# (addI X, a) - b => addI X, (a - b)
+		case (expression(op = "addI", ins = [X], const = a), \
+		      constant(value = b)):
+			if a - b == 0:
+				vrtovn[out] = X;
+				valnum = X;
+			else:
+				valnum = consider_exp(vrtovn, et, "addI", (X,), const = a - b, out = out);
+		
 		# (addI X, a) - (addI X, b) => (a - b)
 		# (addI X, a) - (addI Y, a) => sub X, Y
 		# (addI X, a) - (addI Y, b) => addI (sub X, Y), (a - b)

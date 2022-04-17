@@ -21,7 +21,7 @@ def expression_dotout(self, stream, drawn, et, **_):
 	
 	for subvn in self.ins:
 		if subvn not in drawn:
-			subex = expression_table.vntoex(subvn);
+			subex = et.vntoex(subvn);
 			subex.dotout(stream, subvn, drawn = drawn, et = et);
 			drawn.add(subvn);
 	
@@ -49,7 +49,7 @@ def expression_dotout(self, stream, drawn, et, **_):
 					label = "{operator[self.op]} ({const})"
 					color = "{color}"
 				];
-				"{ivn}":s -> "{self.valnum}":w [color="{ivn / dom} 1 1"];
+				"{ivn}":s -> "{self.valnum}":n [color="{ivn / dom} 1 1"];
 			""", file = stream);
 		
 		# those who have two value-numbers:

@@ -14,8 +14,7 @@ def optimize_mult_vr(vrtovn, et, lvn, rvn, out = None):
 	match (et.vntoex(lvn), et.vntoex(rvn)):
 		# constant-folding:
 		case (constant(value = a), constant(value = b)):
-			# valnum = load_literal(ops, et, a * b, out);
-			assert(not "TODO");
+			valnum = load_literal(vrtovn, et, a * b, out);
 			
 		# identities:
 		# 0 * X = 0
