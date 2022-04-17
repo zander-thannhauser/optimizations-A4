@@ -8,6 +8,7 @@ from phases.reset_post_dominators.self import reset_post_dominators_phase;
 from expression_table.constant.self import constant;
 
 from .instructions.add     import optimize_add;
+from .instructions._and    import optimize_and;
 from .instructions._assert import optimize_assert;
 from .instructions.cbr     import optimize_cbr;
 from .instructions.cbrne   import optimize_cbrne;
@@ -18,6 +19,8 @@ from .instructions.iwrite  import optimize_iwrite;
 from .instructions.load    import optimize_load;
 from .instructions.mod     import optimize_mod;
 from .instructions.mult    import optimize_mult;
+from .instructions._not    import optimize_not;
+from .instructions._or     import optimize_or;
 from .instructions.ret     import optimize_ret;
 from .instructions.sub     import optimize_sub;
 from .instructions.store   import optimize_store;
@@ -31,6 +34,7 @@ from instruction.self import instruction;
 
 lookup = {
 	"add":    optimize_add,
+	"and":    optimize_and,
 	"assert": optimize_assert,
 	"cbr":    optimize_cbr,
 	"cbrne":  optimize_cbrne,
@@ -41,6 +45,8 @@ lookup = {
 	"loadI":  optimize_loadI,
 	"mod":    optimize_mod,
 	"mult":   optimize_mult,
+	"not":    optimize_not,
+	"or":     optimize_or,
 	"ret":    optimize_ret,
 	"sub":    optimize_sub,
 	"store":  optimize_store,

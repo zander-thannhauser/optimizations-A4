@@ -39,14 +39,15 @@ def read_block(t):
 					| "testeq" | "testne" \
 					| "testgt" | "testge" \
 					| "testne" \
-					| "testlt" | "testle" :
+					| "testlt" | "testle" \
+					| "not":
 				ins.append(t.token); t.next();
 				assert(t.token == "=>"); t.next();
 				out = t.token; t.next();
 			
 			# those who take two in and one out:
 			case "add" | "sub" | "mult" | "mod" | "comp" \
-					| "fadd" | "fmult" | "or":
+					| "fadd" | "fmult" | "or" | "and":
 				ins.append(t.token); t.next();
 				assert(t.token == ","); t.next();
 				ins.append(t.token); t.next();

@@ -1,0 +1,3 @@
+.data
+.text
+	.frame test, 0 , %vr(.valnum = 4, .is_new = True), %vr(.valnum = 5, .is_new = True), %vr(.valnum = 6, .is_new = True), %vr(.valnum = 7, .is_new = True)

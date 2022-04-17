@@ -2,7 +2,8 @@
 from debug import *;
 
 operator = {
-	"and":  "∀",
+	"and":  "⋀",
+	"or":   "⋁",
 };
 
 def unordered_dotout(self, stream, drawn, et, **_):
@@ -12,11 +13,11 @@ def unordered_dotout(self, stream, drawn, et, **_):
 	
 	for subvn in self.ins:
 		if subvn not in drawn:
-			subex = expression_table.vntoex(subvn);
-			subex.dotout(stream, subvn, drawn = drawn, et = et);
+			subex = et.vntoex(subvn);
+			subex.dotout(stream, drawn = drawn, et = et);
 			drawn.add(subvn);
 		print(f"""
-			"{subvn}":s -> "{self.valnum}" [
+			"{subvn}":s -> "{self.valnum}":n [
 				color = "{subvn / dom} 1 1"
 			];
 		""", file = stream);

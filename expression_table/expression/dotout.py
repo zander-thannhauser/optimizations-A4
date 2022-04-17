@@ -11,6 +11,7 @@ operator = {
 	"cmp_LE": "≤",
 	"multI": "×",
 	"mod": "\\%",
+	"not": "¬",
 };
 
 def expression_dotout(self, stream, drawn, et, **_):
@@ -27,6 +28,18 @@ def expression_dotout(self, stream, drawn, et, **_):
 	color = f"{self.valnum / dom} 1 1";
 	
 	match self.op:
+		# those who have one value-number:
+		case "not":
+			ivn = self.ins[0];
+			print(f"""
+				"{self.valnum}" [
+					shape = square
+					label = "{operator[self.op]}"
+					color = "{color}"
+				];
+				"{ivn}":s -> "{self.valnum}":n [color="{ivn / dom} 1 1"];
+			""", file = stream);
+		
 		# those who have one value-number and a constant:
 		case "addI" | "multI":
 			ivn, const = self.ins[0], self.const;
