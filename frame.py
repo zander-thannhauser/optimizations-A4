@@ -143,6 +143,8 @@ def process_frame(t, p):
 	reverse_postorder_rank(end, 1, len(all_blocks));
 	
 	todo = [
+		# call lost_parent_phase on all blocks, somehow...
+		
 		reset_dominators_phase(start),    # top-down*
 		dominators_phase(start),          # top-down
 		reset_post_dominators_phase(end), # bottom-up*
@@ -151,12 +153,14 @@ def process_frame(t, p):
 		inheritance_phase(start),         # top-down
 		phi_phase(start),                 # top-down*
 		optimize_phase(start),            # top-down
+		# at this point, the structure is solid:
+		
 		# loop-depth phase(start)
 		# find used unorders, find subsets in common
 		# find used multiplicities, find subsets in common
 		## position_expressions()
 		## critical(),                    # bottom-up
-		dead_code_phase(start),           # top-down*
+		# dead_code_phase(start),           # top-down*
 		
 		# *these phases don't actually have to go in any particaular
 		#  direction.
@@ -169,8 +173,6 @@ def process_frame(t, p):
 		"expression_table": et,
 		"parameters": parameters,
 		"phase_counters": {
-			"reset-dominators": 1,
-			"reset-post-dominators": 1,
 			"in-out": 1,
 			"inheritance": 1,
 			"phi": 1,

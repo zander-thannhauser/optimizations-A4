@@ -22,7 +22,9 @@ def phi_phase_process(self, expression_table, phase_counters, **_):
 			if result.is_new:
 				for srcblock in srcblocks:
 					srcblock.outgoing_phis.setdefault(register, []).append(result.valnum);
-			
+	
+	# needs to invoke optimize on the affected blocks
+	
 	todo = [];
 	
 	block.phase_counters["phi"] = phase_counters["phi"];

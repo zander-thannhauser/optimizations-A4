@@ -95,11 +95,92 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				ins = inst.ins,
 				out = inst.out,
 				const = inst.const,
-				label = inst.label,
-				todo = todo);
+				label = inst.label);
 			self.subdotout(vrtovn, inst, order_sensitive_instructions, expression_table);
 		
-		assert(not "TODO");
+		# generate instructions for the expressions that
+		# feed the i2is:
+#		for register in block.outgoing_phis:
+#			srcvn = expression_table.vrtovn(register);
+#			srcex = expression_table.vntoex(subvalnum);
+#			srcex.generate_instructions(subvalnum, expression_table, new_instructions);
+#			assert(not "TODO");
+		
+		volatile = set();
+		
+		# generate the i2is, the order they were read in:
+		for register in block.outs:
+			if register in block.outgoing_phis:
+				src_valnum = vrtovn[register];
+				for dst_valnum in block.outgoing_phis[register]:
+					dprint(f"register   = {register}")
+					dprint(f"src_valnum = {src_valnum}")
+					dprint(f"dst_valnum = {dst_valnum}")
+					i2i = instruction("i2i", [src_valnum], dst_valnum);
+					i2i.acting_i2i = True;
+					dprint(i2i);
+					phi = expression_table.vntoex(dst_valnum);
+					phi.feeders.append(i2i);
+					order_sensitive_instructions.append(i2i);
+					volatile.add(dst_valnum);
+		
+		if block.jump is not None:
+			before = block.jump
+			
+			jump = [];
+			
+			dprint(before);
+			
+			lookup[before.op](
+				vrtovn = vrtovn,
+				ops = order_sensitive_instructions,
+				expression_table = expression_table,
+				ins = inst.ins,
+				out = inst.out,
+				const = inst.const,
+				label = inst.label,
+				volatile = volatile);
+			
+			if len(jump):
+#				after = order_sensitive_instructions[-1];
+#				
+#				dprint(f"before.op, after.op = {before.op, after.op}");
+#				
+#				match (before.op, after.op):
+#					
+#					case _ if before.op == after.op: pass;
+#					
+#					case ('cbr' | 'cbrne', 'cbr_GT' | 'cbr_GE'):
+#						pass;
+#					
+#					case ('cbr', 'storeAI'):
+#						block.jump = None;
+#					
+#					case _: assert(not "TODO");
+				assert(not "TODO");
+			else:
+				block.jump = None;
+			
+			if block.jump is None:
+				keep, lose = block.successors;
+				lose.predecessors.remove(block);
+				block.successors.remove(lose);
+				# maybe it's unreachable now?
+				todo.append(lost_parent_phase(lose));
+				# for sure it's dominators have changed, reset and redo:
+				todo.append(reset_dominators_phase(lose));
+				# same with post-dominators:
+				todo.append(reset_post_dominators_phase(block));
+				# the things the parent needs to provide for it's children
+				# might have changed:
+				todo.append(in_out_phase(block));
+				# the things the child can get from it's parent
+				# might have changed:
+				todo.append(inheritance_phase(lose));
+				todo.append(phi_phase(lose));
+				assert(not "TODO");
+				
+			assert(not "TODO");
 		
 		block.order_sensitive_instructions = order_sensitive_instructions;
 	
@@ -110,6 +191,26 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 	
 	exit(f"return {[str(t) for t in todo]}");
 	return todo;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

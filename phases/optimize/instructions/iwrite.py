@@ -3,20 +3,13 @@ from debug import *;
 
 from instruction.self import instruction;
 
-from phases.critical.self import critical_phase;
-
-def optimize_iwrite(ops, ins, out, expression_table, todo, label, **_):
+def optimize_iwrite(ops, vrtovn, ins, out, expression_table, label, **_):
 	enter(f"optimize_iwrite(ins = {ins}, out = {out})");
 	
-	assert(not "TODO");
+	ivn = vrtovn[ins[0]];
 	
-#	ivn = expression_table.vrtovn(ins[0]);
-#	
-#	iwrite = instruction("iwrite", [ivn], None);
-#	
-#	iwrite.is_critical = True;
-#	todo.append(critical_phase(iwrite));
-#	
-#	ops.append(iwrite);
-#	
+	iwrite = instruction("iwrite", [ivn], None);
+	
+	ops.append(iwrite);
+	
 	exit("return");

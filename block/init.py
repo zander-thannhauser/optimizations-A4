@@ -17,14 +17,10 @@ def block_init(self, label, original_instructions, children_labels, jump = None)
 	
 	# all phases:
 	self.phase_counters = {
-		"reset-dominators": 0,
-		"reset-post-dominators": 0,
 		"in-out": 0,
 		"inheritance": 0,
 		"phi": 0,
-		"optimize": 0,
 		"dead-code": 0,
-		"earliest": 0,
 	}
 	
 	# lost_parent phase:

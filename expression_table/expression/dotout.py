@@ -22,7 +22,7 @@ def expression_dotout(self, stream, drawn, et, **_):
 	for subvn in self.ins:
 		if subvn not in drawn:
 			subex = et.vntoex(subvn);
-			subex.dotout(stream, subvn, drawn = drawn, et = et);
+			subex.dotout(stream, drawn = drawn, et = et);
 			drawn.add(subvn);
 	
 	color = f"{self.valnum / dom} 1 1";

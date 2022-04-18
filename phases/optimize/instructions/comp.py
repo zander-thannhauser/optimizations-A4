@@ -23,8 +23,7 @@ def optimize_comp_vn(vrtovn, et, lvn, rvn, out = None):
 		
 		# constant-fold:
 		case (constant(value = a), constant(value = b)):
-			# valnum = load_literal(ops, et, comp(a, b), out);
-			assert(not "TODO");
+			valnum = load_literal(vrtovn, et, comp(a, b), out);
 		
 		# identities:
 		# comp(X, X) = 0

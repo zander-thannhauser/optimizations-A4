@@ -143,8 +143,7 @@ def optimize_add_vr(vrtovn, et, lvn, rvn, out = None):
 		
 		# c + X => addI X, c
 		case (constant(value = c), _):
-			# retval = consider(ops, et, "addI", (rvn, c), out);
-			assert(not "TODO");
+			valnum = consider_exp(vrtovn, et, "addI", (rvn, ), out, const = c);
 		
 		# ∑(X) + Y = ∑(X + [Y]):
 		case (multiplicity(op = "sum", ins = X), _):

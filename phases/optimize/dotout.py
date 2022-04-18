@@ -34,7 +34,7 @@ digraph mygraph {
 		
 		head, tail = None, None;
 		for inst in block.order_sensitive_instructions:
-			current = inst.newdotout(stream);
+			current = inst.newdotout(stream, draw_lines = False);
 			if tail:
 				print(f"""
 					"{tail}" -> "{current}" [style=bold];
