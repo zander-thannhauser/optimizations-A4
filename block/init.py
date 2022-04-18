@@ -37,7 +37,7 @@ def block_init(self, label, original_instructions, children_labels, jump = None)
 	self.reverse_post_dominance_frontier = set();
 	
 	# in-out phase:
-	self.ins = set(); # registers
+	self.ins = None; # set of registers
 	self.outs = list(); # (register, instruction) tuples in *original* order
 	
 	# inheritance phase:

@@ -25,7 +25,7 @@ digraph mygraph {
 	for block in all_blocks:
 		bid = id(block);
 		
-		ins = " | ".join(block.ins);
+		ins = "None" if block.ins is None else " | ".join(block.ins);
 		label = f"po = {block.po}";
 		outs = " | ".join(block.outs);
 		

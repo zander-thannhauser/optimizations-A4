@@ -12,6 +12,7 @@ from read_block import read_block;
 from expression_table.self import expression_table;
 from expression_table.parameter.self import parameter;
 
+from phases.lost_parent.self           import lost_parent_phase;
 from phases.reset_dominators.self      import reset_dominators_phase;
 from phases.dominators.self            import dominators_phase;
 from phases.reset_post_dominators.self import reset_post_dominators_phase;
@@ -143,8 +144,9 @@ def process_frame(t, p):
 	reverse_postorder_rank(end, 1, len(all_blocks));
 	
 	todo = [
-		# call lost_parent_phase on all blocks, somehow...
-		
+		# call lost_parent_phase on all blocks:
+		lost_parent_phase(block) for block in all_blocks
+	] + [
 		reset_dominators_phase(start),    # top-down*
 		dominators_phase(start),          # top-down
 		reset_post_dominators_phase(end), # bottom-up*

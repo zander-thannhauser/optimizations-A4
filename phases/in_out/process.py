@@ -3,8 +3,8 @@ from debug import *;
 
 from phases.in_out.self import in_out_phase;
 
-def in_out_phase_process(self, all_blocks, parameters, phase_counters, **_):
-	enter(f"in_out_phase.process(block.po = {self.block.po})");
+def in_out_phase_process(self, all_blocks, parameters, **_):
+	enter(f"in_out_phase.process(block.rpo = {self.block.rpo})");
 	
 	block = self.block;
 	
@@ -13,7 +13,8 @@ def in_out_phase_process(self, all_blocks, parameters, phase_counters, **_):
 	
 	# union children's needs
 	for child in block.successors:
-		ins.update(child.ins);
+		if child.ins is not None:
+			ins.update(child.ins);
 	
 	todo = [];
 	
@@ -53,22 +54,17 @@ def in_out_phase_process(self, all_blocks, parameters, phase_counters, **_):
 				ins.update(inst.ins);
 				
 				new_instructions.insert(0, inst);
-			elif inst.op not in ["loadI"]:
+			elif inst.op not in ["loadI", "testge", "comp"]:
 				assert(not "TODO");
 		
-		block.instructions = new_instructions;
+		block.original_instructions = new_instructions;
 	
 	dprint(f"ins = {ins}, outs = {outs}");
 	
-	block.phase_counters["in-out"] = phase_counters["in-out"];
-	
-	if block.ins == ins:
-		for parent in block.predecessors:
-			if parent.phase_counters["in-out"] < phase_counters["in-out"]:
-				todo.append(in_out_phase(parent));
-	else:
+	if block.ins != ins:
 		for parent in block.predecessors:
 			todo.append(in_out_phase(parent));
+		block.ins = ins;
 		
 	block.ins = ins;
 	block.outs = outs;

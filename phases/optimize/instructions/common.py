@@ -51,7 +51,7 @@ def consider_un(vrtovn, et, op, ins, out = None):
 
 
 def load_literal(vrtovn, et, literal, out = None):
-	enter(f"load_literal(literal = {literal})");
+	enter(f"load_literal(literal = {literal}, out = {out})");
 	
 	result = et.extovn(constant(value = literal));
 	
@@ -60,4 +60,19 @@ def load_literal(vrtovn, et, literal, out = None):
 	
 	exit(f"return {result.valnum};");
 	return result.valnum;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 

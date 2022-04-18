@@ -7,7 +7,7 @@ def lost_parent_phase_dotout(self, all_blocks, **_):
 	
 	enter("lost_parent_phase_dotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-lost-parent.txt", "w");
 	
 	print("""
 digraph mygraph {
@@ -27,7 +27,7 @@ digraph mygraph {
 		
 		print(f"""
 			"{bid}" [
-				label="po = {block.po}"
+				label="rpo = {block.rpo}"
 				color="{block.hue} 1 1"
 				{"style=bold" if block == self.block else ""}
 			];

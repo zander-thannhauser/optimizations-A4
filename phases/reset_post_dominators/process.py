@@ -11,15 +11,15 @@ def reset_post_dominators_phase_process(self, all_blocks, phase_counters, **_):
 	
 	block = self.block;
 	
-	block.post_dominators = set(all_blocks);
+	post_dominators = set(all_blocks);
 	
-	todo.append(post_dominators_phase(block));
-	
-	block.phase_counters["reset-post-dominators"] = phase_counters["reset-post-dominators"];
-	
-	for parent in block.predecessors:
-		if parent.phase_counters["reset-post-dominators"] < phase_counters["reset-post-dominators"]:
+	if block.post_dominators != post_dominators:
+		todo.append(post_dominators_phase(block));
+		
+		for parent in block.predecessors:
 			todo.append(reset_post_dominators_phase(parent));
+		
+		block.post_dominators = post_dominators;
 	
 	exit(f"return {[str(t) for t in todo]}");
 	return todo;

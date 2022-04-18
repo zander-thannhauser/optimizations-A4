@@ -1,9 +1,13 @@
 
 from debug import *;
 
-from phases.optimize.self import optimize_phase;
+from phases.lost_parent.self import lost_parent_phase;
 from phases.reset_dominators.self import reset_dominators_phase;
 from phases.reset_post_dominators.self import reset_post_dominators_phase;
+from phases.in_out.self import in_out_phase;
+from phases.inheritance.self import inheritance_phase;
+from phases.phi.self import phi_phase;
+from phases.optimize.self import optimize_phase;
 
 from expression_table.constant.self import constant;
 
@@ -86,7 +90,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 		# process instructions, pushing order_sensitive:
 		order_sensitive_instructions = [];
 		
-		for inst in block.instructions:
+		for inst in block.original_instructions:
 			dprint(inst);
 			lookup[inst.op](
 				vrtovn = vrtovn,
@@ -133,30 +137,32 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 			
 			lookup[before.op](
 				vrtovn = vrtovn,
-				ops = order_sensitive_instructions,
+				ops = jump,
 				expression_table = expression_table,
-				ins = inst.ins,
-				out = inst.out,
-				const = inst.const,
-				label = inst.label,
+				ins = before.ins,
+				out = before.out,
+				const = before.const,
+				label = before.label,
 				volatile = volatile);
+			self.subdotout(vrtovn, before, order_sensitive_instructions + jump, expression_table);
 			
 			if len(jump):
-#				after = order_sensitive_instructions[-1];
-#				
-#				dprint(f"before.op, after.op = {before.op, after.op}");
-#				
-#				match (before.op, after.op):
-#					
-#					case _ if before.op == after.op: pass;
-#					
-#					case ('cbr' | 'cbrne', 'cbr_GT' | 'cbr_GE'):
-#						pass;
-#					
-#					case ('cbr', 'storeAI'):
-#						block.jump = None;
-#					
-#					case _: assert(not "TODO");
+				after, = jump
+				
+				dprint(f"before.op, after.op = {before.op, after.op}");
+				
+				match (before.op, after.op):
+					
+					case _ if before.op == after.op: pass;
+					
+					case ('cbr' | 'cbrne', 'cbr_GT' | 'cbr_GE'):
+						pass;
+					
+					case ('cbr', 'storeAI'):
+						block.jump = None;
+					
+					case _: assert(not "TODO");
+				
 				assert(not "TODO");
 			else:
 				block.jump = None;
@@ -178,9 +184,6 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				# might have changed:
 				todo.append(inheritance_phase(lose));
 				todo.append(phi_phase(lose));
-				assert(not "TODO");
-				
-			assert(not "TODO");
 		
 		block.order_sensitive_instructions = order_sensitive_instructions;
 	

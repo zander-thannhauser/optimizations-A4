@@ -40,7 +40,7 @@ def instruction_newdotout(self, stream, draw_lines = True, constraint = False):
 		];
 	""", file = stream);
 	
-	if self.acting_i2i:
+	if self.acting_i2i and draw_lines:
 		print(f"""
 			"{name}":s -> "{self.out}" [
 				color = "{color}"

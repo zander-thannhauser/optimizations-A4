@@ -66,7 +66,7 @@ mpv-bottom_up_ranking: $(bottom_up_ranking)
 	mpv $(bottom_up_ranking)
 
 mpv-all: $(alls)
-	mpv $(alls)
+	mpv $(alls) --no-save-position-on-quit
 
 mpv-dominators: $(dominators)
 	mpv $(dominators)
