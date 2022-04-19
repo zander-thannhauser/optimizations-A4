@@ -17,9 +17,6 @@ def block_init(self, label, original_instructions, children_labels, jump = None)
 	
 	# all phases:
 	self.phase_counters = {
-		"in-out": 0,
-		"inheritance": 0,
-		"phi": 0,
 		"dead-code": 0,
 	}
 	
@@ -41,7 +38,7 @@ def block_init(self, label, original_instructions, children_labels, jump = None)
 	self.outs = list(); # (register, instruction) tuples in *original* order
 	
 	# inheritance phase:
-	self.given = dict(); # register -> set of sources
+	self.given = None; # register -> set of sources
 	
 	# phi phase:
 	self.incoming_phis = dict(); # register -> valnum

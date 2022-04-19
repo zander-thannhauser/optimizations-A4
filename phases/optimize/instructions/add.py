@@ -8,6 +8,7 @@ from expression_table.multiplicity.self import multiplicity;
 from .common import consider_multi;
 from .common import consider_exp;
 from .common import load_literal;
+
 from .mult import optimize_mult_vr;
 
 def optimize_add_vr(vrtovn, et, lvn, rvn, out = None):
@@ -61,7 +62,7 @@ def optimize_add_vr(vrtovn, et, lvn, rvn, out = None):
 			assert(not "TODO");
 		
 		# X + (addI Y, a) => addI (add X, Y), a
-		case (_, expression(op = "addI", ins = [Y], const = a)):
+		case (_, expression(op = "addI", ins = Y, const = a)):
 #			subvn = optimize_add_vr(ops, et, lvn, Y);
 #			retval = consider(ops, et, "addI", (subvn, a), out);
 			assert(not "TODO");

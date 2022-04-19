@@ -41,6 +41,7 @@ digraph mygraph {
 				"{id(d)}" -> "{bid}" [
 					color = "{d.hue} 1 1"
 					constraint = false
+					{"style=bold" if d == block.immediate_dominator else ""}
 				]
 			""", file = stream);
 		
@@ -53,6 +54,17 @@ digraph mygraph {
 	phase.frame_counter += 1;
 	
 	exit("return;");
+
+
+
+
+
+
+
+
+
+
+
 
 
 

@@ -12,8 +12,6 @@ def inheritance_phase_dotout(self, all_blocks, **_):
 	print("""
 digraph mygraph {
 
-	node [shape=record];
-	
 	graph [bgcolor=black];
 	
 	edge [color=white]
@@ -25,7 +23,7 @@ digraph mygraph {
 	for block in all_blocks:
 		ins = " | ".join(f"<in_{r[1:]}> {r}" for r in block.ins);
 		
-		label = f"po = {block.po}";
+		label = f"rpo = {block.rpo}";
 		
 		outs = " | ".join(f"<out_{r[1:]}> {r}" for r in block.outs);
 		
@@ -33,6 +31,7 @@ digraph mygraph {
 		
 		print(f"""
 			"{id(block)}" [
+				shape=record
 				label="{label}"
 				color="{block.hue} 1 1"
 				{"style=bold" if block == self.block else ""}
@@ -42,16 +41,17 @@ digraph mygraph {
 		for c in block.successors:
 			print(f"\"{id(block)}\":s -> \"{id(c)}\":n [style=bold]", file = stream);
 		
-		for register, feeders in block.given.items():
-			for feeder in feeders:
-				print(f"""
-					"{id(feeder)}":"out_{register[1:]}":s ->
-					"{id(block)}": "in_{register[1:]}":n [
-						style = dashed
-						constraint = false
-						color = "{feeder.hue} 1 1"
-					]
-				""", file = stream);
+		if block.given is not None:
+			for register, feeders in block.given.items():
+				for feeder in feeders:
+					print(f"""
+						"{id(feeder)}":"out_{register[1:]}":s ->
+						"{id(block)}": "in_{register[1:]}":n [
+							style = dashed
+							constraint = false
+							color = "{feeder.hue} 1 1"
+						]
+					""", file = stream);
 		
 	print("""
 }

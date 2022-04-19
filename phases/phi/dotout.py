@@ -52,11 +52,12 @@ digraph mygraph {
 		
 		ins = " | ".join(f"<in_{r[1:]}> {r}" for r in block.ins);
 		
-		label = f"po = {block.po}";
+		label = f"rpo = {block.rpo}";
 		
 		outs = " | ".join(f"<out_{r[1:]}> {r}" for r in block.outs);
 		
 		label = "{ { " + ins + "} | " + label + " | { " + outs + " } }"
+		
 		
 		print(f"""
 			"{bid}" [

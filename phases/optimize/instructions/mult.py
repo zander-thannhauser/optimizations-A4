@@ -7,6 +7,7 @@ from expression_table.expression.self import expression;
 
 from .common import load_literal;
 from .common import consider_multi;
+from .common import consider_exp;
 
 def optimize_mult_vr(vrtovn, et, lvn, rvn, out = None):
 	enter(f"optimize_mult_vr(lvn = {lvn}, rvn = {rvn}, out = {out})");
@@ -58,7 +59,8 @@ def optimize_mult_vr(vrtovn, et, lvn, rvn, out = None):
 		
 		# a * (addI X, b) => addI (multI X, a), (a * b)
 		case (constant(value = a), expression(op = "addI", ins = [X], const = b)):
-			assert(not "TODO");
+			subvn = optimize_mult_vr(vrtovn, et, X, lvn)
+			valnum = consider_exp(vrtovn, et, "addI", (subvn, ), const = a * b, out = out);
 		
 		# (multI X, a) * b => multI X, (a * b)
 		case (expression(op = "multI", ins = [X], const = a), constant(value = b)):
@@ -94,8 +96,7 @@ def optimize_mult_vr(vrtovn, et, lvn, rvn, out = None):
 		
 		# mult X, c => multI X, c:
 		case (_, constant(value = c)):
-#			consider(ops, et, "multI", (lvn, c), out);
-			assert(not "TODO");
+			valnum = consider_exp(vrtovn, et, "multI", (lvn, ), const = c, out = out);
 		
 		# mult c, X => multI X, c:
 		case (constant(value = c), _):

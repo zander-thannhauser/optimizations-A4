@@ -5,7 +5,7 @@ from phases.self import phase;
 
 def optimize_phase_subdotout(self, vrtovn, instruction, order_sensitive_instructions, expression_table):
 	
-	enter("optimize_phase_dotout()");
+	enter("optimize_phase_subdotout()");
 	
 	stream = open(f"dot/{phase.frame_counter}-optimize.txt", "w");
 	
@@ -58,7 +58,8 @@ digraph mygraph {
 		""", file = stream);
 		print(f"""
 			"{vr}" [
-				label="{vr}"
+				label = "{vr}"
+				shape = note
 				{"style=bold" if vr == instruction.out else ""}
 			];
 		""", file = stream);

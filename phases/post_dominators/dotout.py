@@ -25,6 +25,7 @@ digraph mygraph {
 	for block in all_blocks:
 		bid = id(block);
 		
+		
 		print(f"""
 			"{bid}" [
 				label="rpo = {block.rpo}"

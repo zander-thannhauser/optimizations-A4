@@ -41,6 +41,7 @@ digraph mygraph {
 				"{bid}" -> "{id(d)}" [
 					color = "{d.hue} 1 1"
 					constraint = false
+					{"style=bold" if d == block.post_immediate_dominator else ""}
 				]
 			""", file = stream);
 		

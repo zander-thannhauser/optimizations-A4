@@ -53,17 +53,46 @@ def optimize_sub_vr(vrtovn, et, lvn, rvn, out = None):
 			if X == Y:
 				assert(not "TODO");
 			elif a - b == 0:
-				# valnum = optimize_sub_vr(ops, et, X, Y, out);
+				# valnum = optimize_sub_vr(vrtovn, et, X, Y, out);
 				assert(not "TODO");
 			else:
-#				subvn = optimize_sub_vr(ops, et, X, Y);
-#				retval = consider(ops, et, "addI", (subvn, a - b), out);
+#				subvn = optimize_sub_vr(vrtovn, et, X, Y);
+#				retval = consider(vrtovn, et, "addI", (subvn, a - b), out);
 				assert(not "TODO");
+		
+		# (addI X, a) - Y => addI (sub X, Y), a
+		case (expression(op = "addI", ins = [X], const = a), _):
+			subvn = optimize_sub_vr(vrtovn, et, X, rvn);
+			valnum = consider_exp(vrtovn, et, "addI", (subvn, ), const = a, out = out);
+		
+		# X - (addI Y, a) => addI (sub X, Y), -a
+		case (_, expression(op = "addI", ins = [Y], const = a)):
+#			subvn = optimize_add_vr(vrtovn, et, lvn, Y);
+#			retval = consider(vrtovn, et, "addI", (subvn, a), out);
+			assert(not "TODO");
 		
 		# sum(A) - sum(B) => sum(A - B)
 		case (multiplicity(op = "sum", ins = A), \
 			  multiplicity(op = "sum", ins = B)):
 			difference = multiplicity.difference(A, B);
+			if len(difference) == 1:
+				assert(not "TODO");
+			else:
+				valnum = consider_multi(vrtovn, et, "sum", difference, out);
+		
+		# ∑(X) - (multI, Y, a) = ∑(X - a * [Y]):
+		case (multiplicity(op = "sum", ins = X), \
+			  expression(op = "multI", ins = [Y], const = b)):
+			assert(not "TODO");
+		
+		# (multI, X, a) - ∑(Y) = ∑(a * [X] - Y):
+		case (expression(op = "multI", ins = [Y], const = b), \
+		      multiplicity(op = "sum", ins = X)):
+			assert(not "TODO");
+		
+		# sum(A) - B => sum(A - [B])
+		case (multiplicity(op = "sum", ins = A), _):
+			difference = multiplicity.difference(A, [(rvn, 1)]);
 			if len(difference) == 1:
 				assert(not "TODO");
 			else:
@@ -78,6 +107,22 @@ def optimize_sub_vr(vrtovn, et, lvn, rvn, out = None):
 #				# divide both inner multIs by d, create outer multI
 #				assert(not "TODO");
 			assert(not "TODO");
+		
+		# ∑(X) - (multI, Y, a) = ∑(X - a * [Y]):
+		case (_, expression(op = "multI", ins = [Y], const = b)):
+			assert(not "TODO");
+		
+		# (multI, X, a) - Y = ∑(a * [X] - Y)
+		# (multI, X, 2) - X = X
+		# (multI, X, a) - X = multI X, (a - 1)
+		case (expression(op = "multI", ins = [Y], const = b), _):
+			if Y != rvn:
+				assert(not "TODO");
+			elif b - 1 == 1:
+				if out is not None: vrtovn[out] = rvn;
+				valnum = rvn;
+			else:
+				assert(not "TODO");
 		
 		# product(A) - product(B) => product(A <I> B) * (product(A - B) - product(B - A))
 		case (multiplicity(op = "product", ins = A), \
@@ -111,50 +156,24 @@ def optimize_sub_vr(vrtovn, et, lvn, rvn, out = None):
 			else:
 				assert(not "TODO");
 		
-		# ∑(X) - (multI, Y, a) = ∑(X - a * [Y]):
-		case (multiplicity(op = "sum", ins = X), \
-			  expression(op = "multI", ins = [Y], const = b)):
-			assert(not "TODO");
+#		# (addI X, a) - (multI Y, b) = (Y * -b + X) + a
+#		case (expression(op = "addI",  ins = [X], const = a), \
+#			  expression(op = "multI", ins = [Y], const = b)):
+##			subvn1 = consider(ops, et, "multI", (Y, -b));
+##			subvn2 = optimize_add_vr(ops, et, X, subvn1);
+##			retval = consider(ops, et, "addI", (subvn2, a), out);
+#			assert(not "TODO");
 		
-		# (multI, X, a) - ∑(Y) = ∑(a * [X] - Y):
-		case (expression(op = "multI", ins = [Y], const = b), \
-		      multiplicity(op = "sum", ins = X)):
-			assert(not "TODO");
-		
-		# (addI X, a) - (multI Y, b) = (Y * -b + X) + a
-		case (expression(op = "addI",  ins = [X], const = a), \
-			  expression(op = "multI", ins = [Y], const = b)):
-#			subvn1 = consider(ops, et, "multI", (Y, -b));
-#			subvn2 = optimize_add_vr(ops, et, X, subvn1);
-#			retval = consider(ops, et, "addI", (subvn2, a), out);
-			assert(not "TODO");
-		
-		# X - (multI Y, a) = X + (multI Y, -a)
-		case (_, expression(op = "multI", ins = [Y], const = b)):
-			# subvn = consider(ops, et, "multI", (Y,), const = -b);
-			# valnum = optimize_add_vr(ops, et, lvn, subvn, out);
-			assert(not "TODO");
-		
-		# (sub X, Y) - X => Y
-		# (sub X, Y) - Z => X - (Y + Z)
-		case (expression(op = "sub", ins = [X, Y]), _):
-			if X == rvn:
-				assert(not "TODO");
-			else:
-				assert(not "TODO");
+#		# X - (multI Y, a) = X + (multI Y, -a)
+#		case (_, expression(op = "multI", ins = [Y], const = b)):
+#			# subvn = consider(ops, et, "multI", (Y,), const = -b);
+#			# valnum = optimize_add_vr(ops, et, lvn, subvn, out);
+#			assert(not "TODO");
 		
 		# X - c => addI X, -c
 		case (_, constant(value = c)):
 			# valnum = consider(ops, et, "addI", (lvn,), out, const = -c);
 			assert(not "TODO");
-		
-		# sum(A) - B => sum(A - [B])
-		case (multiplicity(op = "sum", ins = A), _):
-			difference = multiplicity.difference(A, [(rvn, 1)]);
-			if len(difference) == 1:
-				assert(not "TODO");
-			else:
-				valnum = consider_multi(vrtovn, et, "sum", difference, out);
 		
 		# default:
 		case (lex, rex):

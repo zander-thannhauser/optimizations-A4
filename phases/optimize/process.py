@@ -4,7 +4,7 @@ from debug import *;
 from phases.lost_parent.self import lost_parent_phase;
 from phases.reset_dominators.self import reset_dominators_phase;
 from phases.reset_post_dominators.self import reset_post_dominators_phase;
-from phases.in_out.self import in_out_phase;
+from phases.reset_in_out.self import reset_in_out_phase;
 from phases.inheritance.self import inheritance_phase;
 from phases.phi.self import phi_phase;
 from phases.optimize.self import optimize_phase;
@@ -62,7 +62,7 @@ lookup = {
 };
 
 def optimize_phase_process(self, start, expression_table, parameters, **_):
-	enter(f"optimize_phase_process(block.po = {self.block.po})");
+	enter(f"optimize_phase_process(block.rpo = {self.block.rpo})");
 	
 	todo = [];
 	
@@ -75,12 +75,15 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 			vrtovn[parameter.register] = parameter.valnum;
 	else:
 		for predecessor in block.predecessors:
-			for register, valnum in predecessor.vrtovn.items():
-				if register not in vrtovn:
-					dprint(f"inherited {register} => {valnum} from {predecessor}");
-					vrtovn[register] = valnum;
-				else:
-					assert(not "TODO");
+			if predecessor.vrtovn is not None:
+				for register, valnum in predecessor.vrtovn.items():
+					if register not in vrtovn:
+						dprint(f"inherited {register} => {valnum} from {predecessor}");
+						vrtovn[register] = valnum;
+					else:
+						assert(not "TODO");
+			else:
+				dprint(f"inherited nothing from {predecessor}");
 		
 		# introduce phi nodes entering this block into
 		# the expression_table:
@@ -93,22 +96,14 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 		for inst in block.original_instructions:
 			dprint(inst);
 			lookup[inst.op](
-				vrtovn = vrtovn,
-				ops = order_sensitive_instructions,
 				expression_table = expression_table,
+				ops = order_sensitive_instructions,
+				vrtovn = vrtovn,
 				ins = inst.ins,
 				out = inst.out,
 				const = inst.const,
 				label = inst.label);
 			self.subdotout(vrtovn, inst, order_sensitive_instructions, expression_table);
-		
-		# generate instructions for the expressions that
-		# feed the i2is:
-#		for register in block.outgoing_phis:
-#			srcvn = expression_table.vrtovn(register);
-#			srcex = expression_table.vntoex(subvalnum);
-#			srcex.generate_instructions(subvalnum, expression_table, new_instructions);
-#			assert(not "TODO");
 		
 		volatile = set();
 		
@@ -124,7 +119,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 					i2i.acting_i2i = True;
 					dprint(i2i);
 					phi = expression_table.vntoex(dst_valnum);
-					phi.feeders.append(i2i);
+					phi.feeders[block] = i2i;
 					order_sensitive_instructions.append(i2i);
 					volatile.add(dst_valnum);
 		
@@ -136,9 +131,9 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 			dprint(before);
 			
 			lookup[before.op](
+				expression_table = expression_table,
 				vrtovn = vrtovn,
 				ops = jump,
-				expression_table = expression_table,
 				ins = before.ins,
 				out = before.out,
 				const = before.const,
@@ -162,10 +157,11 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 						block.jump = None;
 					
 					case _: assert(not "TODO");
-				
-				assert(not "TODO");
+					
+				block.new_jump = after;
 			else:
 				block.jump = None;
+				block.new_jump = None;
 			
 			if block.jump is None:
 				keep, lose = block.successors;
@@ -179,7 +175,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				todo.append(reset_post_dominators_phase(block));
 				# the things the parent needs to provide for it's children
 				# might have changed:
-				todo.append(in_out_phase(block));
+				todo.append(reset_in_out_phase(block));
 				# the things the child can get from it's parent
 				# might have changed:
 				todo.append(inheritance_phase(lose));

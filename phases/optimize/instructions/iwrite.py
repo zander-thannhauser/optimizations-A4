@@ -8,7 +8,7 @@ def optimize_iwrite(ops, vrtovn, ins, out, expression_table, label, **_):
 	
 	ivn = vrtovn[ins[0]];
 	
-	iwrite = instruction("iwrite", [ivn], None);
+	iwrite = instruction("iwrite", [ivn]);
 	
 	ops.append(iwrite);
 	

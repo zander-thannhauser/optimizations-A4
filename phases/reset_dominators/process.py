@@ -4,6 +4,7 @@ from debug import *;
 from phases.reset_dominators.self import reset_dominators_phase;
 from phases.dominators.self import dominators_phase;
 
+
 def reset_dominators_phase_process(self, all_blocks, phase_counters, **_):
 	enter(f"reset_dominators_phase_process(block.po = {self.block.po})");
 	

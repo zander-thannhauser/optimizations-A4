@@ -6,12 +6,14 @@ class phase:
 	DOMINATORS            = 3;
 	RESET_POST_DOMINATORS = 4;
 	POST_DOMINATORS       = 5;
-	IN_OUT                = 6;
-	INHEIRTANCE           = 7;
-	PHI                   = 8;
-	OPTIMIZE              = 9;
-	CRITICAL              = 10;
-	DEAD_CODE             = 11;
+	RESET_IN_OUT          = 6;
+	IN_OUT                = 7;
+	INHEIRTANCE           = 8;
+	PHI                   = 9;
+	OPTIMIZE              = 10;
+	CRITICAL              = 11;
+	DEAD_CODE             = 12;
+	MAX_PHASE             = 13;
 
 from .init import phase_init;
 

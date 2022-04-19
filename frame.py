@@ -151,11 +151,11 @@ def process_frame(t, p):
 		dominators_phase(start),          # top-down
 		reset_post_dominators_phase(end), # bottom-up*
 		post_dominators_phase(end),       # bottom-up
+		## reset_in_out_phase(end),       # bottom-up
 		in_out_phase(end),                # bottom-up
 		inheritance_phase(start),         # top-down
 		phi_phase(start),                 # top-down*
 		optimize_phase(start),            # top-down
-		# at this point, the structure is solid:
 		
 		# loop-depth phase(start)
 		# find used unorders, find subsets in common
@@ -174,10 +174,8 @@ def process_frame(t, p):
 		"end": end,
 		"expression_table": et,
 		"parameters": parameters,
+		"phis": list(),
 		"phase_counters": {
-			"in-out": 1,
-			"inheritance": 1,
-			"phi": 1,
 			"dead-code": 1,
 		},
 	};
