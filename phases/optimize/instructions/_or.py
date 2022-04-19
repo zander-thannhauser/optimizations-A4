@@ -37,6 +37,9 @@ def optimize_or_vr(vrtovn, et, lvn, rvn, out = None):
 		case (unordered(op = "or", ins = A), _):
 			together = set.union(A, set([rvn]));
 			retval = consider_un(vrtovn, et, "or", together, out);
+			# for each element:
+				# check that not(element) isn't also in the union
+			assert(not "TODO");
 		
 		case (_, unordered(op = "or", ins = B)):
 			assert(not "TODO");

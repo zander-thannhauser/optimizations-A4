@@ -158,9 +158,17 @@ def process_frame(t, p):
 		optimize_phase(start),            # top-down
 		
 		# loop-depth phase(start)
+		
 		# find used unorders, find subsets in common
 		# find used multiplicities, find subsets in common
-		## position_expressions()
+		
+		## position_expressions():
+			# bewteen the lowest dominator that has a instruction
+			# that feeds me, and the lowest dominator all who use
+			# me have in common, find the lowest block with the
+			# lowest loop-depth and insert this
+			# expression/instruction there
+		
 		## critical(),                    # bottom-up
 		# dead_code_phase(start),           # top-down*
 		

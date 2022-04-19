@@ -37,6 +37,9 @@ def optimize_and_vr(vrtovn, et, lvn, rvn, out = None):
 		case (unordered(op = "and", ins = A), _):
 			together = set.union(A, set([rvn]));
 			retval = consider_un(vrtovn, et, "and", together, out);
+			# for each element:
+				# check that not(element) isn't also in the union
+			assert(not "TODO");
 		
 		case (_, unordered(op = "and", ins = B)):
 			assert(not "TODO");
