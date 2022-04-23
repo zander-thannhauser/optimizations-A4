@@ -159,33 +159,43 @@ def process_frame(t, p):
 		
 		# loop-depth phase(start)
 		
-		# find used unorders, find subsets in common
-			# new idea: sort inputs by who feed them, adding into running
-			# sum/product. this moves subsets their shallowest loop-depth
+		# top-down blocks:
+			# for each osi:
+				# travel up the expression tree, building
+					# instructions with (rpo-number, 0)
+					# push instructions into next phase
+				# for everyone but load:
+					# you're critical, push to todo.
 		
-		# find used multiplicities, find subsets in common
-			# new idea: see above
+		# top-down instructions:
+			# determine highest-bound for each instruction:
+				# match (ins):
+					# parameters: (start.rpo, -1, -1)
+					# loadI:      (start.rpo, -1,  0)
+					# phi:        (highest in idom chain with this incoming-phi, -1, -1)
+					# load:       (block, load.index, -1)
+				# if this is a unordered, or multiplicy:
+					# combine multiplicities
+					# sort inputs by highest-bound, create expression of
+						# running sum/product with each input
+						# create instruction
+						# assign it rpo = (my rpo, counter++)
+						# assign it's upper position as min() + 1
+					# ins = [running-instruction, last-one]
+				# each instruction's highest-bound should be one higher
+					# than it's highest input
 		
-		# connect children expression with parent expressions,
-			# give rpos to expression-trees
+		# bottom-up:
+			# your theorical lowest is the lowest-common-dominator of your
+			# parent instructions
+			# between your upper-bound and your lower-bound find the lowest
+			# loop-depth, find the lowest block with that depth.
+			# that's home.
 		
-		# bottom-up: combine instructions of parents with only one child,
-			# and children with only one parent.
-			# (eg. loadAO, storeAO)
+		# critical(),  # bottom-up
+			# sort by instruction rpo
 		
-		## position_expressions():
-			
-			# bewteen the lowest dominator that has a instruction
-			# that feeds me, and the lowest dominator all who use
-			# me have in common, find the lowest block with the
-			# lowest loop-depth and insert this
-			# expression/instruction there
-		
-		# critical(),                    # bottom-up
 		# dead_code_phase(start),           # top-down*
-		
-		# *these phases don't actually have to go in any particaular
-		#  direction.
 	];
 	
 	args = {
