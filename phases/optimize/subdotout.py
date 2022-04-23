@@ -47,7 +47,7 @@ digraph mygraph {
 		last = label;
 	
 	for vn in vrtovn.values():
-		if vn not in drawn:
+		if vn is not None and vn not in drawn:
 			ex = expression_table.vntoex(vn);
 			ex.dotout(stream, drawn = drawn, et = expression_table);
 			drawn.add(vn);

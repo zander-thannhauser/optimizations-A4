@@ -44,11 +44,14 @@ eog-%: dot/%.png
 mpv-%: dot/%.png
 	mpv $<
 
+gimp-%: dot/%.png
+	gimp $<
+
 gimp-all: $(alls)
 	gimp $(alls)
 
 mpv-all: $(alls)
-	mpv $(alls) --no-save-position-on-quit
+	mpv $(alls) # --no-save-position-on-quit
 
 mpv-top_down_ranking: $(top_down_ranking)
 	mpv $(top_down_ranking)

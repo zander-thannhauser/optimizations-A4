@@ -38,7 +38,8 @@ def optimize_mult_vr(vrtovn, et, lvn, rvn, out = None):
 		
 		# X * 1 = X
 		case (_, constant(value = 1)):
-			assert(not "TODO");
+			if out is not None: vrtovn[out] = lvn;
+			valnum = lvn;
 		
 		# X * -1 = -X
 		case (_, constant(value = -1)):
@@ -50,12 +51,11 @@ def optimize_mult_vr(vrtovn, et, lvn, rvn, out = None):
 #		# substitutions:
 		# (addI X, a) * b => addI (multI X, b), (a * b)
 		case (expression(op = "addI", ins = [X], const = a), constant(value = b)):
-#			if a * b:
-#				subvn = consider(ops, et, "multI", ins = (X, ), const = b);
-#				valnum = consider(ops, et, "addI", ins = (subvn, ), const = (a * b), out = out);
-#			else:
-#				assert(not "TODO");
-			assert(not "TODO");
+			if a * b != 0:
+				subvn = consider_exp(vrtovn, et, "multI", ins = (X, ), const = b);
+				valnum = consider_exp(vrtovn, et, "addI", ins = (subvn, ), const = (a * b), out = out);
+			else:
+				assert(not "TODO");
 		
 		# a * (addI X, b) => addI (multI X, a), (a * b)
 		case (constant(value = a), expression(op = "addI", ins = [X], const = b)):

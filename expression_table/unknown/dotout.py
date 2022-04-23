@@ -1,12 +1,12 @@
 
 from debug import *;
 
-def unknown_dotout(self, stream, **_):
-	assert(not "TODO");
+def unknown_dotout(self, stream, et, **_):
+	pass
 #	print(f"""
-#		"{vn}" [
+#		"{self.valnum}" [
 #			shape = diamond
-#			label = "{self.register}"
-#			color = "{vn / expression_table.valcounter} 1 1"
+#			label = "{self.instruction.op}"
+#			color = "{self.valnum / et.valcounter} 1 1"
 #		];
 #	""", file = stream);

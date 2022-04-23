@@ -1,5 +1,5 @@
 
 def unknown_hash(self):
-	return hash(("unknown", self.instruction));
+	return hash(("unknown", self.id));
 
 

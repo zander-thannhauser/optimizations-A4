@@ -33,8 +33,7 @@ def optimize_comp_vn(vrtovn, et, lvn, rvn, out = None):
 		# substitutions:
 		# (addI X, a) vs b => X vs (b - a)
 		case (expression(op = "addI", ins = [X], const = a), constant(value = b)):
-			# valnum = optimize_comp_vn(ops, et, X, load_literal(ops, et, b - a), out);
-			assert(not "TODO");
+			valnum = optimize_comp_vn(vrtovn, et, X, load_literal(vrtovn, et, b - a), out);
 		
 		case (constant(value = b), expression(op = "addI", ins = [X], const = a)):
 			assert(not "TODO");
@@ -84,16 +83,13 @@ def optimize_comp_vn(vrtovn, et, lvn, rvn, out = None):
 		
 		case (multiplicity(op = op_a, ins = A),
 		      multiplicity(op = op_b, ins = B)) if op_a == op_b:
-			if len(A) == 1 and len(B) == 1:
-				assert(not "TODO");
-			else:
-				difference = multiplicity.difference(A, B);
-				
-				# move positives left, move negatives right
-				# if empty: consider as zero
-				# if either's length <= 1, call self
-				# otherwise: return consider()
-				
+			difference = multiplicity.difference(A, B);
+			
+			# move positives left, move negatives right
+			# if empty: consider as zero
+			# if either's length <= 1, call self
+			# otherwise: return consider()
+			
 #				if len(difference) == 1:
 #					# compare against zero
 #					assert(not "TODO");
@@ -104,7 +100,7 @@ def optimize_comp_vn(vrtovn, et, lvn, rvn, out = None):
 #					subvalnum = consider_multi(vrtovn, et, op_a, difference);
 #					valnum = optimize_comp_vn(vrtovn, et, subvalnum, \
 #						load_literal(vrtovn, et, 0), out);
-				assert(not "TODO");
+			assert(not "TODO");
 		
 		case (unordered(op = op_a, ins = A),
 		      unordered(op = op_b, ins = B)) if op_a == op_b:
@@ -113,8 +109,7 @@ def optimize_comp_vn(vrtovn, et, lvn, rvn, out = None):
 		
 		# default:
 		case (_, _):
-			# valnum = consider(ops, et, "comp", (lvn, rvn), out);
-			assert(not "TODO");
+			valnum = consider_exp(vrtovn, et, "comp", (lvn, rvn), out = out);
 	
 	exit(f"return {valnum};");
 	return valnum;

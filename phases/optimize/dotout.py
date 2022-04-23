@@ -5,7 +5,7 @@ from phases.self import phase;
 
 from instruction.self import instruction;
 
-def optimize_phase_dotout(self, all_blocks, expression_table, parameters, phase_counters, **_):
+def optimize_phase_dotout(self, all_blocks, expression_table, **_):
 	
 	enter("optimize_phase_dotout()");
 	
@@ -30,17 +30,35 @@ digraph mygraph {
 	
 	headtails = dict();
 	
+	drawn = set();
+	
 	for block in all_blocks:
 		
+		for vn in block.incoming_phis.values():
+			if vn not in drawn:
+				phi = expression_table.vntoex(vn);
+				phi.dotout(stream, done = drawn, et = expression_table);
+				drawn.add(vn);
+		
 		head, tail = None, None;
-		for inst in block.order_sensitive_instructions:
-			current = inst.newdotout(stream, draw_lines = False);
+		for inst in block.order_sensitive_instructions \
+			+ ([] if block.new_jump is None else [block.new_jump]):
+			
+			for vn in inst.ins:
+				if vn not in drawn:
+					ex = expression_table.vntoex(vn);
+					ex.dotout(stream, drawn = drawn, et = expression_table);
+					drawn.add(vn);
+			
+			current = inst.newdotout(stream, constraint = True);
+			
 			if tail:
 				print(f"""
 					"{tail}" -> "{current}" [style=bold];
 				""", file = stream);
 			else:
 				head = current;
+			
 			tail = current;
 		
 		if not head:

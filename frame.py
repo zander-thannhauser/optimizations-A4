@@ -160,16 +160,28 @@ def process_frame(t, p):
 		# loop-depth phase(start)
 		
 		# find used unorders, find subsets in common
+			# new idea: sort inputs by who feed them, adding into running
+			# sum/product. this moves subsets their shallowest loop-depth
+		
 		# find used multiplicities, find subsets in common
+			# new idea: see above
+		
+		# connect children expression with parent expressions,
+			# give rpos to expression-trees
+		
+		# bottom-up: combine instructions of parents with only one child,
+			# and children with only one parent.
+			# (eg. loadAO, storeAO)
 		
 		## position_expressions():
+			
 			# bewteen the lowest dominator that has a instruction
 			# that feeds me, and the lowest dominator all who use
 			# me have in common, find the lowest block with the
 			# lowest loop-depth and insert this
 			# expression/instruction there
 		
-		## critical(),                    # bottom-up
+		# critical(),                    # bottom-up
 		# dead_code_phase(start),           # top-down*
 		
 		# *these phases don't actually have to go in any particaular

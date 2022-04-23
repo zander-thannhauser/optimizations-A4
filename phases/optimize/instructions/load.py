@@ -3,40 +3,56 @@ from debug import *;
 
 from expression_table.unknown.self import unknown;
 from expression_table.expression.self import expression;
+from expression_table.multiplicity.self import multiplicity;
+
 from instruction.self import instruction;
 
-def optimize_load(ops, ins, out, expression_table, **_):
+from .mult import optimize_mult_vr;
+
+from .common import load_literal;
+
+def optimize_load(ops, vrtovn, ins, out, expression_table, id, **_):
 	enter(f"optimize_load(ins = {ins}, out = {out})");
 	
-	assert(not "TODO");
+	ivn = vrtovn[ins[0]];
 	
-#	ivn = expression_table.vrtovn(ins[0]);
-#	
-#	loadex = unknown();
-#	oresult = expression_table.extovn(loadex);
-#	ovn = oresult.valnum;
-#	
-#	match (expression_table.vntoex(ivn)):
-#		# load (addI X, c) => Y === loadAI X, c => Y
-#		case expression(op = "addI", ins = [X], const = c):
-#			# ops.append(instruction("loadAI", [X, c], ovn));
-#			assert(not "TODO");
-#		
-#		# load (add  X, Y) => Z === loadAO X, Y => Z
-#		case expression(op = "add", ins = [X, Y]):
-#			load = instruction("loadAO", [X, Y], ovn);
-#		
-#		case iex:
-#			# dprint(f"iex = {iex}");
-#			# ops.append(Instruction("load", [ivn], ovn));
-#			assert(not "TODO");
-#	
-#	loadex.instruction = load;
-#	ops.append(load);
-#	
-#	expression_table.avrwvn(out, ovn);
+	loadex = unknown(id);
+	oresult = expression_table.extovn(loadex);
+	ovn = oresult.valnum;
+	
+	match (expression_table.vntoex(ivn)):
+		# load X, (Y + c) => loadAI X -> Y, c
+		case expression(op = "addI", ins = [X], const = c):
+			# load = instruction("loadAI", [ivn, X], const = c, out = ovn);
+			assert(not "TODO");
+		
+		# load X, (Y + c) => loadAI X -> Y, c
+		case multiplicity(op = "sum", ins = ins) if len(ins) == 2:
+			sublvn, sublfactor = ins[0]
+			subrvn, subrfactor = ins[1]
+			et = expression_table;
+			lvn = optimize_mult_vr(vrtovn, et, sublvn, load_literal(vrtovn, et, sublfactor));
+			rvn = optimize_mult_vr(vrtovn, et, subrvn, load_literal(vrtovn, et, subrfactor));
+			load = instruction("loadAO", [lvn, rvn], out = ovn);
+		
+		# default:
+		case (oexp):
+			dprint(f"oexp == {oexp}");
+			load = instruction("load", [ivn], out = ovn);
+			assert(not "TODO");
+	
+	loadex.instruction = load;
+	ops.append(load);
+	
+	vrtovn[out] = ovn;
 	
 	exit();
 	return [];
+
+
+
+
+
+
 
 

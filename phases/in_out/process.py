@@ -54,7 +54,7 @@ def in_out_phase_process(self, all_blocks, parameters, **_):
 				ins.update(inst.ins);
 				
 				new_instructions.insert(0, inst);
-			elif inst.op not in ["loadI", "testge", "comp"]:
+			elif inst.op not in ["loadI", "testge", "testgt", "comp"]:
 				assert(not "TODO");
 		
 		block.original_instructions = new_instructions;

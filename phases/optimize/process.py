@@ -80,14 +80,16 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 					if register not in vrtovn:
 						dprint(f"inherited {register} => {valnum} from {predecessor}");
 						vrtovn[register] = valnum;
-					else:
-						assert(not "TODO");
+					elif vrtovn[register] is not None and vrtovn[register] != valnum:
+						dprint(f"conflicting valnum for {register} from {predecessor}");
+						vrtovn[register] = None;
 			else:
 				dprint(f"inherited nothing from {predecessor}");
 		
 		# introduce phi nodes entering this block into
 		# the expression_table:
 		for register, valnum in block.incoming_phis.items():
+			dprint(f"inherited {register} => {valnum} from phi nodes");
 			vrtovn[register] = valnum;
 		
 		# process instructions, pushing order_sensitive:
@@ -102,7 +104,8 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				ins = inst.ins,
 				out = inst.out,
 				const = inst.const,
-				label = inst.label);
+				label = inst.label,
+				id = inst.id);
 			self.subdotout(vrtovn, inst, order_sensitive_instructions, expression_table);
 		
 		volatile = set();
@@ -182,6 +185,9 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				todo.append(phi_phase(lose));
 		
 		block.order_sensitive_instructions = order_sensitive_instructions;
+	
+	dprint(f"block.vrtovn = {block.vrtovn}")
+	dprint(f"vrtovn       = {vrtovn}")
 	
 	if block.vrtovn != vrtovn:
 		for child in block.successors:

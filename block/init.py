@@ -46,6 +46,7 @@ def block_init(self, label, original_instructions, children_labels, jump = None)
 	
 	# optimize phase:
 	self.vrtovn = None;
+	self.new_jump = None;
 	
 	# critical phase:
 	self.is_critical = False;

@@ -16,8 +16,7 @@ def optimize_cbrne_vn(ops, ivn, et, volatile, label, **_):
 		
 		case expression(op = "cmp_LT", ins = [X, Y]) \
 			if X not in volatile and Y not in volatile:
-			# ops.append(Instruction("cbrne_LT", [X, Y], out, label));
-			assert(not "TODO");
+			ops.append(instruction("cbr_GE", [X, Y], label = label));
 		
 		case expression(op = "cmp_LE", ins = [X, Y]) \
 			if X not in volatile and Y not in volatile:

@@ -1,5 +1,5 @@
 
 def optimize_phase_str(self):
-	return f"optimize_phase(block.po = {self.block.po})";
+	return f"optimize_phase(block.rpo = {self.block.rpo})";
 
 
