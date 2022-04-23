@@ -3,8 +3,8 @@ from expression_table.self import expression_table;
 
 from .self import instruction;
 
-def instruction_dotout(self, stream):
-	name = f"inst_{self.id}";
+def instruction_dotout(self, stream, block):
+	name = f"{id(block)}_{self.id}";
 	hue = self.id / instruction.counter;
 	label = self.op;
 	for i in self.ins:

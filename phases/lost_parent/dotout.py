@@ -35,7 +35,7 @@ digraph mygraph {
 		
 		for s in block.successors:
 			print(f"""
-				"{bid}":s -> "{id(s)}":n [
+				"{bid}" -> "{id(s)}" [
 					style = bold
 				]
 			""", file = stream);

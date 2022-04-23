@@ -9,19 +9,21 @@ from .common import load_literal;
 def optimize_testeq_vr(vrtovn, et, ivn, out = None):
 	enter(f"optimize_testeq_vr(ivn = {ivn}, out = {out})");
 	
-	match (et.vntoex(ivn)):
-		# constant-fold:
-		case constant(value = c):
-			valnum = load_literal(vrtovn, et, 1 if c == 0 else 0, out);
-		
-		# substitutions:
-		case expression(op = "comp", ins = [X, Y]):
-			# valnum = consider(ops, et, "cmp_GE", (X, Y), out);
-			assert(not "TODO");
-		
-		# default:
-		case (iex):
-			assert(not "TODO");
+	assert(not "TODO");
+	
+#	match (et.vntoex(ivn)):
+#		# constant-fold:
+#		case constant(value = c):
+#			valnum = load_literal(vrtovn, et, 1 if c == 0 else 0, out);
+#		
+#		# substitutions:
+#		case expression(op = "comp", ins = [X, Y]):
+#			# valnum = consider(ops, et, "cmp_GE", (X, Y), out);
+#			assert(not "TODO");
+#		
+#		# default:
+#		case (iex):
+#			assert(not "TODO");
 	
 	exit(f"return {valnum}");
 	return valnum;

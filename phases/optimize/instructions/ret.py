@@ -8,8 +8,10 @@ from instruction.self import instruction;
 def optimize_ret(ops, **_):
 	enter(f"optimize_ret()");
 	
-	ret = instruction("ret", []);
+	assert(not "TODO");
 	
-	ops.append(ret);
+#	ret = instruction("ret", []);
+#	
+#	ops.append(ret);
 	
 	exit("return");

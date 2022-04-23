@@ -4,39 +4,26 @@ default:
 dot/all.mk:
 	find $(@D) -name '*.txt' | sort -V | sed 's/^/alls += /;s/.txt$$/.png/' > $@
 
-dot/top_down_ranking.mk:
-	find $(@D) -name '*-top_down_ranking.txt' | sort -V | sed 's/^/top_down_ranking += /;s/.txt$$/.png/' > $@
+dot/anticipation.mk:
+	find $(@D) -name '*-anticipation.txt' | sort -V | sed 's/^/anticipation += /;s/.txt$$/.png/' > $@
 
-dot/bottom_up_ranking.mk:
-	find $(@D) -name '*-bottom_up_ranking.txt' | sort -V | sed 's/^/bottom_up_ranking += /;s/.txt$$/.png/' > $@
+dot/available.mk:
+	find $(@D) -name '*-available.txt' | sort -V | sed 's/^/available += /;s/.txt$$/.png/' > $@
 
-dot/dominators.mk:
-	find $(@D) -name '*-dominators.txt' | sort -V | sed 's/^/dominators += /;s/.txt$$/.png/' > $@
-
-dot/postdominators.mk:
-	find $(@D) -name '*-postdominators.txt' | sort -V | sed 's/^/postdominators += /;s/.txt$$/.png/' > $@
-
-dot/phi.mk:
-	find $(@D) -name '*-phi.txt' | sort -V | sed 's/^/phi += /;s/.txt$$/.png/' > $@
-
-dot/optimize.mk:
-	find $(@D) -name '*-optimize.txt' | sort -V | sed 's/^/optimize += /;s/.txt$$/.png/' > $@
-
-dot/inheritance.mk:
-	find $(@D) -name '*-inheritance.txt' | sort -V | sed 's/^/inheritance += /;s/.txt$$/.png/' > $@
+dot/earliest.mk:
+	find $(@D) -name '*-earliest.txt' | sort -V | sed 's/^/earliest += /;s/.txt$$/.png/' > $@
 
 include dot/all.mk
-include dot/top_down_ranking.mk
-include dot/bottom_up_ranking.mk
-include dot/dominators.mk
-include dot/postdominators.mk
-include dot/phi.mk
-include dot/optimize.mk
-include dot/inheritance.mk
+include dot/anticipation.mk
+include dot/available.mk
+include dot/earliest.mk
 
 all: $(alls)
 
 .PRECIOUS: dot/%.png
+
+dot/%.png: dot/%.txt
+	dot -Tpng < $< > $@
 
 eog-%: dot/%.png
 	eog $<
@@ -50,38 +37,38 @@ gimp-%: dot/%.png
 gimp-all: $(alls)
 	gimp $(alls)
 
+eog-all: $(alls)
+	eog $(alls)
+
 mpv-all: $(alls)
-	mpv $(alls) # --no-save-position-on-quit
+	mpv $(alls) --no-save-position-on-quit
 
-mpv-top_down_ranking: $(top_down_ranking)
-	mpv $(top_down_ranking)
+mpv-available: $(available)
+	mpv $(available)
 
-mpv-bottom_up_ranking: $(bottom_up_ranking)
-	mpv $(bottom_up_ranking)
+gimp-available: $(available)
+	gimp $(available)
 
-mpv-dominators: $(dominators)
-	mpv $(dominators)
+eog-available: $(available)
+	eog $(available)
 
-mpv-postdominators: $(postdominators)
-	mpv $(postdominators)
+mpv-anticipation: $(anticipation)
+	mpv $(anticipation)
 
-mpv-inheritance: $(inheritance)
-	mpv $(inheritance)
+eog-anticipation: $(anticipation)
+	eog $(anticipation)
 
-mpv-phi: $(phi)
-	mpv $(phi)
+gimp-anticipation: $(anticipation)
+	gimp $(anticipation)
 
-mpv-optimize: $(optimize)
-	mpv $(optimize)
+mpv-earliest: $(earliest)
+	mpv $(earliest)
 
-gimp-optimize: $(optimize)
-	gimp $(optimize)
+eog-earliest: $(earliest)
+	eog $(earliest)
 
-gimp-%: dot/%.png
-	gimp $<
-
-dot/%.png: dot/%.txt
-	dot -Tpng < $< > $@
+gimp-earliest: $(earliest)
+	gimp $(earliest)
 
 
 
