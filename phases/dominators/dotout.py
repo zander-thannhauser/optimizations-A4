@@ -38,8 +38,7 @@ digraph mygraph {
 		
 		for d in block.dominators:
 			print(f"""
-				"{id(d)}" ->
-				"{bid}" [
+				"{id(d)}" -> "{bid}" [
 					color="{d.hue} 1 1"
 					constraint = false
 					{"style=bold" if d == block.immediate_dominator else ""}

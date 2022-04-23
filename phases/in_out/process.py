@@ -39,7 +39,7 @@ def in_out_phase_process(self, all_blocks, parameters, **_):
 		
 		new_instructions = [];
 		
-		for inst in block.original_instructions[::-1]:
+		for inst in block.instructions[::-1]:
 			dprint(f"inst = {inst}");
 			
 			if (inst.out in ins) or inst.op in \
@@ -57,7 +57,7 @@ def in_out_phase_process(self, all_blocks, parameters, **_):
 			elif inst.op not in ["loadI", "testge", "testgt", "comp"]:
 				assert(not "TODO");
 		
-		block.original_instructions = new_instructions;
+		block.instructions = new_instructions;
 	
 	dprint(f"ins = {ins}, outs = {outs}");
 	

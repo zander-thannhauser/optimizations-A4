@@ -7,7 +7,7 @@ def reset_post_dominators_phase_dotout(self, all_blocks, **_):
 	
 	enter("reset_post_dominators_phase_dotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}.reset-post-dominators.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}.reset-postdominators.txt", "w");
 	
 	print("""
 digraph mygraph {

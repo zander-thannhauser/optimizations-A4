@@ -22,13 +22,13 @@ from phases.later.self                 import later_phase;
 from phases.insert_delete.self         import insert_delete_phase;
 
 # SSA redundancy elimination:
-#from phases.reset_dominators.self      import reset_dominators_phase;
-#from phases.dominators.self            import dominators_phase;
-#from phases.reset_post_dominators.self import reset_post_dominators_phase;
-#from phases.post_dominators.self       import post_dominators_phase;
-#from phases.in_out.self                import in_out_phase;
-#from phases.inheritance.self           import inheritance_phase;
-#from phases.phi.self                   import phi_phase;
+from phases.reset_dominators.self      import reset_dominators_phase;
+from phases.dominators.self            import dominators_phase;
+from phases.reset_post_dominators.self import reset_post_dominators_phase;
+from phases.post_dominators.self       import post_dominators_phase;
+from phases.in_out.self                import in_out_phase;
+from phases.inheritance.self           import inheritance_phase;
+from phases.phi.self                   import phi_phase;
 #from phases.optimize.self              import optimize_phase;
 
 # dead code removal:
@@ -171,14 +171,14 @@ def process_frame(t, p):
 		insert_delete_phase(start), # top-down
 		
 		# SSA redundancy elimination (A2):
-#		reset_dominators_phase(start),    # top-down*
-#		dominators_phase(start),          # top-down
-#		reset_post_dominators_phase(end), # bottom-up*
-#		post_dominators_phase(end),       # bottom-up
-#		## reset_in_out_phase(end),       # bottom-up
-#		in_out_phase(end),                # bottom-up
-#		inheritance_phase(start),         # top-down
-#		phi_phase(start),                 # top-down*
+		reset_dominators_phase(start),    # top-down*
+		dominators_phase(start),          # top-down
+		reset_post_dominators_phase(end), # bottom-up*
+		post_dominators_phase(end),       # bottom-up
+		## reset_in_out_phase(end),       # bottom-up
+		in_out_phase(end),                # bottom-up
+		inheritance_phase(start),         # top-down
+		phi_phase(start),                 # top-down*
 #		optimize_phase(start),            # top-down
 		
 		# A3?:
@@ -219,9 +219,10 @@ def process_frame(t, p):
 		
 		"insert": dict(), # (p, s) -> set of instructions
 		
+		"parameters": parameters,
+
 #		"expression_table": et,
 #		
-#		"parameters": parameters,
 #		
 #		"phis": list(),
 		

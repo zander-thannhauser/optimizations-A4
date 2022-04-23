@@ -46,23 +46,23 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	self.subparent_po = 1;
 	self.subchild_rpo = 1;
 	
-#	# dominator phase:
-#	self.dominators = set();
-#	self.immediate_dominator = None;
-#	
-#	# post dominator phase:
-#	self.post_dominators = set();
-#	self.post_immediate_dominator = None;
-#	self.post_dominance_frontier = set();
-#	self.reverse_post_dominance_frontier = set();
-#	
-#	# in-out phase:
-#	self.ins = None; # set of registers
-#	self.outs = list(); # (register, instruction) tuples in *original* order
-#	
-#	# inheritance phase:
-#	self.given = None; # register -> set of sources
-#	
+	# dominator phase:
+	self.dominators = set();
+	self.immediate_dominator = None;
+	
+	# post dominator phase:
+	self.post_dominators = set();
+	self.post_immediate_dominator = None;
+	self.post_dominance_frontier = set();
+	self.reverse_post_dominance_frontier = set();
+	
+	# in-out phase:
+	self.ins = None; # set of registers
+	self.outs = list(); # (register, instruction) tuples in *original* order
+	
+	# inheritance phase:
+	self.given = None; # register -> set of sources
+	
 #	# phi phase:
 #	self.incoming_phis = dict(); # register -> valnum
 #	self.outgoing_phis = dict(); # register -> set of phi valnums

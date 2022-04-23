@@ -12,14 +12,14 @@ class phase:
 	INSERT_DELETE         = 7;
 	
 	# SSA redundancy-elimination (A2):
-#	RESET_DOMINATORS      = 2;
-#	DOMINATORS            = 3;
-#	RESET_POST_DOMINATORS = 4;
-#	POST_DOMINATORS       = 5;
-#	RESET_IN_OUT          = 6;
-#	IN_OUT                = 7;
-#	INHEIRTANCE           = 8;
-#	PHI                   = 9;
+	RESET_DOMINATORS      =  8;
+	DOMINATORS            =  9;
+	RESET_POST_DOMINATORS = 10;
+	POST_DOMINATORS       = 11;
+	RESET_IN_OUT          = 12;
+	IN_OUT                = 13;
+	INHEIRTANCE           = 14;
+	PHI                   = 15;
 #	OPTIMIZE              = 10;
 	
 	# dead-code removal (A3?):
