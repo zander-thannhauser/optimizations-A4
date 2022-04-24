@@ -142,6 +142,21 @@ gimp-live_instances: $(live_instances)
 	gimp $(live_instances)
 
 
+dot/build_interference.mk:
+	find $(@D) -name '*-build_interference.dot' | sort -V | sed 's/^/build_interference += /;s/.dot$$/.png/' > $@
+
+include dot/build_interference.mk
+
+mpv-build_interference: $(build_interference)
+	mpv $(build_interference)
+
+eog-build_interference: $(build_interference)
+	eog $(build_interference)
+
+gimp-build_interference: $(build_interference)
+	gimp $(build_interference)
+
+
 
 
 

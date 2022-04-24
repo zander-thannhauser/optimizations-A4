@@ -22,6 +22,7 @@ def block_init(self, label, instructions, children_labels, jump = None):
 		"valnum_singleton_sets": 0,
 		"union_valnum_sets": 0,
 		"rename_valnums_to_liveids": 0,
+		"build_interference": 0,
 	}
 	
 	# lost_parent phase:
@@ -71,6 +72,7 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	# live_instances:
 	self.liveout = None;
 	
+	# build_interference:
 
 
 

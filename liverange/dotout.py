@@ -4,7 +4,7 @@ def liverange_dotout(self, stream, denominator):
 	name = id(self);
 	
 #	label = f"Φ"
-	label = f"#{self.liveid}"
+	label = f"%lr{self.liveid}"
 #	label = f"{self.liveid}, {self.instance_id}"
 	
 	hue = self.liveid / denominator;

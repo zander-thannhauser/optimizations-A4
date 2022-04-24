@@ -28,9 +28,10 @@ from phases.valnum_singleton_sets.self     import valnum_singleton_sets_phase;
 from phases.union_valnum_sets.self         import union_valnum_sets_phase;
 from phases.rename_valnums_to_liveids.self import rename_valnums_to_liveids_phase;
 
-from phases.live_in_out.self      import live_in_out_phase;
-from phases.live_inheritance.self import live_inheritance_phase;
-from phases.live_instances.self   import live_instances_phase;
+from phases.live_in_out.self        import live_in_out_phase;
+from phases.live_inheritance.self   import live_inheritance_phase;
+from phases.live_instances.self     import live_instances_phase;
+from phases.build_interference.self import build_interference_phase;
 
 # dead code removal:
 #from phases.dead_code.self             import dead_code_phase;
@@ -217,7 +218,7 @@ def process_frame(t, p):
 			# pass downwards a liverange id -> instance
 			# the bottom of every block should remember outgoing mapping
 		
-		# bottom-up: build_interference
+		build_interference_phase(end), # bottom-up:
 			# recall above outgoing mapping
 			# for every instruction[::-1]:
 				# if you see a definition:
@@ -265,12 +266,17 @@ def process_frame(t, p):
 		
 		"all_liveranges": set(),
 		
+		# a: set([b, c]), b: set([a, c]), c: set([a, b]);
+		
+		"interference": set(),
+		
 		"phase_counters": {
 			"superfical-critical": 1,
 			"dead-code": 1,
 			"valnum_singleton_sets": 1,
 			"union_valnum_sets": 1,
 			"rename_valnums_to_liveids": 1,
+			"build_interference": 1,
 		},
 	};
 	

@@ -27,6 +27,7 @@ class phase:
 	LIVE_IN_OUT               = 17;
 	LIVE_INHERITANCE          = 18;
 	LIVE_INSTANCES            = 19;
+	BUILD_INTERFERENCE        = 20;
 	
 
 from .init import phase_init;
