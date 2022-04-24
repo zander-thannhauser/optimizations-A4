@@ -19,6 +19,9 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	self.phase_counters = {
 		"superfical-critical": 0,
 		"dead-code": 0,
+		"valnum_singleton_sets": 0,
+		"union_valnum_sets": 0,
+		"rename_valnums_to_liveids": 0,
 	}
 	
 	# lost_parent phase:
@@ -54,6 +57,9 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	# critical phase:
 	self.is_critical = False;
 	
+	# rename_valnums_to_liveids:
+	self.newer_instructions = [];
+	self.newer_jump = None;
 
 
 

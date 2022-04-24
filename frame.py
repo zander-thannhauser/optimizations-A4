@@ -24,6 +24,10 @@ from phases.optimize.self              import optimize_phase;
 from phases.superfical_critical.self   import superfical_critical_phase;
 from phases.dead_code.self             import dead_code_phase;
 
+from phases.valnum_singleton_sets.self     import valnum_singleton_sets_phase;
+from phases.union_valnum_sets.self         import union_valnum_sets_phase;
+from phases.rename_valnums_to_liveids.self import rename_valnums_to_liveids_phase;
+
 # dead code removal:
 #from phases.dead_code.self             import dead_code_phase;
 
@@ -153,31 +157,33 @@ def process_frame(t, p):
 		# call lost_parent_phase on all blocks:
 		lost_parent_phase(block) for block in all_blocks
 	] + [
-		reset_dominators_phase(start),    # top-down*
-		dominators_phase(start),          # top-down
-		reset_post_dominators_phase(end), # bottom-up*
-		post_dominators_phase(end),       # bottom-up
-		## reset_in_out_phase(end),       # bottom-up
-		in_out_phase(end),                # bottom-up
-		inheritance_phase(start),         # top-down
-		phi_phase(start),                 # top-down*
-		optimize_phase(start),            # top-down
+		reset_dominators_phase(start),      # top-down*
+		dominators_phase(start),            # top-down
+		reset_post_dominators_phase(end),   # bottom-up*
+		post_dominators_phase(end),         # bottom-up
+		## reset_in_out_phase(end),         # bottom-up
+		in_out_phase(end),                  # bottom-up
+		inheritance_phase(start),           # top-down
+		phi_phase(start),                   # top-down*
+		optimize_phase(start),              # top-down
 		
-		superfical_critical_phase(start), # top-down
+		superfical_critical_phase(start),   # top-down
 		## critical(),  # bottom-up
-		dead_code_phase(start),           # top-down*
+		dead_code_phase(start),             # top-down*
 		
-		# top-down:
-			# create singltion sets of each valnum used/defined
+		valnum_singleton_sets_phase(start), # top-down*:
+			# create singleton sets of each valnum used/defined
 			# create mapping valnum -> valnum-set
 		
-		# top-down:
+		union_valnum_sets_phase(start), # top-down*:
 			# for every phi node: get the valnums that feed it
 			# get the sets of those valnums
 			# union them togteher
 			# update mapping
 		
-		# rename all valnums to the live-range id
+		rename_valnums_to_liveids_phase(start), # top-down:
+			# assign valnum-sets live range ids
+			# rename all valnums to the live-range id
 		
 		# repeat point:
 		
@@ -236,25 +242,27 @@ def process_frame(t, p):
 		
 		"start": start,
 		
-		"syntax_lookup": dict(), # destination -> instruction
-		
-		"usage": dict(), # this valnum is used by -> these valnums (kill them)
-		
-		"earliest": dict(), # (p, s) -> set of instructions
-		
-		"later": dict(), # (p, s) -> set of instructions
-		
-		"insert": dict(), # (p, s) -> set of instructions
+		"end": end,
 		
 		"parameters": parameters,
 		
 		"expression_table": et,
-#		
-#		"phis": list(),
+		
+		"valnum_to_vnsets": dict(), # valnum -> set of valnums
+		
+		"vnsets_to_liveid": {
+			# set of valnums -> live id (integer)
+			"next": 0
+		},
+		
+		"phis": set(), # phi expressions
 		
 		"phase_counters": {
 			"superfical-critical": 1,
 			"dead-code": 1,
+			"valnum_singleton_sets": 1,
+			"union_valnum_sets": 1,
+			"rename_valnums_to_liveids": 1,
 		},
 	};
 	

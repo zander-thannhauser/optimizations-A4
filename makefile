@@ -1,52 +1,6 @@
 
-default:
+default: all
 
-dot/all.mk:
-	find $(@D) -name '*.txt' | sort -V | sed 's/^/alls += /;s/.txt$$/.png/' > $@
-
-dot/anticipation.mk:
-	find $(@D) -name '*-anticipation.txt' | sort -V | sed 's/^/anticipation += /;s/.txt$$/.png/' > $@
-
-dot/available.mk:
-	find $(@D) -name '*-available.txt' | sort -V | sed 's/^/available += /;s/.txt$$/.png/' > $@
-
-dot/earliest.mk:
-	find $(@D) -name '*-earliest.txt' | sort -V | sed 's/^/earliest += /;s/.txt$$/.png/' > $@
-
-dot/dominators.mk:
-	find $(@D) -name '*-dominators.txt' | sort -V | sed 's/^/dominators += /;s/.txt$$/.png/' > $@
-
-dot/postdominators.mk:
-	find $(@D) -name '*-postdominators.txt' | sort -V | sed 's/^/postdominators += /;s/.txt$$/.png/' > $@
-
-dot/inout.mk:
-	find $(@D) -name '*-inout.txt' | sort -V | sed 's/^/inout += /;s/.txt$$/.png/' > $@
-
-dot/inheritance.mk:
-	find $(@D) -name '*-inheritance.txt' | sort -V | sed 's/^/inheritance += /;s/.txt$$/.png/' > $@
-
-dot/optimize.mk:
-	find $(@D) -name '*-optimize.txt' | sort -V | sed 's/^/optimize += /;s/.txt$$/.png/' > $@
-
-dot/superfical.mk:
-	find $(@D) -name '*-superfical.txt' | sort -V | sed 's/^/superfical += /;s/.txt$$/.png/' > $@
-
-dot/critical.mk:
-	find $(@D) -name '*-critical.txt' | sort -V | sed 's/^/critical += /;s/.txt$$/.png/' > $@
-
-include dot/all.mk
-include dot/anticipation.mk
-include dot/available.mk
-include dot/earliest.mk
-include dot/dominators.mk
-include dot/postdominators.mk
-include dot/inout.mk
-include dot/inheritance.mk
-include dot/optimize.mk
-include dot/superfical.mk
-include dot/critical.mk
-
-all: $(alls)
 
 .PRECIOUS: dot/%.png
 
@@ -62,6 +16,14 @@ mpv-%: dot/%.png
 gimp-%: dot/%.png
 	gimp $<
 
+
+dot/all.mk:
+	find $(@D) -name '*.txt' | sort -V | sed 's/^/alls += /;s/.txt$$/.png/' > $@
+
+include dot/all.mk
+
+all: $(alls)
+
 gimp-all: $(alls)
 	gimp $(alls)
 
@@ -71,86 +33,11 @@ eog-all: $(alls)
 mpv-all: $(alls)
 	mpv $(alls) --no-save-position-on-quit
 
-mpv-available: $(available)
-	mpv $(available)
 
-gimp-available: $(available)
-	gimp $(available)
+dot/critical.mk:
+	find $(@D) -name '*-critical.txt' | sort -V | sed 's/^/critical += /;s/.txt$$/.png/' > $@
 
-eog-available: $(available)
-	eog $(available)
-
-mpv-anticipation: $(anticipation)
-	mpv $(anticipation)
-
-eog-anticipation: $(anticipation)
-	eog $(anticipation)
-
-gimp-anticipation: $(anticipation)
-	gimp $(anticipation)
-
-mpv-earliest: $(earliest)
-	mpv $(earliest)
-
-eog-earliest: $(earliest)
-	eog $(earliest)
-
-gimp-earliest: $(earliest)
-	gimp $(earliest)
-
-mpv-dominators: $(dominators)
-	mpv $(dominators)
-
-eog-dominators: $(dominators)
-	eog $(dominators)
-
-gimp-dominators: $(dominators)
-	gimp $(dominators)
-
-mpv-postdominators: $(postdominators)
-	mpv $(postdominators)
-
-eog-postdominators: $(postdominators)
-	eog $(postdominators)
-
-gimp-postdominators: $(postdominators)
-	gimp $(postdominators)
-
-mpv-inout: $(inout)
-	mpv $(inout)
-
-eog-inout: $(inout)
-	eog $(inout)
-
-gimp-inout: $(inout)
-	gimp $(inout)
-
-mpv-inheritance: $(inheritance)
-	mpv $(inheritance)
-
-eog-inheritance: $(inheritance)
-	eog $(inheritance)
-
-gimp-inheritance: $(inheritance)
-	gimp $(inheritance)
-
-mpv-optimize: $(optimize)
-	mpv $(optimize)
-
-eog-optimize: $(optimize)
-	eog $(optimize)
-
-gimp-optimize: $(optimize)
-	gimp $(optimize)
-
-mpv-superfical: $(superfical)
-	mpv $(superfical)
-
-eog-superfical: $(superfical)
-	eog $(superfical)
-
-gimp-superfical: $(superfical)
-	gimp $(superfical)
+include dot/critical.mk
 
 mpv-critical: $(critical)
 	mpv $(critical)
@@ -160,6 +47,64 @@ eog-critical: $(critical)
 
 gimp-critical: $(critical)
 	gimp $(critical)
+
+
+
+dot/valnum_singleton_sets.mk:
+	find $(@D) -name '*-valnum_singleton_sets.txt' | sort -V | sed 's/^/valnum_singleton_sets += /;s/.txt$$/.png/' > $@
+
+include dot/valnum_singleton_sets.mk
+
+mpv-valnum_singleton_sets: $(valnum_singleton_sets)
+	mpv $(valnum_singleton_sets)
+
+eog-valnum_singleton_sets: $(valnum_singleton_sets)
+	eog $(valnum_singleton_sets)
+
+gimp-valnum_singleton_sets: $(valnum_singleton_sets)
+	gimp $(valnum_singleton_sets)
+
+
+
+dot/union_valnum_sets.mk:
+	find $(@D) -name '*-union_valnum_sets.txt' | sort -V | sed 's/^/union_valnum_sets += /;s/.txt$$/.png/' > $@
+
+include dot/union_valnum_sets.mk
+
+mpv-union_valnum_sets: $(union_valnum_sets)
+	mpv $(union_valnum_sets)
+
+eog-union_valnum_sets: $(union_valnum_sets)
+	eog $(union_valnum_sets)
+
+gimp-union_valnum_sets: $(union_valnum_sets)
+	gimp $(union_valnum_sets)
+
+
+dot/rename_valnums_to_liveids.mk:
+	find $(@D) -name '*-rename_valnums_to_liveids.txt' | sort -V | sed 's/^/rename_valnums_to_liveids += /;s/.txt$$/.png/' > $@
+
+include dot/rename_valnums_to_liveids.mk
+
+mpv-rename_valnums_to_liveids: $(rename_valnums_to_liveids)
+	mpv $(rename_valnums_to_liveids)
+
+eog-rename_valnums_to_liveids: $(rename_valnums_to_liveids)
+	eog $(rename_valnums_to_liveids)
+
+gimp-rename_valnums_to_liveids: $(rename_valnums_to_liveids)
+	gimp $(rename_valnums_to_liveids)
+
+
+
+
+
+
+
+
+
+
+
 
 
 

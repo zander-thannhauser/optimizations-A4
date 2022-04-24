@@ -9,6 +9,7 @@ from .hash   import instruction_hash;
 
 from .dotout    import instruction_dotout;
 from .newdotout import instruction_newdotout;
+from .newerdotout import instruction_newerdotout;
 
 instruction.__init__ = instruction_init;
 instruction.__str__  = instruction_str;
@@ -17,5 +18,6 @@ instruction.__hash__ = instruction_hash;
 
 instruction.dotout = instruction_dotout;
 instruction.newdotout = instruction_newdotout;
+instruction.newerdotout = instruction_newerdotout;
 
 

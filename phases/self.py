@@ -1,6 +1,8 @@
 
 class phase:
 	frame_counter         =  0;
+	
+	# SSA redundancy elmination (A2):
 	LOST_PARENT           =  1;
 	RESET_DOMINATORS      =  2;
 	DOMINATORS            =  3;
@@ -11,12 +13,17 @@ class phase:
 	INHEIRTANCE           =  8;
 	PHI                   =  9;
 	OPTIMIZE              = 10;
+	
+	# dead-code elmination (A3?):
 	SUPERFICAL_CRITICAL   = 11;
 	CRITICAL              = 12;
 	DEAD_CODE             = 13;
 	
 	# register-allocation (A4):
-#	MAX_PHASE             = 13;
+	VALNUM_SINGLETON_SETS     = 14;
+	UNION_VALNUM_SETS         = 15;
+	RENAME_VALNUMS_TO_LIVEIDS = 16;
+	
 
 from .init import phase_init;
 

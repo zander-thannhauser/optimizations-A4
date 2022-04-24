@@ -3,11 +3,13 @@ from debug import *;
 
 from phases.self import phase;
 
-def dead_code_phase_dotout(self, all_blocks, parameters, expression_table, **_):
+def rename_valnums_to_liveids_phase_dotout(self, all_blocks, vnsets_to_liveid, **_):
 	
-	enter("dead_code_phase_dotout()");
+	enter("rename_valnums_to_liveids.dotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}.txt", "w");
+	dprint(f"phase.frame_counter = {phase.frame_counter}");
+	
+	stream = open(f"dot/{phase.frame_counter}-rename_valnums_to_liveids.txt", "w");
 	
 	print("""
 digraph mygraph {
@@ -24,13 +26,15 @@ digraph mygraph {
 	
 	headtails = dict();
 	
+	denominator = vnsets_to_liveid["next"]
+	
 	for block in all_blocks:
 		
 		head, tail = None, None;
 		
-		for inst in block.new_instructions + ([] if block.new_jump is None else [block.new_jump]):
+		for inst in block.newer_instructions + ([] if block.newer_jump is None else [block.newer_jump]):
 			
-			current = inst.newdotout(stream, block, valnum_names = False, draw_lines = False);
+			current = inst.newerdotout(stream, block, denominator);
 			
 			if tail:
 				print(f"""
@@ -65,6 +69,14 @@ digraph mygraph {
 	phase.frame_counter += 1;
 	
 	exit("return;");
+
+
+
+
+
+
+
+
 
 
 
