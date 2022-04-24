@@ -70,11 +70,13 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 	block = self.block;
 	
 	avin = set();
+	vnsrcs = dict(); # valnum -> set of instructions
 	
 	if (block == start):
 		for parameter in parameters:
 			vrtovn[parameter.register] = parameter.valnum;
 			avin.add(parameter.valnum);
+			vnsrcs[parameter.valnum] = set();
 	else:
 		for predecessor in block.predecessors:
 			if predecessor.vrtovn is not None:
@@ -90,6 +92,9 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 		
 		avin = set.intersection(*(p.avin for p in block.predecessors if p.avin is not None));
 		
+		for vn in avin:
+			vnsrcs[vn] = set.union(*(p.vnsrcs[vn] for p in block.predecessors if p.vnsrcs is not None))
+		
 		dprint(f"avin = {avin}");
 		
 		# introduce phi nodes entering this block into
@@ -97,6 +102,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 		for register, valnum in block.incoming_phis.items():
 			dprint(f"inherited {register} => {valnum} from phi nodes");
 			vrtovn[register] = valnum;
+			vnsrcs[valnum] = set();
 		
 		# process instructions, pushing order_sensitive:
 		new_instructions = [];
@@ -104,14 +110,15 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 		for inst in block.instructions:
 			dprint(inst);
 			lookup[inst.op](
-				ops = new_instructions,
-				vrtovn = vrtovn,
 				avin = avin,
 				id = inst.id,
 				ins = inst.ins,
 				out = inst.out,
+				vnsrcs = vnsrcs,
+				vrtovn = vrtovn,
 				const = inst.const,
 				label = inst.label,
+				ops = new_instructions,
 				expression_table = expression_table);
 			self.subdotout(vrtovn, avin, inst, new_instructions, expression_table);
 		
@@ -121,11 +128,13 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 		for register in block.outs:
 			if register in block.outgoing_phis:
 				src_valnum = vrtovn[register];
+				subcriticals = vnsrcs[src_valnum];
 				for dst_valnum in block.outgoing_phis[register]:
 					dprint(f"register   = {register}")
 					dprint(f"src_valnum = {src_valnum}")
 					dprint(f"dst_valnum = {dst_valnum}")
 					i2i = instruction("i2i", [src_valnum], dst_valnum);
+					i2i.subcriticals = subcriticals;
 					i2i.acting_i2i = True;
 					dprint(i2i);
 					phi = expression_table.vntoex(dst_valnum);
@@ -207,10 +216,18 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 	dprint(f"block.avin = {block.avin}")
 	dprint(f"avin       = {avin}")
 	
-	if block.vrtovn != vrtovn or block.avin != avin:
+	dprint(f"block.vnsrcs = {block.vnsrcs}")
+	dprint(f"vnsrcs       = {vnsrcs}")
+	
+	if False \
+		or block.vrtovn != vrtovn \
+		or block.avin != avin \
+		or block.vnsrcs != vnsrcs:
+		
 		for child in block.successors:
 			todo.append(optimize_phase(child));
 		block.vrtovn = vrtovn;
+		block.vnsrcs = vnsrcs;
 		block.avin = avin;
 	
 	exit(f"return {[str(t) for t in todo]}");

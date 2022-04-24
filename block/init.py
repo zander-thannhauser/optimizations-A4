@@ -37,6 +37,7 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	# optimize phase:
 	self.vrtovn = None; # virtual register -> valnum
 	self.avin = None;   # set of available valnums
+	self.vnsrcs = None; # valnum -> set of (block, instruction-index) sources
 	self.new_instructions = None;
 	self.new_jump = None;
 	

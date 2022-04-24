@@ -1,32 +1,19 @@
 
-#from Instruction.self import Instruction;
+from instruction.self import instruction;
 
 from expression_table.expression.self import expression;
 from expression_table.constant.self import constant;
 
 from debug import *;
 
-def consider(ops, vrtovn, avin, et, op, ins, const = None, out = None):
-	enter(f"consider_exp(op = {op}, ins = {ins}, const = {const}, out = {out})");
-	
-	exp = expression(op = op, ins = ins, const = const);
-	
-	result = et.extovn(exp);
-	
-	if not result.is_new:
-		assert(not "TODO");
-	
-	if result.valnum not in avin:
-		exp.append_instructions(ops, avin, et);
-	
-	if out is not None:
-		vrtovn[out] = result.valnum;
-	
-	exit(f"return {result.valnum}")
-	return result.valnum;
-
-def load_literal(ops, vrtovn, avin, et, literal, out = None):
+def load_literal(stuff, literal, out = None):
 	enter(f"load_literal(literal = {literal}, out = {out})");
+	
+	ops = stuff["ops"];
+	vrtovn = stuff["vrtovn"];
+	avin = stuff["avin"];
+	et = stuff["expression_table"];
+	vnsrcs = stuff["vnsrcs"];
 	
 	exp = constant(value = literal);
 	
@@ -36,7 +23,11 @@ def load_literal(ops, vrtovn, avin, et, literal, out = None):
 		exp = et.vntoex(result.valnum);
 	
 	if result.valnum not in avin:
-		exp.append_instructions(ops, avin, et);
+		new = instruction(op = "loadI", ins = [], const = exp.value, out = exp.valnum);
+		dprint(f"new = {new}")
+		vnsrcs[result.valnum] = set([new]);
+		avin.add(result.valnum);
+		ops.append(new);
 	
 	if out is not None:
 		vrtovn[out] = result.valnum;
@@ -44,6 +35,37 @@ def load_literal(ops, vrtovn, avin, et, literal, out = None):
 	exit(f"return {result.valnum};");
 	return result.valnum;
 
+
+def consider(stuff, op, ins, const = None, out = None):
+	enter(f"consider_exp(op = {op}, ins = {ins}, const = {const}, out = {out})");
+	
+	ops = stuff["ops"];
+	vrtovn = stuff["vrtovn"];
+	avin = stuff["avin"];
+	et = stuff["expression_table"];
+	vnsrcs = stuff["vnsrcs"];
+	
+	exp = expression(op = op, ins = ins, const = const);
+	
+	result = et.extovn(exp);
+	
+	if not result.is_new:
+		exp = et.vntoex(result.valnum);
+	
+	if result.valnum not in avin:
+		new = instruction(op = exp.op, ins = exp.ins, const = exp.const, out = exp.valnum);
+		dprint(f"new = {new}")
+		new.subcriticals = set.union(*(vnsrcs[i] for i in exp.ins));
+		dprint(f"new.subcriticals = {[str(s) for s in new.subcriticals]}")
+		vnsrcs[result.valnum] = set([new]);
+		avin.add(result.valnum);
+		ops.append(new);
+	
+	if out is not None:
+		vrtovn[out] = result.valnum;
+	
+	exit(f"return {result.valnum}")
+	return result.valnum;
 
 
 

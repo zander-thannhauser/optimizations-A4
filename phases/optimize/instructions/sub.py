@@ -10,13 +10,15 @@ from .common import load_literal;
 from .add import optimize_add_vr;
 from .mult import optimize_mult_vr;
 
-def optimize_sub_vr(ops, vrtovn, avin, et, lvn, rvn, out = None):
+def optimize_sub_vr(stuff, lvn, rvn, out = None):
 	enter(f"optimize_sub_vr(lvn = {lvn}, rvn = {rvn}, out = {out})");
+	
+	et = stuff["expression_table"];
 	
 	match (et.vntoex(lvn), et.vntoex(rvn)):
 			
 		case (constant(value = a), constant(value = b)):
-			valnum = load_literal(ops, vrtovn, avin, et, literal = a - b, out = out);
+			valnum = load_literal(stuff, literal = a - b, out = out);
 		
 		case (_, constant(value = 0)):
 			assert(not "TODO");
@@ -28,8 +30,8 @@ def optimize_sub_vr(ops, vrtovn, avin, et, lvn, rvn, out = None):
 		
 		# (X + a) - Y => (X - Y) + a
 		case (expression(op = "addI", ins = (X, ), const = a), _):
-			subvn = optimize_sub_vr(ops, vrtovn, avin, et, X, rvn);
-			valnum = consider(ops, vrtovn, avin, et, "addI", (subvn, ), const = a, out = out);
+			subvn = optimize_sub_vr(stuff, X, rvn);
+			valnum = consider(stuff, "addI", (subvn, ), const = a, out = out);
 		
 		# a * X - b * X => (a - b) * X
 		case (expression(op = "multI", ins = (X, ), const = a), \
@@ -57,12 +59,14 @@ def optimize_sub_vr(ops, vrtovn, avin, et, lvn, rvn, out = None):
 	exit(f"return {valnum};");
 	return valnum;
 
-def optimize_sub(ops, vrtovn, avin, ins, out, expression_table, **_):
+def optimize_sub(ins, out, **stuff):
 	enter(f"optimize_sub(ins = {ins}, out = {out})");
+	
+	vrtovn = stuff["vrtovn"];
 	
 	lvn, rvn = vrtovn[ins[0]], vrtovn[ins[1]]
 	
-	optimize_sub_vr(ops, vrtovn, avin, expression_table, lvn, rvn, out);
+	optimize_sub_vr(stuff, lvn, rvn, out);
 	
 	exit("return;");
 	return [];

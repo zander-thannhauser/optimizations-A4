@@ -58,7 +58,7 @@ digraph mygraph {
 		else:
 			for inst in block.new_instructions + ([] if block.new_jump is None else [block.new_jump]):
 				
-				current = inst.newdotout(stream, block, draw_lines = False);
+				current = inst.newdotout(stream, block, valnum_names = False, draw_lines = False);
 				
 				if tail:
 					print(f"""

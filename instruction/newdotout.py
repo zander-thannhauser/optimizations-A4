@@ -1,15 +1,15 @@
 
 from expression_table.self import expression_table;
 
-def instruction_newdotout(self, stream, block, draw_lines = True, constraint = False):
+def instruction_newdotout(self, stream, block, valnum_names = True, draw_lines = True, constraint = False):
 	denominators = expression_table.valcounter;
 
 	name  = f"{id(block)}_{self.id}";
 	color =  "white";
 	
 	if self.out is not None:
-		if not self.acting_i2i:
-			name  = f"{self.out}";
+		if not self.acting_i2i and valnum_names:
+			name = f"{self.out}";
 		color = f"{self.out / denominators} 1 1"
 	
 	label = f"{self.op}"

@@ -6,8 +6,11 @@ from instruction.self import instruction;
 from expression_table.constant.self import constant;
 from expression_table.expression.self import expression;
 
-def optimize_cbr_vn(ops, ivn, et, volatile, label, **_):
+def optimize_cbr_vn(stuff, ivn, volatile, label):
 	enter(f"optimize_cbr_vn(ivn = {ivn}, volatile = {volatile})");
+	
+	ops = stuff["ops"];
+	et = stuff["expression_table"];
 	
 	match (et.vntoex(ivn)):
 		# constant-folding:
@@ -31,8 +34,7 @@ def optimize_cbr_vn(ops, ivn, et, volatile, label, **_):
 		
 		case expression(op = "cmp_GE", ins = [X, Y]) \
 			if X not in volatile and Y not in volatile:
-			# ops.append(Instruction("cbr_GE", [X, Y], out, label));
-			assert(not "TODO");
+			ops.append(instruction("cbr_GE", [X, Y], label = label));
 		
 		case expression(op = "cmp_EQ", ins = [X, Y]) \
 			if X not in volatile and Y not in volatile:
@@ -81,12 +83,15 @@ def optimize_cbr_vn(ops, ivn, et, volatile, label, **_):
 	return [];
 
 
-def optimize_cbr(ops, vrtovn, ins, expression_table, volatile, label, **_):
+def optimize_cbr(ins, label, **stuff):
+	volatile = stuff["volatile"];
 	enter(f"optimize_cbr(ins = {ins}, volatile = {volatile})");
+	
+	vrtovn = stuff["vrtovn"];
 	
 	ivn = vrtovn[ins[0]];
 	
-	optimize_cbr_vn(ops, ivn, expression_table, volatile, label);
+	optimize_cbr_vn(stuff, ivn, volatile, label);
 	
 	exit("return;");
 	return [];
