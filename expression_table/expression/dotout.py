@@ -53,7 +53,7 @@ def expression_dotout(self, stream, drawn, et, **_):
 			""", file = stream);
 		
 		# those who have two value-numbers:
-		case "comp" | "cmp_GT" | "cmp_LT" | "cmp_LE" | "cmp_GE" | "mod":
+		case "comp" | "cmp_GT" | "cmp_LT" | "cmp_LE" | "cmp_GE" | "mod" | "add":
 			lvn, rvn = self.ins
 			print(f"""
 				"{self.valnum}" [

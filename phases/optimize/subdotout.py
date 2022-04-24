@@ -60,7 +60,7 @@ digraph mygraph {
 	
 	for vr, vn in vrtovn.items():
 		print(f"""
-			"{vn}":s -> "{vr}":n [dir=back];
+			"{vn}" -> "{vr}":n [dir=back];
 		""", file = stream);
 		print(f"""
 			"{vr}" [

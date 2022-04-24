@@ -35,6 +35,11 @@ def optimize_mult_vr(stuff, lvn, rvn, out = None):
 			subvn = consider(stuff, "multI", (X, ), const = a);
 			valnum = consider(stuff, "addI", (subvn, ), const = a * b, out = out);
 		
+		# (X + a) * b => b * X + a * b
+		case (expression(op = "addI", ins = (X, ), const = a), constant(value = b)):
+			subvn = consider(stuff, "multI", (X, ), const = b);
+			valnum = consider(stuff, "addI", (subvn, ), const = a * b, out = out);
+		
 		case (lex, rex):
 			dprint(f"lex, rex = {str(lex), str(rex)}");
 			assert(not "TODO");

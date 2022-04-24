@@ -1,6 +1,8 @@
 
 from debug import *;
 
+from expression_table.phi.self import phi;
+from expression_table.unknown.self import unknown;
 from expression_table.constant.self import constant;
 from expression_table.parameter.self import parameter;
 from expression_table.expression.self import expression;
@@ -27,7 +29,12 @@ def optimize_comp_vn(stuff, lvn, rvn, out = None):
 		case (_, _) if lvn == rvn:
 			assert(not "TODO");
 		
-		case (parameter(), constant()):
+		# (X + a) vs. b => X vs. (b - a)
+		case (expression(op = "addI", ins = (X, ), const = a), constant(value = b)):
+			subrvn = load_literal(stuff, b - a);
+			valnum = optimize_comp_vn(stuff, X, subrvn, out);
+		
+		case (parameter() | phi() | unknown(), constant() | unknown()):
 			valnum = consider(stuff, "comp", (lvn, rvn), out = out);
 		
 		case (lex, rex):

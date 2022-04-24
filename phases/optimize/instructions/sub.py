@@ -1,6 +1,8 @@
 
 from debug import *;
 
+from expression_table.phi.self import phi;
+from expression_table.parameter.self import parameter;
 from expression_table.constant.self import constant;
 from expression_table.expression.self import expression;
 
@@ -15,18 +17,31 @@ def optimize_sub_vr(stuff, lvn, rvn, out = None):
 	
 	et = stuff["expression_table"];
 	
+	vrtovn = stuff["vrtovn"];
+	
 	match (et.vntoex(lvn), et.vntoex(rvn)):
 			
 		case (constant(value = a), constant(value = b)):
 			valnum = load_literal(stuff, literal = a - b, out = out);
 		
 		case (_, constant(value = 0)):
-			assert(not "TODO");
+			if out is not None: vrtovn[out] = lvn;
+			valnum = lvn;
 		
 		# (X + a) - (Y + b) => (X - Y) + (a - b)
 		case (expression(op = "addI", ins = (X, ), const = a), \
 		      expression(op = "addI", ins = (Y, ), const = b)):
-			assert(not "TODO");
+			if a - b == 0:
+				valnum = optimize_sub_vr(stuff, X, Y, out);
+			else:
+				assert(not "TODO");
+		
+		# (X + a) - b => X + (a - b)
+		case (expression(op = "addI", ins = (X, ), const = a), constant(value = b)):
+			if a - b == 0:
+				assert(not "TODO");
+			else:
+				valnum = consider(stuff, "addI", (X, ), const = a - b, out = out);
 		
 		# (X + a) - Y => (X - Y) + a
 		case (expression(op = "addI", ins = (X, ), const = a), _):
@@ -51,6 +66,19 @@ def optimize_sub_vr(stuff, lvn, rvn, out = None):
 					if out is not None: vrtovn[out] = X
 					valnum = X;
 				case _: assert(not "TODO");
+		
+		# X - a * X => (1 - a) * X
+		case (_, expression(op = "multI", ins = (X, ), const = a)) if lvn == X:
+			assert(not "TODO");
+		
+		# X - a * Y => X + (-a) * Y
+		case (_, expression(op = "multI", ins = (Y, ), const = a)) if lvn != X:
+			subrvn = consider(stuff, "multI", ins = (X, ), const = -a);
+			valnum = consider(stuff, "add", ins = (lvn, subrvn), out = out);
+		
+		# X - c => (X - c)
+		case (phi() | parameter(), constant(value = a)):
+			valnum = consider(stuff, "addI", ins = (lvn, ), const = -a, out = out);
 		
 		case (lex, rex):
 			dprint(f"lex, rex = {str(lex), str(rex)}");

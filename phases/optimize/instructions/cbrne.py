@@ -6,18 +6,20 @@ from instruction.self import instruction;
 from expression_table.constant.self import constant;
 from expression_table.expression.self import expression;
 
-def optimize_cbrne_vn(ops, ivn, et, volatile, label, **_):
+def optimize_cbrne_vn(stuff, ivn, volatile, label):
 	enter(f"optimize_cbrne_vn(ivn = {ivn}, volatile = {volatile})");
+	
+	et = stuff["expression_table"];
 	
 	match (et.vntoex(ivn)):
 		# constant-folding:
 		case constant(value = c):
-			if not c: ops.append(instruction("jumpI", [], label = label));
+			if not c: cbrne = instruction("jumpI", [], label = label);
+			else: cbrne = None;
 		
 		case expression(op = "cmp_LT", ins = [X, Y]) \
 			if X not in volatile and Y not in volatile:
-			# ops.append(instruction("cbr_GE", [X, Y], label = label));
-			assert(not "TODO");
+			cbrne = instruction("cbr_GE", [X, Y], label = label);
 		
 		case expression(op = "cmp_LE", ins = [X, Y]) \
 			if X not in volatile and Y not in volatile:
@@ -77,17 +79,26 @@ def optimize_cbrne_vn(ops, ivn, et, volatile, label, **_):
 		case iex:
 			# ops.append(instruction("cbrne", [ivn], out, label = label));
 			assert(not "TODO");
-
+	
+	if cbrne is not None:
+		ops = stuff["ops"];
+		vnsrcs = stuff["vnsrcs"];
+		cbrne.subcriticals = set.union(*(vnsrcs[i] for i in cbrne.ins));
+		ops.append(cbrne);
+	
 	exit("return;");
 	return [];
 
 
-def optimize_cbrne(ops, vrtovn, ins, expression_table, volatile, label, **_):
+def optimize_cbrne(ins, label, **stuff):
+	volatile = stuff["volatile"];
 	enter(f"optimize_cbrne(ins = {ins}, volatile = {volatile})");
+	
+	vrtovn = stuff["vrtovn"];
 	
 	ivn = vrtovn[ins[0]];
 	
-	optimize_cbrne_vn(ops, ivn, expression_table, volatile, label);
+	optimize_cbrne_vn(stuff, ivn, volatile, label);
 	
 	exit("return;");
 	return [];

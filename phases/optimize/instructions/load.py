@@ -10,42 +10,41 @@ from .mult import optimize_mult_vr;
 
 from .common import load_literal;
 
-def optimize_load(ops, vrtovn, ins, out, expression_table, id, **_):
+def optimize_load(ops, vrtovn, ins, out, vnsrcs, avin, expression_table, id, **_):
 	enter(f"optimize_load(ins = {ins}, out = {out})");
 	
-	assert(not "TODO");
+	ivn = vrtovn[ins[0]];
 	
-#	ivn = vrtovn[ins[0]];
-#	
-#	loadex = unknown(id);
-#	oresult = expression_table.extovn(loadex);
-#	ovn = oresult.valnum;
-#	
-#	match (expression_table.vntoex(ivn)):
-#		# load X, (Y + c) => loadAI X -> Y, c
-#		case expression(op = "addI", ins = [X], const = c):
-#			# load = instruction("loadAI", [ivn, X], const = c, out = ovn);
-#			assert(not "TODO");
-#		
-#		# load X, (Y + c) => loadAI X -> Y, c
-#		case multiplicity(op = "sum", ins = ins) if len(ins) == 2:
-#			sublvn, sublfactor = ins[0]
-#			subrvn, subrfactor = ins[1]
-#			et = expression_table;
-#			lvn = optimize_mult_vr(vrtovn, et, sublvn, load_literal(vrtovn, et, sublfactor));
-#			rvn = optimize_mult_vr(vrtovn, et, subrvn, load_literal(vrtovn, et, subrfactor));
-#			load = instruction("loadAO", [lvn, rvn], out = ovn);
-#		
-#		# default:
-#		case (oexp):
-#			dprint(f"oexp == {oexp}");
-#			load = instruction("load", [ivn], out = ovn);
-#			assert(not "TODO");
-#	
-#	loadex.instruction = load;
-#	ops.append(load);
-#	
-#	vrtovn[out] = ovn;
+	loadex = unknown(id);
+	oresult = expression_table.extovn(loadex);
+	ovn = oresult.valnum;
+	
+	if not oresult.is_new:
+		loadex = expression_table.vntoex(ovn);
+		# assert(not "TODO");
+	
+	match (expression_table.vntoex(ivn)):
+		# load X, (Y + c) => loadAI X -> Y, c
+		case expression(op = "addI", ins = [Y], const = c):
+			# load = instruction("loadAI", [ivn, Y], const = c, out = ovn);
+			assert(not "TODO");
+		
+		# load X, (Y + Z) => loadAO X -> Y, Z
+		case expression(op = "add", ins = [Y, Z]):
+			load = instruction("loadAO", [ivn, Y, Z], out = ovn);
+		
+		# default:
+		case (oexp):
+			dprint(f"oexp == {oexp}");
+			load = instruction("load", [ivn], out = ovn);
+			assert(not "TODO");
+	
+	loadex.instruction = load;
+	ops.append(load);
+	
+	vrtovn[out] = ovn;
+	vnsrcs[ovn] = set([load]);
+	avin.add(ovn);
 	
 	exit();
 	return [];

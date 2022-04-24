@@ -95,14 +95,16 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 		for vn in avin:
 			vnsrcs[vn] = set.union(*(p.vnsrcs[vn] for p in block.predecessors if p.vnsrcs is not None))
 		
-		dprint(f"avin = {avin}");
-		
 		# introduce phi nodes entering this block into
 		# the expression_table:
 		for register, valnum in block.incoming_phis.items():
 			dprint(f"inherited {register} => {valnum} from phi nodes");
 			vrtovn[register] = valnum;
 			vnsrcs[valnum] = set();
+			avin.add(valnum);
+		
+		dprint(f"avin = {avin}");
+		dprint(f"vnsrcs = {vnsrcs}");
 		
 		# process instructions, pushing order_sensitive:
 		new_instructions = [];
@@ -120,7 +122,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				label = inst.label,
 				ops = new_instructions,
 				expression_table = expression_table);
-			self.subdotout(vrtovn, avin, inst, new_instructions, expression_table);
+			# self.subdotout(vrtovn, avin, inst, new_instructions, expression_table);
 		
 		volatile = set();
 		
@@ -141,7 +143,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 					phi.feeders[block] = i2i;
 					new_instructions.append(i2i);
 					volatile.add(dst_valnum);
-					self.subdotout(vrtovn, avin, i2i, new_instructions, expression_table);
+					# self.subdotout(vrtovn, avin, i2i, new_instructions, expression_table);
 		
 		if block.jump is not None:
 			before = block.jump
@@ -155,6 +157,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				vrtovn = vrtovn,
 				avin = avin,
 				id = before.id,
+				vnsrcs = vnsrcs,
 				ins = before.ins,
 				out = before.out,
 				const = before.const,
@@ -162,7 +165,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				expression_table = expression_table,
 				volatile = volatile);
 			
-			self.subdotout(vrtovn, avin, before, new_instructions + jump, expression_table);
+			# self.subdotout(vrtovn, avin, before, new_instructions + jump, expression_table);
 			
 			if len(jump):
 				after, = jump

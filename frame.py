@@ -158,9 +158,8 @@ def process_frame(t, p):
 		reset_post_dominators_phase(end), # bottom-up*
 		post_dominators_phase(end),       # bottom-up
 		
-		# superfical_cruciality(start) # top-down
-		# critical(),  # bottom-up
-			# sort by instruction rpo
+		# superfical_cruciality(start)      # top-down
+		## critical(),  # bottom-up
 		# dead_code_phase(start),           # top-down*
 		
 		# find all still alive phis, assign them live-range ids.

@@ -34,9 +34,6 @@ def optimize_add_vr(stuff, lvn, rvn, out = None):
 		case (_, _) if lvn == rvn:
 			assert(not "TODO");
 		
-		case (phi() | parameter(), constant(value = a)):
-			valnum = consider(stuff, "addI", ins = (lvn, ), const = a, out = out);
-		
 		# a * X + b * X => (a + b) * X
 		case (expression(op = "multI", ins = (X, ), const = a), \
 		      expression(op = "multI", ins = (Y, ), const = b)) if X == Y:
@@ -60,6 +57,9 @@ def optimize_add_vr(stuff, lvn, rvn, out = None):
 		# X + a * X => (a + 1) * X
 		case (_, expression(op = "multI", ins = (X, ), const = a)) if lvn == X:
 			assert(not "TODO");
+		
+		case (phi() | parameter(), constant(value = a)):
+			valnum = consider(stuff, "addI", ins = (lvn, ), const = a, out = out);
 		
 		case (lex, rex):
 			dprint(f"lex, rex = {str(lex), str(rex)}");

@@ -12,31 +12,20 @@ from .common import load_literal;
 def optimize_store(ops, vrtovn, ins, out, expression_table, **_):
 	enter(f"optimize_store(ins = {ins}, out = {out})");
 	
-	assert(not "TODO");
+	ivn, ovn = vrtovn[ins[0]], vrtovn[ins[1]];
 	
-#	ivn, ovn = vrtovn[ins[0]], vrtovn[ins[1]];
-#	
-#	match (expression_table.vntoex(ovn)):
-#		# store X, (Y + c) => storeAI X -> Y, c
-#		case expression(op = "addI", ins = [X], const = c):
-#			store = instruction("storeAI", [ivn, X], const = c);
-#		
-#		# store X, (Y + c) => storeAI X -> Y, c
-#		case multiplicity(op = "sum", ins = ins) if len(ins) == 2:
-#			sublvn, sublfactor = ins[0]
-#			subrvn, subrfactor = ins[1]
-#			et = expression_table;
-#			lvn = optimize_mult_vr(vrtovn, et, sublvn, load_literal(vrtovn, et, sublfactor));
-#			rvn = optimize_mult_vr(vrtovn, et, subrvn, load_literal(vrtovn, et, subrfactor));
-#			store = instruction("storeAO", [ivn, lvn, rvn]);
-#		
-#		# default:
-#		case (oexp):
-#			dprint(f"oexp == {oexp}");
-#			# store = (Instruction("store", [ivn, ovn], None));
-#			assert(not "TODO");
-#	
-#	ops.append(store);
+	match (expression_table.vntoex(ovn)):
+		# store X, (Y + c) => storeAI X -> Y, c
+		case expression(op = "addI", ins = [X], const = c):
+			store = instruction("storeAI", [ivn, X], const = c);
+		
+		# default:
+		case (oexp):
+			dprint(f"oexp == {oexp}");
+			# store = (Instruction("store", [ivn, ovn], None));
+			assert(not "TODO");
+	
+	ops.append(store);
 	
 	exit("return;");
 
