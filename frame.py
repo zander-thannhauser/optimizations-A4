@@ -155,7 +155,6 @@ def process_frame(t, p):
 	] + [
 		reset_dominators_phase(start),    # top-down*
 		dominators_phase(start),          # top-down
-		
 		reset_post_dominators_phase(end), # bottom-up*
 		post_dominators_phase(end),       # bottom-up
 		## reset_in_out_phase(end),       # bottom-up
@@ -168,17 +167,65 @@ def process_frame(t, p):
 		## critical(),  # bottom-up
 		dead_code_phase(start),           # top-down*
 		
-		# find all still alive phis, assign them live-range ids.
+		# top-down:
+			# create singltion sets of each valnum used/defined
+			# create mapping valnum -> valnum-set
 		
-		## reset live-range in-out # top-down
-		# live-range in-out        # bottom-up
-		# build_interference       # bottom-up
+		# top-down:
+			# for every phi node: get the valnums that feed it
+			# get the sets of those valnums
+			# union them togteher
+			# update mapping
+		
+		# rename all valnums to the live-range id
+		
+		# repeat point:
+		
+		# bottom-up: live in-out:
+			# ids used but not defined in this block
+			# ids defined and the last instruction that defined it
+		
+		# topd-down: live inheritance:
+			# all definers need to have unique number
+			# defines -> set of unique numbers (instruction id?)
+				# (initalized to singltions)
+			# pass downwards a set of live-range id -> set of definers
+			# every live-in:
+				# if there's more than one definer:
+					# union all their definers-sets together
+					# update the mapping
+			# every new define resets the downwards-dict:
+		
+		# top-down*: live_instances
+			# create dict(): define-sets -> liverange instances
+			# for every instruction:
+				# if it's a usage:
+					# store in it the instance it should introduce
+				# if you see a define:
+					# lookup mapping, create if None
+					# update mapping with define's instance
+			# pass downwards a liverange id -> instance
+			# the bottom of every block should remember outgoing mapping
+		
+		# bottom-up: build_interference
+			# recall above outgoing mapping
+			# for every instruction[::-1]:
+				# if you see a definition:
+					# remove instance from mapping
+					# mark this instance as iterfering with
+					# all other instances in current mapping
+					# calculate cost
+				# if you see a usage:
+					# introduce instance into mapping
+		
 		# assign live range to register:
 			# if possible: push to rename phase
 			# otherwise: push to spill-over phase
+		
 		# spill-over phase:
 			# given a live-range, insert loads and stores
 			# invoke live-range in/out reset on start again.
+		
 		# rename phase:
 			# if this live range is of the current (last) batch
 			# rename uses and defintions and remove `i2i same -> same`s
