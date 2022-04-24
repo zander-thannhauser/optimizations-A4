@@ -5,7 +5,7 @@ from instruction.self import instruction;
 
 from phases.rename_valnums_to_liveids.self import rename_valnums_to_liveids_phase;
 
-def rename_valnums_to_liveids_phase_process(self, valnum_to_vnsets, vnsets_to_liveid, phase_counters, **_):
+def rename_valnums_to_liveids_phase_process(self, start, parameters, valnum_to_vnsets, vnsets_to_liveid, phase_counters, **_):
 	enter(f"rename_valnums_to_liveids.process(self.block.rpo = {self.block.rpo})");
 	
 	block = self.block;
@@ -21,6 +21,10 @@ def rename_valnums_to_liveids_phase_process(self, valnum_to_vnsets, vnsets_to_li
 			vnsets_to_liveid[vnset] = next;
 			vnsets_to_liveid["next"] = next + 1;
 			return next;
+	
+	if block == start:
+		for p in parameters:
+			p.liveid = get_id(p.valnum);
 	
 	newer_instructions = [];
 	

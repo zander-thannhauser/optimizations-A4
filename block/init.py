@@ -60,6 +60,10 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	# rename_valnums_to_liveids:
 	self.newer_instructions = [];
 	self.newer_jump = None;
+	
+	# live_in_out:
+	self.live_ins = None;
+	self.live_outs = set();
 
 
 

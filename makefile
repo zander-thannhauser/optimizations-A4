@@ -97,6 +97,22 @@ gimp-rename_valnums_to_liveids: $(rename_valnums_to_liveids)
 
 
 
+dot/liveinout.mk:
+	find $(@D) -name '*-liveinout.txt' | sort -V | sed 's/^/liveinout += /;s/.txt$$/.png/' > $@
+
+include dot/liveinout.mk
+
+mpv-liveinout: $(liveinout)
+	mpv $(liveinout)
+
+eog-liveinout: $(liveinout)
+	eog $(liveinout)
+
+gimp-liveinout: $(liveinout)
+	gimp $(liveinout)
+
+
+
 
 
 

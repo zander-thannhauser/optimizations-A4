@@ -28,6 +28,8 @@ from phases.valnum_singleton_sets.self     import valnum_singleton_sets_phase;
 from phases.union_valnum_sets.self         import union_valnum_sets_phase;
 from phases.rename_valnums_to_liveids.self import rename_valnums_to_liveids_phase;
 
+from phases.live_in_out.self import live_in_out_phase;
+
 # dead code removal:
 #from phases.dead_code.self             import dead_code_phase;
 
@@ -187,11 +189,11 @@ def process_frame(t, p):
 		
 		# repeat point:
 		
-		# bottom-up: live in-out:
+		live_in_out_phase(end), # bottom-up:
 			# ids used but not defined in this block
-			# ids defined and the last instruction that defined it
+			# ids defined and set([last instruction that defined it])
 		
-		# topd-down: live inheritance:
+		# top-down: live inheritance:
 			# all definers need to have unique number
 			# defines -> set of unique numbers (instruction id?)
 				# (initalized to singltions)

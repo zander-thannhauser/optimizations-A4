@@ -23,10 +23,33 @@ class phase:
 	VALNUM_SINGLETON_SETS     = 14;
 	UNION_VALNUM_SETS         = 15;
 	RENAME_VALNUMS_TO_LIVEIDS = 16;
+	# while changed:
+	LIVE_IN_OUT               = 17;
 	
 
 from .init import phase_init;
 
 phase.__init__ = phase_init;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
