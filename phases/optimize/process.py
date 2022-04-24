@@ -2,6 +2,7 @@
 from debug import *;
 
 from phases.lost_parent.self import lost_parent_phase;
+from phases.reset_dominators.self import reset_dominators_phase;
 from phases.reset_post_dominators.self import reset_post_dominators_phase;
 from phases.reset_in_out.self import reset_in_out_phase;
 from phases.inheritance.self import inheritance_phase;
@@ -70,13 +71,12 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 	block = self.block;
 	
 	avin = set();
-	vnsrcs = dict(); # valnum -> set of instructions
 	
 	if (block == start):
 		for parameter in parameters:
 			vrtovn[parameter.register] = parameter.valnum;
 			avin.add(parameter.valnum);
-			vnsrcs[parameter.valnum] = set();
+		block.new_instructions = [];
 	else:
 		for predecessor in block.predecessors:
 			if predecessor.vrtovn is not None:
@@ -90,21 +90,16 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 			else:
 				dprint(f"inherited nothing from {predecessor}");
 		
-		avin = set.intersection(*(p.avin for p in block.predecessors if p.avin is not None));
-		
-		for vn in avin:
-			vnsrcs[vn] = set.union(*(p.vnsrcs[vn] for p in block.predecessors if p.vnsrcs is not None))
+		avin = block.immediate_dominator.avin.copy();
 		
 		# introduce phi nodes entering this block into
 		# the expression_table:
 		for register, valnum in block.incoming_phis.items():
 			dprint(f"inherited {register} => {valnum} from phi nodes");
 			vrtovn[register] = valnum;
-			vnsrcs[valnum] = set();
 			avin.add(valnum);
 		
 		dprint(f"avin = {avin}");
-		dprint(f"vnsrcs = {vnsrcs}");
 		
 		# process instructions, pushing order_sensitive:
 		new_instructions = [];
@@ -116,13 +111,12 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				id = inst.id,
 				ins = inst.ins,
 				out = inst.out,
-				vnsrcs = vnsrcs,
 				vrtovn = vrtovn,
 				const = inst.const,
 				label = inst.label,
 				ops = new_instructions,
 				expression_table = expression_table);
-			# self.subdotout(vrtovn, avin, inst, new_instructions, expression_table);
+			self.subdotout(vrtovn, avin, inst, new_instructions, expression_table);
 		
 		volatile = set();
 		
@@ -130,20 +124,18 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 		for register in block.outs:
 			if register in block.outgoing_phis:
 				src_valnum = vrtovn[register];
-				subcriticals = vnsrcs[src_valnum];
 				for dst_valnum in block.outgoing_phis[register]:
 					dprint(f"register   = {register}")
 					dprint(f"src_valnum = {src_valnum}")
 					dprint(f"dst_valnum = {dst_valnum}")
 					i2i = instruction("i2i", [src_valnum], dst_valnum);
-					i2i.subcriticals = subcriticals;
 					i2i.acting_i2i = True;
 					dprint(i2i);
 					phi = expression_table.vntoex(dst_valnum);
 					phi.feeders[block] = i2i;
 					new_instructions.append(i2i);
 					volatile.add(dst_valnum);
-					# self.subdotout(vrtovn, avin, i2i, new_instructions, expression_table);
+					self.subdotout(vrtovn, avin, i2i, new_instructions, expression_table);
 		
 		if block.jump is not None:
 			before = block.jump
@@ -157,7 +149,6 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				vrtovn = vrtovn,
 				avin = avin,
 				id = before.id,
-				vnsrcs = vnsrcs,
 				ins = before.ins,
 				out = before.out,
 				const = before.const,
@@ -165,7 +156,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				expression_table = expression_table,
 				volatile = volatile);
 			
-			# self.subdotout(vrtovn, avin, before, new_instructions + jump, expression_table);
+			self.subdotout(vrtovn, avin, before, new_instructions + jump, expression_table);
 			
 			if len(jump):
 				after, = jump
@@ -185,7 +176,8 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 						block.jump = None;
 					
 					case _: assert(not "TODO");
-					
+				
+				after.block = block;
 				block.new_jump = after;
 			else:
 				# always fallthrough:
@@ -198,8 +190,8 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				block.successors.remove(lose);
 				# maybe it's unreachable now?
 				todo.append(lost_parent_phase(lose));
-#				# for sure it's dominators have changed, reset and redo:
-#				todo.append(reset_dominators_phase(lose));
+				# for sure it's dominators have changed, reset and redo:
+				todo.append(reset_dominators_phase(lose));
 				# same with post-dominators:
 				todo.append(reset_post_dominators_phase(block));
 				# the things the parent needs to provide for it's children
@@ -211,6 +203,9 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				todo.append(phi_phase(lose));
 				block.new_jump = None;
 		
+		for n in new_instructions:
+			n.block = block;
+		
 		block.new_instructions = new_instructions;
 	
 	dprint(f"block.vrtovn = {block.vrtovn}")
@@ -219,18 +214,14 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 	dprint(f"block.avin = {block.avin}")
 	dprint(f"avin       = {avin}")
 	
-	dprint(f"block.vnsrcs = {block.vnsrcs}")
-	dprint(f"vnsrcs       = {vnsrcs}")
-	
 	if False \
 		or block.vrtovn != vrtovn \
-		or block.avin != avin \
-		or block.vnsrcs != vnsrcs:
+		or block.avin != avin:
 		
 		for child in block.successors:
 			todo.append(optimize_phase(child));
+		
 		block.vrtovn = vrtovn;
-		block.vnsrcs = vnsrcs;
 		block.avin = avin;
 	
 	exit(f"return {[str(t) for t in todo]}");

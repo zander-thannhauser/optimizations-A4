@@ -28,6 +28,12 @@ dot/inheritance.mk:
 dot/optimize.mk:
 	find $(@D) -name '*-optimize.txt' | sort -V | sed 's/^/optimize += /;s/.txt$$/.png/' > $@
 
+dot/superfical.mk:
+	find $(@D) -name '*-superfical.txt' | sort -V | sed 's/^/superfical += /;s/.txt$$/.png/' > $@
+
+dot/critical.mk:
+	find $(@D) -name '*-critical.txt' | sort -V | sed 's/^/critical += /;s/.txt$$/.png/' > $@
+
 include dot/all.mk
 include dot/anticipation.mk
 include dot/available.mk
@@ -37,6 +43,8 @@ include dot/postdominators.mk
 include dot/inout.mk
 include dot/inheritance.mk
 include dot/optimize.mk
+include dot/superfical.mk
+include dot/critical.mk
 
 all: $(alls)
 
@@ -134,6 +142,24 @@ eog-optimize: $(optimize)
 
 gimp-optimize: $(optimize)
 	gimp $(optimize)
+
+mpv-superfical: $(superfical)
+	mpv $(superfical)
+
+eog-superfical: $(superfical)
+	eog $(superfical)
+
+gimp-superfical: $(superfical)
+	gimp $(superfical)
+
+mpv-critical: $(critical)
+	mpv $(critical)
+
+eog-critical: $(critical)
+	eog $(critical)
+
+gimp-critical: $(critical)
+	gimp $(critical)
 
 
 

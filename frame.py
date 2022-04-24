@@ -13,12 +13,16 @@ from expression_table.self import expression_table;
 from expression_table.parameter.self import parameter;
 
 from phases.lost_parent.self           import lost_parent_phase;
+from phases.reset_dominators.self      import reset_dominators_phase;
+from phases.dominators.self            import dominators_phase;
 from phases.reset_post_dominators.self import reset_post_dominators_phase;
 from phases.post_dominators.self       import post_dominators_phase;
 from phases.in_out.self                import in_out_phase;
 from phases.inheritance.self           import inheritance_phase;
 from phases.phi.self                   import phi_phase;
 from phases.optimize.self              import optimize_phase;
+from phases.superfical_critical.self   import superfical_critical_phase;
+from phases.dead_code.self             import dead_code_phase;
 
 # dead code removal:
 #from phases.dead_code.self             import dead_code_phase;
@@ -149,18 +153,20 @@ def process_frame(t, p):
 		# call lost_parent_phase on all blocks:
 		lost_parent_phase(block) for block in all_blocks
 	] + [
+		reset_dominators_phase(start),    # top-down*
+		dominators_phase(start),          # top-down
+		
+		reset_post_dominators_phase(end), # bottom-up*
+		post_dominators_phase(end),       # bottom-up
 		## reset_in_out_phase(end),       # bottom-up
 		in_out_phase(end),                # bottom-up
 		inheritance_phase(start),         # top-down
 		phi_phase(start),                 # top-down*
 		optimize_phase(start),            # top-down
 		
-		reset_post_dominators_phase(end), # bottom-up*
-		post_dominators_phase(end),       # bottom-up
-		
-		# superfical_cruciality(start)      # top-down
+		superfical_critical_phase(start), # top-down
 		## critical(),  # bottom-up
-		# dead_code_phase(start),           # top-down*
+		dead_code_phase(start),           # top-down*
 		
 		# find all still alive phis, assign them live-range ids.
 		
@@ -196,14 +202,11 @@ def process_frame(t, p):
 		"parameters": parameters,
 		
 		"expression_table": et,
-		
 #		
 #		"phis": list(),
 		
 		"phase_counters": {
-			"syntax-lookup": 1,
-			"earliest": 1,
-			"insert-delete": 1,
+			"superfical-critical": 1,
 			"dead-code": 1,
 		},
 	};

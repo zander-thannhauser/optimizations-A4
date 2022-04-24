@@ -10,7 +10,7 @@ from .mult import optimize_mult_vr;
 
 from .common import load_literal;
 
-def optimize_load(ops, vrtovn, ins, out, vnsrcs, avin, expression_table, id, **_):
+def optimize_load(ops, vrtovn, ins, out, avin, expression_table, id, **_):
 	enter(f"optimize_load(ins = {ins}, out = {out})");
 	
 	ivn = vrtovn[ins[0]];
@@ -21,7 +21,6 @@ def optimize_load(ops, vrtovn, ins, out, vnsrcs, avin, expression_table, id, **_
 	
 	if not oresult.is_new:
 		loadex = expression_table.vntoex(ovn);
-		# assert(not "TODO");
 	
 	match (expression_table.vntoex(ivn)):
 		# load X, (Y + c) => loadAI X -> Y, c
@@ -29,9 +28,9 @@ def optimize_load(ops, vrtovn, ins, out, vnsrcs, avin, expression_table, id, **_
 			# load = instruction("loadAI", [ivn, Y], const = c, out = ovn);
 			assert(not "TODO");
 		
-		# load X, (Y + Z) => loadAO X -> Y, Z
-		case expression(op = "add", ins = [Y, Z]):
-			load = instruction("loadAO", [ivn, Y, Z], out = ovn);
+		# load (X + Y) -> Z => loadAO X, Y -> Z
+		case expression(op = "add", ins = [X, Y]):
+			load = instruction("loadAO", [X, Y], out = ovn);
 		
 		# default:
 		case (oexp):
@@ -43,7 +42,6 @@ def optimize_load(ops, vrtovn, ins, out, vnsrcs, avin, expression_table, id, **_
 	ops.append(load);
 	
 	vrtovn[out] = ovn;
-	vnsrcs[ovn] = set([load]);
 	avin.add(ovn);
 	
 	exit();

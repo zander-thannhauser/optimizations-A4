@@ -3,13 +3,13 @@ from debug import *;
 
 from phases.self import phase;
 
-def critical_phase_dotout(self, all_blocks, parameters, expression_table, **_):
+def superfical_critical_phase_dotout(self, all_blocks, expression_table, **_):
 	
-	enter("critical_phase_dotout()");
+	enter("superfical_critical.dotout()");
 	
 	dprint(f"phase.frame_counter = {phase.frame_counter}");
 	
-	stream = open(f"dot/{phase.frame_counter}-critical.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-superfical.txt", "w");
 	
 	print("""
 digraph mygraph {
@@ -79,6 +79,14 @@ digraph mygraph {
 	# assert(not "CHECK");
 	
 	exit("return;");
+
+
+
+
+
+
+
+
 
 
 

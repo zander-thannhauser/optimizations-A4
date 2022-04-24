@@ -13,7 +13,6 @@ def load_literal(stuff, literal, out = None):
 	vrtovn = stuff["vrtovn"];
 	avin = stuff["avin"];
 	et = stuff["expression_table"];
-	vnsrcs = stuff["vnsrcs"];
 	
 	exp = constant(value = literal);
 	
@@ -25,7 +24,6 @@ def load_literal(stuff, literal, out = None):
 	if result.valnum not in avin:
 		new = instruction(op = "loadI", ins = [], const = exp.value, out = exp.valnum);
 		dprint(f"new = {new}")
-		vnsrcs[result.valnum] = set([new]);
 		avin.add(result.valnum);
 		ops.append(new);
 	
@@ -43,7 +41,6 @@ def consider(stuff, op, ins, const = None, out = None):
 	vrtovn = stuff["vrtovn"];
 	avin = stuff["avin"];
 	et = stuff["expression_table"];
-	vnsrcs = stuff["vnsrcs"];
 	
 	exp = expression(op = op, ins = ins, const = const);
 	
@@ -55,9 +52,6 @@ def consider(stuff, op, ins, const = None, out = None):
 	if result.valnum not in avin:
 		new = instruction(op = exp.op, ins = exp.ins, const = exp.const, out = exp.valnum);
 		dprint(f"new = {new}")
-		new.subcriticals = set.union(*(vnsrcs[i] for i in exp.ins));
-		dprint(f"new.subcriticals = {[str(s) for s in new.subcriticals]}")
-		vnsrcs[result.valnum] = set([new]);
 		avin.add(result.valnum);
 		ops.append(new);
 	

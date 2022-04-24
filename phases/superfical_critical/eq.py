@@ -1,8 +1,6 @@
 
-def post_dominators_phase_eq(self, other):
+def superfical_critical_phase_eq(self, other):
 	return True \
 		and self.kind == other.kind \
 		and self.block == other.block;
-
-
 

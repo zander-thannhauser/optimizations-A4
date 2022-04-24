@@ -9,62 +9,60 @@ from expression_table.unknown.self    import unknown;
 
 from phases.critical.self import critical_phase;
 
-def critical_phase_process(self, **_):
+def critical_phase_process(self, expression_table, **_):
 	enter(f"critical_phase.process(instruction.id = {self.instruction.id})");
 	
 	todo = [];
 	
-	assert(not "TODO");
+	instruction = self.instruction;
 	
-#	instruction = self.instruction;
-#	
-#	dprint(instruction);
-#	
-#	block = instruction.block;
-#	
-#	instruction.is_critical = True;
-#	
-#	if not block.is_critical:
-#		# push reverse_post_dominance_frontier's jumps:
-#		for split in block.reverse_post_dominance_frontier:
-#			assert(split.jump);
-#			if not split.jump.is_critical:
-#				todo.append(critical_phase(split.jump));
-#				split.jump.is_critical = True;
-#		block.is_critical = True;
-#	
-#	expression_table = block.expression_table;
-#	
-#	for valnum in instruction.ins:
-#		ex = expression_table.vntoex(valnum);
-#		match ex:
-#			case parameter():
-#				pass;
-#			
-#			case unknown():
-#				inst = ex.instruction;
-#				assert(inst);
-#				if not inst.is_critical:
-#					todo.append(critical_phase(inst));
-#					inst.is_critical = True;
-#			
-#			case phi() as p:
-#				if not p.is_critical:
-#					for feeder in p.feeders:
-#						if not feeder.is_critical:
-#							todo.append(critical_phase(feeder));
-#							feeder.is_critical = True;
-#					p.is_critical = True;
-#			
-#			case (constant() | expression()) as ex:
-#				inst = ex.instruction;
-#				assert(inst);
-#				if not inst.is_critical:
-#					todo.append(critical_phase(ex.instruction));
-#					inst.is_critical = True;
-#			
-#			case _:
-#				assert(not "TODO");
+	dprint(f"instruction: {instruction}");
+	
+	block = instruction.block;
+	
+	instruction.is_critical = True;
+	
+	if not block.is_critical:
+		# push reverse_post_dominance_frontier's jumps:
+		for split in block.reverse_post_dominance_frontier:
+			assert(split.new_jump);
+			if not split.new_jump.is_critical:
+				todo.append(critical_phase(split.new_jump));
+				split.new_jump.is_critical = True;
+		block.is_critical = True;
+	
+	for valnum in instruction.ins:
+		ex = expression_table.vntoex(valnum);
+		match ex:
+			case parameter():
+				pass;
+			
+			case phi() as p:
+				if not p.is_critical:
+					for feeder in p.feeders.values():
+						if not feeder.is_critical:
+							todo.append(critical_phase(feeder));
+							feeder.is_critical = True;
+					p.is_critical = True;
+			
+			case (unknown() | constant() | expression()) as ex:
+				finger = block;
+				found = None;
+				
+				while found is None and finger != finger.immediate_dominator:
+					for inst in finger.new_instructions[::-1]:
+						if inst.out == valnum:
+							found = inst;
+					finger = finger.immediate_dominator;
+				
+				assert(found);
+				
+				if not found.is_critical:
+					todo.append(critical_phase(found));
+					found.is_critical = True;
+				
+			case _:
+				assert(not "TODO");
 	
 	exit(f"return {[str(t) for t in todo]}");
 	return todo;

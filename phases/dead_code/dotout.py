@@ -20,53 +20,51 @@ digraph mygraph {
 	
 	node [fontname="Courier New" fontcolor=white color=white];
 	
+	# optimize dotout():
+	
 	""", file = stream);
 	
-	assert(not "TODO");
+	headtails = dict();
 	
-#	drawn_phis = set();
-#	
-#	for vn, param in enumerate(parameters):
-#		param.dotout(stream, vn);
-#	
-#	headtails = dict();
-#	
-#	for block in all_blocks:
-#		for valnum in block.incoming_phis.values():
-#			if valnum not in drawn_phis:
-#				phi = expression_table.vntoex(valnum);
-#				phi.dotout(stream, valnum);
-#				drawn_phis.add(valnum);
-#		
-#		head, tail = None, None;
-#		for inst in block.instructions + ([block.jump] if block.jump else []):
-#			current = inst.newdotout(stream);
-#			if tail:
-#				print(f"""
-#					"{tail}" -> "{current}" [style=bold];
-#				""", file = stream);
-#			else:
-#				head = current;
-#			tail = current;
-#		
-#		if not head:
-#			if block.label:
-#				label = block.label;
-#			else:
-#				label = f"po = {block.po}";
-#			head = label;
-#			tail = label;
-#		
-#		headtails[id(block)] = (head, tail);
-#	
-#	for block in all_blocks:
-#		dprint(f"block.po = {block.po}");
-#		head, tail = headtails[id(block)];
-#		for s in block.successors:
-#			dprint(f"s.po = {s.po}")
-#			print(f"""
-#				"{tail}" -> "{headtails[id(s)][0]}" [color="white:black:white" style=bold];
-#			""", file = stream);
+	drawn = set();
+	
+	for block in all_blocks:
+		
+		for vn in block.incoming_phis.values():
+			if vn not in drawn:
+				phi = expression_table.vntoex(vn);
+				phi.dotout(stream, done = drawn, et = expression_table);
+				drawn.add(vn);
+		
+		head, tail = None, None;
+		
+		for inst in block.new_instructions + ([] if block.new_jump is None else [block.new_jump]):
+			
+			current = inst.newdotout(stream, block, valnum_names = False, draw_lines = False);
+			
+			if tail:
+				print(f"""
+					"{tail}" -> "{current}" [style=bold];
+				""", file = stream);
+			else:
+				head = current;
+			
+			tail = current;
+		
+		if not head:
+			label = f"rpo = {block.rpo}";
+			head = label;
+			tail = label;
+		
+		headtails[id(block)] = (head, tail);
+	
+	for block in all_blocks:
+		head, tail = headtails[id(block)];
+		
+		for s in block.successors:
+			print(f"""
+				"{tail}" -> "{headtails[id(s)][0]}" [color="white:black:white" style=bold];
+			""", file = stream);
 	
 	print("""
 }

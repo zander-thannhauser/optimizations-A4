@@ -11,15 +11,16 @@ def optimize_cbrne_vn(stuff, ivn, volatile, label):
 	
 	et = stuff["expression_table"];
 	
+	ops = stuff["ops"];
+	
 	match (et.vntoex(ivn)):
 		# constant-folding:
 		case constant(value = c):
-			if not c: cbrne = instruction("jumpI", [], label = label);
-			else: cbrne = None;
+			if not c: ops.append(instruction("jumpI", [], label = label));
 		
 		case expression(op = "cmp_LT", ins = [X, Y]) \
 			if X not in volatile and Y not in volatile:
-			cbrne = instruction("cbr_GE", [X, Y], label = label);
+			ops.append(instruction("cbr_GE", [X, Y], label = label));
 		
 		case expression(op = "cmp_LE", ins = [X, Y]) \
 			if X not in volatile and Y not in volatile:
@@ -79,12 +80,6 @@ def optimize_cbrne_vn(stuff, ivn, volatile, label):
 		case iex:
 			# ops.append(instruction("cbrne", [ivn], out, label = label));
 			assert(not "TODO");
-	
-	if cbrne is not None:
-		ops = stuff["ops"];
-		vnsrcs = stuff["vnsrcs"];
-		cbrne.subcriticals = set.union(*(vnsrcs[i] for i in cbrne.ins));
-		ops.append(cbrne);
 	
 	exit("return;");
 	return [];

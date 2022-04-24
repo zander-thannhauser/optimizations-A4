@@ -16,16 +16,18 @@ def optimize_store(ops, vrtovn, ins, out, expression_table, **_):
 	
 	match (expression_table.vntoex(ovn)):
 		# store X, (Y + c) => storeAI X -> Y, c
-		case expression(op = "addI", ins = [X], const = c):
-			store = instruction("storeAI", [ivn, X], const = c);
+		case expression(op = "addI", ins = [Y], const = c):
+			ops.append(instruction("storeAI", [ivn, Y], const = c));
+		
+		# store X, (Y + Z) => storeAO X -> Y, Z
+		case expression(op = "add", ins = [Y, Z]):
+			ops.append(instruction("storeAO", [ivn, Y, Z]));
 		
 		# default:
 		case (oexp):
 			dprint(f"oexp == {oexp}");
 			# store = (Instruction("store", [ivn, ovn], None));
 			assert(not "TODO");
-	
-	ops.append(store);
 	
 	exit("return;");
 
