@@ -41,25 +41,33 @@ digraph mygraph {
 				drawn.add(vn);
 		
 		head, tail = None, None;
-		for inst in block.order_sensitive_instructions \
-			+ ([] if block.new_jump is None else [block.new_jump]):
-			
-			for vn in inst.ins:
-				if vn not in drawn:
-					ex = expression_table.vntoex(vn);
-					ex.dotout(stream, drawn = drawn, et = expression_table);
-					drawn.add(vn);
-			
-			current = inst.newdotout(stream, constraint = True);
-			
-			if tail:
-				print(f"""
-					"{tail}" -> "{current}" [style=bold];
-				""", file = stream);
-			else:
-				head = current;
-			
-			tail = current;
+		
+		if block.new_instructions is None:
+			for inst in block.instructions + ([] if block.jump is None else [block.jump]):
+				
+				current = inst.dotout(stream, block);
+				
+				if tail:
+					print(f"""
+						"{tail}" -> "{current}" [style=bold];
+					""", file = stream);
+				else:
+					head = current;
+				
+				tail = current;
+		else:
+			for inst in block.new_instructions + ([] if block.new_jump is None else [block.new_jump]):
+				
+				current = inst.newdotout(stream, block, draw_lines = False);
+				
+				if tail:
+					print(f"""
+						"{tail}" -> "{current}" [style=bold];
+					""", file = stream);
+				else:
+					head = current;
+				
+				tail = current;
 		
 		if not head:
 			label = f"rpo = {block.rpo}";
@@ -70,6 +78,7 @@ digraph mygraph {
 	
 	for block in all_blocks:
 		head, tail = headtails[id(block)];
+		
 		for s in block.successors:
 			print(f"""
 				"{tail}" -> "{headtails[id(s)][0]}" [color="white:black:white" style=bold];

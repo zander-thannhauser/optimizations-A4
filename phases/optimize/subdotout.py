@@ -3,7 +3,7 @@ from debug import *;
 
 from phases.self import phase;
 
-def optimize_phase_subdotout(self, vrtovn, instruction, order_sensitive_instructions, expression_table):
+def optimize_phase_subdotout(self, vrtovn, avin, inst, new_instructions, expression_table):
 	
 	enter("optimize_phase_subdotout()");
 	
@@ -23,22 +23,21 @@ digraph mygraph {
 	""", file = stream);
 	
 	print(f"""
-		label = "{str(instruction)}";
+		label = "{str(inst)}";
 	""", file = stream);
+	
+	block = self.block;
 	
 	drawn = set();
 	
 	last = None;
 	denominator = expression_table.valcounter;
 	
-	for inst in order_sensitive_instructions:
-		for vn in inst.ins:
-			if vn not in drawn:
-				ex = expression_table.vntoex(vn);
-				ex.dotout(stream, drawn = drawn, et = expression_table);
-				drawn.add(vn);
+	for inst in new_instructions:
+		label = inst.newdotout(stream, block, constraint = True);
 		
-		label = inst.newdotout(stream, constraint = True);
+		if inst.out:
+			drawn.add(inst.out);
 		
 		if last:
 			print(f"""
@@ -52,6 +51,13 @@ digraph mygraph {
 			ex.dotout(stream, drawn = drawn, et = expression_table);
 			drawn.add(vn);
 	
+	for inst in new_instructions:
+		for vn in inst.ins:
+			if vn not in drawn:
+				ex = expression_table.vntoex(vn);
+				ex.dotout(stream, drawn = drawn, et = expression_table);
+				drawn.add(vn);
+	
 	for vr, vn in vrtovn.items():
 		print(f"""
 			"{vn}":s -> "{vr}":n [dir=back];
@@ -60,7 +66,7 @@ digraph mygraph {
 			"{vr}" [
 				label = "{vr}"
 				shape = note
-				{"style=bold" if vr == instruction.out else ""}
+				{"style=filled fontcolor=black" if vr == inst.out else ""}
 			];
 		""", file = stream);
 	

@@ -6,63 +6,40 @@ from expression_table.constant.self import constant;
 
 from debug import *;
 
-def consider_exp(vrtovn, et, op, ins, out = None, const = None):
-	enter(f"consider_exp(op = {op}, ins = {ins}, out = {out}, const = {const})");
+def consider(ops, vrtovn, avin, et, op, ins, const = None, out = None):
+	enter(f"consider_exp(op = {op}, ins = {ins}, const = {const}, out = {out})");
 	
-	assert(not "TODO");
+	exp = expression(op = op, ins = ins, const = const);
 	
-#	exp = expression(op = op, ins = ins, const = const);
-#	
-#	result = et.extovn(exp);
-#	
-#	if out is not None:
-#		vrtovn[out] = result.valnum;
+	result = et.extovn(exp);
 	
-	exit(f"return {result.valnum}")
-	return result.valnum;
-
-
-def consider_multi(vrtovn, et, op, ins, out = None):
-	enter(f"consider_multi(op = {op}, ins = {ins}, out = {out})");
+	if not result.is_new:
+		assert(not "TODO");
 	
-	assert(not "TODO");
+	if result.valnum not in avin:
+		exp.append_instructions(ops, avin, et);
 	
-#	exp = multiplicity(op = op, ins = ins);
-#	
-#	result = et.extovn(exp);
-#	
-#	if out is not None:
-#		vrtovn[out] = result.valnum;
+	if out is not None:
+		vrtovn[out] = result.valnum;
 	
 	exit(f"return {result.valnum}")
 	return result.valnum;
 
-
-def consider_un(vrtovn, et, op, ins, out = None):
-	enter(f"consider_un(op = {op}, ins = {ins}, out = {out})");
-	
-	assert(not "TODO");
-	
-#	exp = unordered(op = op, ins = ins);
-#	
-#	result = et.extovn(exp);
-#	
-#	if out is not None:
-#		vrtovn[out] = result.valnum;
-	
-	exit(f"return {result.valnum}")
-	return result.valnum;
-
-
-def load_literal(vrtovn, et, literal, out = None):
+def load_literal(ops, vrtovn, avin, et, literal, out = None):
 	enter(f"load_literal(literal = {literal}, out = {out})");
 	
-	assert(not "TODO");
+	exp = constant(value = literal);
 	
-#	result = et.extovn(constant(value = literal));
-#	
-#	if out is not None:
-#		vrtovn[out] = result.valnum;
+	result = et.extovn(exp);
+	
+	if not result.is_new:
+		exp = et.vntoex(result.valnum);
+	
+	if result.valnum not in avin:
+		exp.append_instructions(ops, avin, et);
+	
+	if out is not None:
+		vrtovn[out] = result.valnum;
 	
 	exit(f"return {result.valnum};");
 	return result.valnum;

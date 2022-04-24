@@ -4,8 +4,7 @@ from debug import *;
 from expression_table.constant.self import constant;
 from expression_table.expression.self import expression;
 
-from .common import consider_multi;
-from .common import consider_exp;
+from .common import consider;
 from .common import load_literal;
 
 from .mult import optimize_mult_vr;

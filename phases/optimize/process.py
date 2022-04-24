@@ -2,7 +2,6 @@
 from debug import *;
 
 from phases.lost_parent.self import lost_parent_phase;
-from phases.reset_dominators.self import reset_dominators_phase;
 from phases.reset_post_dominators.self import reset_post_dominators_phase;
 from phases.reset_in_out.self import reset_in_out_phase;
 from phases.inheritance.self import inheritance_phase;
@@ -70,133 +69,149 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 	
 	block = self.block;
 	
-	# replace optimize_* functions with A2
-	# pass around vnavail set bewteen blocks, to know what to add.
-	assert(not "TODO");
+	avin = set();
 	
-#	if (block == start):
-#		for parameter in parameters:
-#			vrtovn[parameter.register] = parameter.valnum;
-#	else:
-#		for predecessor in block.predecessors:
-#			if predecessor.vrtovn is not None:
-#				for register, valnum in predecessor.vrtovn.items():
-#					if register not in vrtovn:
-#						dprint(f"inherited {register} => {valnum} from {predecessor}");
-#						vrtovn[register] = valnum;
-#					elif vrtovn[register] is not None and vrtovn[register] != valnum:
-#						dprint(f"conflicting valnum for {register} from {predecessor}");
-#						vrtovn[register] = None;
-#			else:
-#				dprint(f"inherited nothing from {predecessor}");
-#		
-#		# introduce phi nodes entering this block into
-#		# the expression_table:
-#		for register, valnum in block.incoming_phis.items():
-#			dprint(f"inherited {register} => {valnum} from phi nodes");
-#			vrtovn[register] = valnum;
-#		
-#		# process instructions, pushing order_sensitive:
-#		order_sensitive_instructions = [];
-#		
-#		for inst in block.original_instructions:
-#			dprint(inst);
-#			lookup[inst.op](
-#				expression_table = expression_table,
-#				ops = order_sensitive_instructions,
-#				vrtovn = vrtovn,
-#				ins = inst.ins,
-#				out = inst.out,
-#				const = inst.const,
-#				label = inst.label,
-#				id = inst.id);
-#			self.subdotout(vrtovn, inst, order_sensitive_instructions, expression_table);
-#		
-#		volatile = set();
-#		
-#		# generate the i2is, the order they were read in:
-#		for register in block.outs:
-#			if register in block.outgoing_phis:
-#				src_valnum = vrtovn[register];
-#				for dst_valnum in block.outgoing_phis[register]:
-#					dprint(f"register   = {register}")
-#					dprint(f"src_valnum = {src_valnum}")
-#					dprint(f"dst_valnum = {dst_valnum}")
-#					i2i = instruction("i2i", [src_valnum], dst_valnum);
-#					i2i.acting_i2i = True;
-#					dprint(i2i);
-#					phi = expression_table.vntoex(dst_valnum);
-#					phi.feeders[block] = i2i;
-#					order_sensitive_instructions.append(i2i);
-#					volatile.add(dst_valnum);
-#		
-#		if block.jump is not None:
-#			before = block.jump
-#			
-#			jump = [];
-#			
-#			dprint(before);
-#			
-#			lookup[before.op](
-#				expression_table = expression_table,
-#				vrtovn = vrtovn,
-#				ops = jump,
-#				ins = before.ins,
-#				out = before.out,
-#				const = before.const,
-#				label = before.label,
-#				volatile = volatile);
-#			self.subdotout(vrtovn, before, order_sensitive_instructions + jump, expression_table);
-#			
-#			if len(jump):
-#				after, = jump
-#				
-#				dprint(f"before.op, after.op = {before.op, after.op}");
-#				
-#				match (before.op, after.op):
-#					
-#					case _ if before.op == after.op: pass;
-#					
-#					case ('cbr' | 'cbrne', 'cbr_GT' | 'cbr_GE'):
-#						pass;
-#					
-#					case ('cbr', 'storeAI'):
-#						block.jump = None;
-#					
-#					case _: assert(not "TODO");
-#					
-#				block.new_jump = after;
-#			else:
-#				block.jump = None;
-#				block.new_jump = None;
-#			
-#			if block.jump is None:
-#				keep, lose = block.successors;
-#				lose.predecessors.remove(block);
-#				block.successors.remove(lose);
-#				# maybe it's unreachable now?
-#				todo.append(lost_parent_phase(lose));
+	if (block == start):
+		for parameter in parameters:
+			vrtovn[parameter.register] = parameter.valnum;
+			avin.add(parameter.valnum);
+	else:
+		for predecessor in block.predecessors:
+			if predecessor.vrtovn is not None:
+				for register, valnum in predecessor.vrtovn.items():
+					if register not in vrtovn:
+						dprint(f"inherited {register} => {valnum} from {predecessor}");
+						vrtovn[register] = valnum;
+					elif vrtovn[register] is not None and vrtovn[register] != valnum:
+						dprint(f"conflicting valnum for {register} from {predecessor}");
+						vrtovn[register] = None;
+			else:
+				dprint(f"inherited nothing from {predecessor}");
+		
+		avin = set.intersection(*(p.avin for p in block.predecessors if p.avin is not None));
+		
+		dprint(f"avin = {avin}");
+		
+		# introduce phi nodes entering this block into
+		# the expression_table:
+		for register, valnum in block.incoming_phis.items():
+			dprint(f"inherited {register} => {valnum} from phi nodes");
+			vrtovn[register] = valnum;
+		
+		# process instructions, pushing order_sensitive:
+		new_instructions = [];
+		
+		for inst in block.instructions:
+			dprint(inst);
+			lookup[inst.op](
+				ops = new_instructions,
+				vrtovn = vrtovn,
+				avin = avin,
+				id = inst.id,
+				ins = inst.ins,
+				out = inst.out,
+				const = inst.const,
+				label = inst.label,
+				expression_table = expression_table);
+			self.subdotout(vrtovn, avin, inst, new_instructions, expression_table);
+		
+		volatile = set();
+		
+		# generate the i2is, the order they were read in:
+		for register in block.outs:
+			if register in block.outgoing_phis:
+				src_valnum = vrtovn[register];
+				for dst_valnum in block.outgoing_phis[register]:
+					dprint(f"register   = {register}")
+					dprint(f"src_valnum = {src_valnum}")
+					dprint(f"dst_valnum = {dst_valnum}")
+					i2i = instruction("i2i", [src_valnum], dst_valnum);
+					i2i.acting_i2i = True;
+					dprint(i2i);
+					phi = expression_table.vntoex(dst_valnum);
+					phi.feeders[block] = i2i;
+					new_instructions.append(i2i);
+					volatile.add(dst_valnum);
+					self.subdotout(vrtovn, avin, i2i, new_instructions, expression_table);
+		
+		if block.jump is not None:
+			before = block.jump
+			
+			jump = [];
+			
+			dprint(before);
+			
+			lookup[before.op](
+				ops = jump,
+				vrtovn = vrtovn,
+				avin = avin,
+				id = before.id,
+				ins = before.ins,
+				out = before.out,
+				const = before.const,
+				label = before.label,
+				expression_table = expression_table,
+				volatile = volatile);
+			
+			self.subdotout(vrtovn, avin, before, new_instructions + jump, expression_table);
+			
+			if len(jump):
+				after, = jump
+				
+				dprint(f"before.op, after.op = {before.op, after.op}");
+				
+				match (before.op, after.op):
+					
+					case _ if before.op == after.op: pass;
+					
+					case ('cbr' | 'cbrne', 'cbr_GT' | 'cbr_GE'):
+						pass;
+					
+					# always jump:
+					case ('cbr', 'jumpI'):
+						lose, keep = block.successors;
+						block.jump = None;
+					
+					case _: assert(not "TODO");
+					
+				block.new_jump = after;
+			else:
+				# always fallthrough:
+				keep, lose = block.successors;
+				block.jump = None;
+			
+			if block.jump is None:
+				dprint(f"keep, lose = {str(keep), str(lose)}")
+				lose.predecessors.remove(block);
+				block.successors.remove(lose);
+				# maybe it's unreachable now?
+				todo.append(lost_parent_phase(lose));
 #				# for sure it's dominators have changed, reset and redo:
 #				todo.append(reset_dominators_phase(lose));
-#				# same with post-dominators:
-#				todo.append(reset_post_dominators_phase(block));
-#				# the things the parent needs to provide for it's children
-#				# might have changed:
-#				todo.append(reset_in_out_phase(block));
-#				# the things the child can get from it's parent
-#				# might have changed:
-#				todo.append(inheritance_phase(lose));
-#				todo.append(phi_phase(lose));
-#		
-#		block.order_sensitive_instructions = order_sensitive_instructions;
-#	
-#	dprint(f"block.vrtovn = {block.vrtovn}")
-#	dprint(f"vrtovn       = {vrtovn}")
-#	
-#	if block.vrtovn != vrtovn:
-#		for child in block.successors:
-#			todo.append(optimize_phase(child));
-#		block.vrtovn = vrtovn;
+				# same with post-dominators:
+				todo.append(reset_post_dominators_phase(block));
+				# the things the parent needs to provide for it's children
+				# might have changed:
+				todo.append(reset_in_out_phase(block));
+				# the things the child can get from it's parent
+				# might have changed:
+				todo.append(inheritance_phase(lose));
+				todo.append(phi_phase(lose));
+				block.new_jump = None;
+		
+		block.new_instructions = new_instructions;
+	
+	dprint(f"block.vrtovn = {block.vrtovn}")
+	dprint(f"vrtovn       = {vrtovn}")
+	
+	dprint(f"block.avin = {block.avin}")
+	dprint(f"avin       = {avin}")
+	
+	if block.vrtovn != vrtovn or block.avin != avin:
+		for child in block.successors:
+			todo.append(optimize_phase(child));
+		block.vrtovn = vrtovn;
+		block.avin = avin;
 	
 	exit(f"return {[str(t) for t in todo]}");
 	return todo;

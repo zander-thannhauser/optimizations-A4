@@ -1,10 +1,10 @@
 
 from expression_table.self import expression_table;
 
-def instruction_newdotout(self, stream, draw_lines = True, constraint = False):
+def instruction_newdotout(self, stream, block, draw_lines = True, constraint = False):
 	denominators = expression_table.valcounter;
 
-	name  = f"inst_{self.id}";
+	name  = f"{id(block)}_{self.id}";
 	color =  "white";
 	
 	if self.out is not None:
@@ -24,7 +24,7 @@ def instruction_newdotout(self, stream, draw_lines = True, constraint = False):
 				];
 			""", file = stream);
 	
-	if self.const:
+	if self.const is not None:
 		label += f" | {self.const}";
 		
 	if self.out is not None:
@@ -40,12 +40,12 @@ def instruction_newdotout(self, stream, draw_lines = True, constraint = False):
 		];
 	""", file = stream);
 	
-	if self.acting_i2i and draw_lines:
-		print(f"""
-			"{name}":s -> "{self.out}" [
-				color = "{color}"
-			];
-		""", file = stream);
+#	if self.acting_i2i and draw_lines:
+#		print(f"""
+#			"{name}":s -> "{self.out}" [
+#				color = "{color}"
+#			];
+#		""", file = stream);
 	
 	return name;
 

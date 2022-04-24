@@ -5,9 +5,8 @@ from expression_table.constant.self import constant;
 from expression_table.expression.self import expression;
 from expression_table.parameter.self import parameter;
 
-from .common import consider_un;
-from .common import consider_exp;
 from .common import load_literal;
+from .common import consider;
 
 def optimize_not_vr(vrtovn, et, ivn, out = None):
 	enter(f"optimize_not_vr(ivn = {ivn}, out = {out})");

@@ -12,24 +12,13 @@ from read_block import read_block;
 from expression_table.self import expression_table;
 from expression_table.parameter.self import parameter;
 
-# code motion:
 from phases.lost_parent.self           import lost_parent_phase;
-from phases.syntax_lookup.self         import syntax_lookup_phase;
-from phases.available.self             import available_phase;
-from phases.anticipation.self          import anticipation_phase;
-from phases.earliest.self              import earliest_phase;
-from phases.later.self                 import later_phase;
-from phases.insert_delete.self         import insert_delete_phase;
-
-# SSA redundancy elimination:
-from phases.reset_dominators.self      import reset_dominators_phase;
-from phases.dominators.self            import dominators_phase;
 from phases.reset_post_dominators.self import reset_post_dominators_phase;
 from phases.post_dominators.self       import post_dominators_phase;
 from phases.in_out.self                import in_out_phase;
 from phases.inheritance.self           import inheritance_phase;
 from phases.phi.self                   import phi_phase;
-#from phases.optimize.self              import optimize_phase;
+from phases.optimize.self              import optimize_phase;
 
 # dead code removal:
 #from phases.dead_code.self             import dead_code_phase;
@@ -120,20 +109,18 @@ def resolve_references(all_blocks):
 	exit("return;");
 
 def postorder_rank(b, x):
-	print(f"b.po[0] = {b.po[0]}");
-	if b.po[0]: return x;
-	b.po = (1, 0);
+	if b.po: return x;
+	b.po = 1;
 	for c in b.successors: x = postorder_rank(c, x);
-	b.po = (x, 0);
-	print(f"b.po[0] = {b.po[0]}");
+	b.po = x;
 	x += 1;
 	return x;
 
 def reverse_postorder_rank(b, x, n):
-	if b.rpo[0]: return x;
-	b.rpo = (1, 0);
+	if b.rpo: return x;
+	b.rpo = 1;
 	for c in b.predecessors: x = reverse_postorder_rank(c, x, n);
-	b.rpo = (x, 0);
+	b.rpo = x;
 	b.hue = (x - 1) / n;
 	x += 1;
 	return x;
@@ -162,34 +149,22 @@ def process_frame(t, p):
 		# call lost_parent_phase on all blocks:
 		lost_parent_phase(block) for block in all_blocks
 	] + [
-		# Code Motion (A3):
-		syntax_lookup_phase(start), # top-down
-		available_phase(start),     # top-down
-		anticipation_phase(end),    # bottom-up
-		earliest_phase(start),      # top-down
-		later_phase(start),         # top-down
-		insert_delete_phase(start), # top-down
-		
-		# SSA redundancy elimination (A2):
-		reset_dominators_phase(start),    # top-down*
-		dominators_phase(start),          # top-down
-		reset_post_dominators_phase(end), # bottom-up*
-		post_dominators_phase(end),       # bottom-up
 		## reset_in_out_phase(end),       # bottom-up
 		in_out_phase(end),                # bottom-up
 		inheritance_phase(start),         # top-down
 		phi_phase(start),                 # top-down*
-#		optimize_phase(start),            # top-down
+		optimize_phase(start),            # top-down
 		
-		# A3?:
-		# superfical_cruciality(start)
+		reset_post_dominators_phase(end), # bottom-up*
+		post_dominators_phase(end),       # bottom-up
+		
+		# superfical_cruciality(start) # top-down
 		# critical(),  # bottom-up
 			# sort by instruction rpo
 		# dead_code_phase(start),           # top-down*
 		
-		# find all still-alive phis, assign them live-range ids.
+		# find all still alive phis, assign them live-range ids.
 		
-		# A4:
 		## reset live-range in-out # top-down
 		# live-range in-out        # bottom-up
 		# build_interference       # bottom-up
@@ -220,9 +195,9 @@ def process_frame(t, p):
 		"insert": dict(), # (p, s) -> set of instructions
 		
 		"parameters": parameters,
-
-#		"expression_table": et,
-#		
+		
+		"expression_table": et,
+		
 #		
 #		"phis": list(),
 		

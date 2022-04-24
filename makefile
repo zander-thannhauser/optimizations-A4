@@ -25,6 +25,9 @@ dot/inout.mk:
 dot/inheritance.mk:
 	find $(@D) -name '*-inheritance.txt' | sort -V | sed 's/^/inheritance += /;s/.txt$$/.png/' > $@
 
+dot/optimize.mk:
+	find $(@D) -name '*-optimize.txt' | sort -V | sed 's/^/optimize += /;s/.txt$$/.png/' > $@
+
 include dot/all.mk
 include dot/anticipation.mk
 include dot/available.mk
@@ -33,6 +36,7 @@ include dot/dominators.mk
 include dot/postdominators.mk
 include dot/inout.mk
 include dot/inheritance.mk
+include dot/optimize.mk
 
 all: $(alls)
 
@@ -121,6 +125,15 @@ eog-inheritance: $(inheritance)
 
 gimp-inheritance: $(inheritance)
 	gimp $(inheritance)
+
+mpv-optimize: $(optimize)
+	mpv $(optimize)
+
+eog-optimize: $(optimize)
+	eog $(optimize)
+
+gimp-optimize: $(optimize)
+	gimp $(optimize)
 
 
 

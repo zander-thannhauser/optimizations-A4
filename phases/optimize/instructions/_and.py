@@ -3,7 +3,6 @@ from debug import *;
 
 from expression_table.constant.self import constant;
 
-from .common import consider_un;
 from .common import load_literal;
 
 def optimize_and_vr(vrtovn, et, lvn, rvn, out = None):

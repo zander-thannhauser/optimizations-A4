@@ -3,15 +3,13 @@ from debug import *;
 
 from instruction.self import instruction;
 
-def optimize_iwrite(ops, vrtovn, ins, out, expression_table, label, **_):
-	enter(f"optimize_iwrite(ins = {ins}, out = {out})");
+def optimize_iwrite(ops, vrtovn, ins, label, **_):
+	enter(f"optimize_iwrite(ins = {ins})");
 	
-	assert(not "TODO");
+	ivn = vrtovn[ins[0]];
 	
-#	ivn = vrtovn[ins[0]];
-#	
-#	iwrite = instruction("iwrite", [ivn]);
-#	
-#	ops.append(iwrite);
-#	
+	iwrite = instruction("iwrite", [ivn]);
+	
+	ops.append(iwrite);
+	
 	exit("return");

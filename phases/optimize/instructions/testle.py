@@ -5,7 +5,7 @@ from expression_table.constant.self import constant;
 from expression_table.expression.self import expression;
 
 from .common import load_literal;
-from .common import consider_exp;
+from .common import consider;
 
 def optimize_testle_vr(vrtovn, et, ivn, out = None):
 	enter(f"optimize_testle_vr(ivn = {ivn}, out = {out})");
