@@ -4,7 +4,7 @@ default: all
 
 .PRECIOUS: dot/%.png
 
-dot/%.png: dot/%.txt
+dot/%.png: dot/%.dot
 	dot -Tpng < $< > $@
 
 eog-%: dot/%.png
@@ -18,7 +18,7 @@ gimp-%: dot/%.png
 
 
 dot/all.mk:
-	find $(@D) -name '*.txt' | sort -V | sed 's/^/alls += /;s/.txt$$/.png/' > $@
+	find $(@D) -name '*.dot' | sort -V | sed 's/^/alls += /;s/.dot$$/.png/' > $@
 
 include dot/all.mk
 
@@ -35,7 +35,7 @@ mpv-all: $(alls)
 
 
 dot/critical.mk:
-	find $(@D) -name '*-critical.txt' | sort -V | sed 's/^/critical += /;s/.txt$$/.png/' > $@
+	find $(@D) -name '*-critical.dot' | sort -V | sed 's/^/critical += /;s/.dot$$/.png/' > $@
 
 include dot/critical.mk
 
@@ -51,7 +51,7 @@ gimp-critical: $(critical)
 
 
 dot/valnum_singleton_sets.mk:
-	find $(@D) -name '*-valnum_singleton_sets.txt' | sort -V | sed 's/^/valnum_singleton_sets += /;s/.txt$$/.png/' > $@
+	find $(@D) -name '*-valnum_singleton_sets.dot' | sort -V | sed 's/^/valnum_singleton_sets += /;s/.dot$$/.png/' > $@
 
 include dot/valnum_singleton_sets.mk
 
@@ -67,7 +67,7 @@ gimp-valnum_singleton_sets: $(valnum_singleton_sets)
 
 
 dot/union_valnum_sets.mk:
-	find $(@D) -name '*-union_valnum_sets.txt' | sort -V | sed 's/^/union_valnum_sets += /;s/.txt$$/.png/' > $@
+	find $(@D) -name '*-union_valnum_sets.dot' | sort -V | sed 's/^/union_valnum_sets += /;s/.dot$$/.png/' > $@
 
 include dot/union_valnum_sets.mk
 
@@ -82,7 +82,7 @@ gimp-union_valnum_sets: $(union_valnum_sets)
 
 
 dot/rename_valnums_to_liveids.mk:
-	find $(@D) -name '*-rename_valnums_to_liveids.txt' | sort -V | sed 's/^/rename_valnums_to_liveids += /;s/.txt$$/.png/' > $@
+	find $(@D) -name '*-rename_valnums_to_liveids.dot' | sort -V | sed 's/^/rename_valnums_to_liveids += /;s/.dot$$/.png/' > $@
 
 include dot/rename_valnums_to_liveids.mk
 
@@ -98,7 +98,7 @@ gimp-rename_valnums_to_liveids: $(rename_valnums_to_liveids)
 
 
 dot/liveinout.mk:
-	find $(@D) -name '*-liveinout.txt' | sort -V | sed 's/^/liveinout += /;s/.txt$$/.png/' > $@
+	find $(@D) -name '*-liveinout.dot' | sort -V | sed 's/^/liveinout += /;s/.dot$$/.png/' > $@
 
 include dot/liveinout.mk
 
@@ -110,6 +110,36 @@ eog-liveinout: $(liveinout)
 
 gimp-liveinout: $(liveinout)
 	gimp $(liveinout)
+
+
+dot/live_inheritance.mk:
+	find $(@D) -name '*-live_inheritance.dot' | sort -V | sed 's/^/live_inheritance += /;s/.dot$$/.png/' > $@
+
+include dot/live_inheritance.mk
+
+mpv-live_inheritance: $(live_inheritance)
+	mpv $(live_inheritance)
+
+eog-live_inheritance: $(live_inheritance)
+	eog $(live_inheritance)
+
+gimp-live_inheritance: $(live_inheritance)
+	gimp $(live_inheritance)
+
+
+dot/live_instances.mk:
+	find $(@D) -name '*-live_instances.dot' | sort -V | sed 's/^/live_instances += /;s/.dot$$/.png/' > $@
+
+include dot/live_instances.mk
+
+mpv-live_instances: $(live_instances)
+	mpv $(live_instances)
+
+eog-live_instances: $(live_instances)
+	eog $(live_instances)
+
+gimp-live_instances: $(live_instances)
+	gimp $(live_instances)
 
 
 

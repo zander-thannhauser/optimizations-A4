@@ -1,7 +1,7 @@
 
-def instruction_newerdotout(self, stream, block, denominator):
+def instruction_newerdotout(self, stream, denominator):
 
-	name  = f"{id(block)}_{self.id}";
+	name  = f"{id(self)}";
 	color =  "white";
 	
 	if self.out is not None:

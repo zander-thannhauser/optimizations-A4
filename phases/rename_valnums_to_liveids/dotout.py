@@ -9,7 +9,7 @@ def rename_valnums_to_liveids_phase_dotout(self, all_blocks, vnsets_to_liveid, *
 	
 	dprint(f"phase.frame_counter = {phase.frame_counter}");
 	
-	stream = open(f"dot/{phase.frame_counter}-rename_valnums_to_liveids.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-rename_valnums_to_liveids.dot", "w");
 	
 	print("""
 digraph mygraph {
@@ -34,7 +34,7 @@ digraph mygraph {
 		
 		for inst in block.newer_instructions + ([] if block.newer_jump is None else [block.newer_jump]):
 			
-			current = inst.newerdotout(stream, block, denominator);
+			current = inst.newerdotout(stream, denominator);
 			
 			if tail:
 				print(f"""

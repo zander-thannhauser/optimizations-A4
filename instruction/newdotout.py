@@ -1,10 +1,10 @@
 
 from expression_table.self import expression_table;
 
-def instruction_newdotout(self, stream, block, valnum_names = True, draw_lines = True, constraint = False):
+def instruction_newdotout(self, stream, valnum_names = True, draw_lines = True, constraint = False):
 	denominators = expression_table.valcounter;
 
-	name  = f"{id(block)}_{self.id}";
+	name  = f"{id(self)}";
 	color =  "white";
 	
 	if self.out is not None:

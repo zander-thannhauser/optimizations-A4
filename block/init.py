@@ -63,8 +63,14 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	
 	# live_in_out:
 	self.live_ins = None;
-	self.live_outs = set();
-
+	self.live_outs = dict();
+	
+	# live_inheritance:
+	self.live_given = None;
+	
+	# live_instances:
+	self.liveout = None;
+	
 
 
 

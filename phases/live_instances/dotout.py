@@ -3,13 +3,13 @@ from debug import *;
 
 from phases.self import phase;
 
-def superfical_critical_phase_dotout(self, all_blocks, expression_table, **_):
+def live_instances_phase_dotout(self, all_blocks, all_liveranges, vnsets_to_liveid, **_):
 	
-	enter("superfical_critical.dotout()");
+	enter("live_instances.dotout()");
 	
 	dprint(f"phase.frame_counter = {phase.frame_counter}");
 	
-	stream = open(f"dot/{phase.frame_counter}-superfical.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-live_instances.dot", "w");
 	
 	print("""
 digraph mygraph {
@@ -22,27 +22,19 @@ digraph mygraph {
 	
 	node [fontname="Courier New" fontcolor=white color=white];
 	
-	# optimize dotout():
-	
 	""", file = stream);
 	
 	headtails = dict();
 	
-	drawn = set();
+	denominator = vnsets_to_liveid["next"]
 	
 	for block in all_blocks:
 		
-		for vn in block.incoming_phis.values():
-			if vn not in drawn:
-				phi = expression_table.vntoex(vn);
-				phi.dotout(stream, done = drawn, et = expression_table);
-				drawn.add(vn);
-		
 		head, tail = None, None;
 		
-		for inst in block.new_instructions + ([] if block.new_jump is None else [block.new_jump]):
+		for inst in block.newer_instructions + ([] if block.newer_jump is None else [block.newer_jump]):
 			
-			current = inst.newdotout(stream, valnum_names = False, draw_lines = False);
+			current = inst.newerdotout(stream, denominator);
 			
 			if tail:
 				print(f"""
@@ -52,11 +44,6 @@ digraph mygraph {
 				head = current;
 			
 			tail = current;
-		
-		if not head:
-			label = f"rpo = {block.rpo}";
-			head = label;
-			tail = label;
 		
 		headtails[id(block)] = (head, tail);
 	
@@ -68,6 +55,20 @@ digraph mygraph {
 				"{tail}" -> "{headtails[id(s)][0]}" [color="white:black:white" style=bold];
 			""", file = stream);
 	
+	for liverange in all_liveranges:
+		liverange.dotout(stream, denominator);
+	
+	for liveid, liverange in self.block.liveout.items():
+		print(f"""
+			"{liveid}" [
+				shape = note
+				label = "%lr{liveid}"
+			];
+			"{id(liverange)}" -> "{liveid}" [
+				dir = back
+			];
+		""", file = stream);
+	
 	print("""
 }
 	""", file = stream);
@@ -75,8 +76,6 @@ digraph mygraph {
 	stream.close();
 	
 	phase.frame_counter += 1;
-	
-	# assert(not "CHECK");
 	
 	exit("return;");
 

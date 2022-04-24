@@ -28,7 +28,9 @@ from phases.valnum_singleton_sets.self     import valnum_singleton_sets_phase;
 from phases.union_valnum_sets.self         import union_valnum_sets_phase;
 from phases.rename_valnums_to_liveids.self import rename_valnums_to_liveids_phase;
 
-from phases.live_in_out.self import live_in_out_phase;
+from phases.live_in_out.self      import live_in_out_phase;
+from phases.live_inheritance.self import live_inheritance_phase;
+from phases.live_instances.self   import live_instances_phase;
 
 # dead code removal:
 #from phases.dead_code.self             import dead_code_phase;
@@ -192,19 +194,19 @@ def process_frame(t, p):
 		live_in_out_phase(end), # bottom-up:
 			# ids used but not defined in this block
 			# ids defined and set([last instruction that defined it])
-		
-		# top-down: live inheritance:
-			# all definers need to have unique number
 			# defines -> set of unique numbers (instruction id?)
 				# (initalized to singltions)
+		
+		live_inheritance_phase(start), # top-down:
 			# pass downwards a set of live-range id -> set of definers
 			# every live-in:
 				# if there's more than one definer:
 					# union all their definers-sets together
 					# update the mapping
-			# every new define resets the downwards-dict:
+			# every live-out:
+				# sets the downwards-dict make to the singleton
 		
-		# top-down*: live_instances
+		live_instances_phase(start), # top-down*:
 			# create dict(): define-sets -> liverange instances
 			# for every instruction:
 				# if it's a usage:
@@ -257,7 +259,11 @@ def process_frame(t, p):
 			"next": 0
 		},
 		
+		"defineset_to_liverange": dict(), # set of instructions -> liverange
+		
 		"phis": set(), # phi expressions
+		
+		"all_liveranges": set(),
 		
 		"phase_counters": {
 			"superfical-critical": 1,

@@ -22,9 +22,9 @@ def live_in_out_phase_process(self, all_blocks, parameters, **_):
 		# I'm the start block
 		# so I should look like I produce the parameter's registers:
 		
-		outs = [p.liveid for p in parameters];
-		
-		ins.difference_update(outs);
+		for p in parameters:
+			outs[p.liveid] = None;
+			ins.discard(p.liveid);
 		
 		if len(ins):
 			dprint(f"ins = {ins}")
@@ -41,8 +41,10 @@ def live_in_out_phase_process(self, all_blocks, parameters, **_):
 			dprint(f"inst = {inst}");
 			
 			# is it publishing something?
-			if inst.out is not None and inst.out not in outs:
-				outs[inst.out] = inst;
+			if inst.out is not None:
+				inst.define_set = set([inst]);
+				if inst.out not in outs:
+					outs[inst.out] = inst;
 			
 			ins.discard(inst.out);
 			ins.update(inst.ins);

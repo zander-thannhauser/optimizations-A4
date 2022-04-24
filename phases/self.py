@@ -25,6 +25,8 @@ class phase:
 	RENAME_VALNUMS_TO_LIVEIDS = 16;
 	# while changed:
 	LIVE_IN_OUT               = 17;
+	LIVE_INHERITANCE          = 18;
+	LIVE_INSTANCES            = 19;
 	
 
 from .init import phase_init;

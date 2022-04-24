@@ -34,6 +34,7 @@ def rename_valnums_to_liveids_phase_process(self, start, parameters, valnum_to_v
 			ins = [get_id(p) for p in inst.ins], \
 			const = inst.const, \
 			out = (None if inst.out is None else get_id(inst.out)));
+		new.block = block;
 		newer_instructions.append(new);
 	
 	block.newer_instructions = newer_instructions;
@@ -44,6 +45,7 @@ def rename_valnums_to_liveids_phase_process(self, start, parameters, valnum_to_v
 			op = inst.op, \
 			ins = [get_id(p) for p in inst.ins], \
 			label = inst.label);
+		new.block = block;
 		block.newer_jump = new;
 	
 	block.phase_counters["rename_valnums_to_liveids"] = phase_counters["rename_valnums_to_liveids"]
