@@ -45,6 +45,11 @@ digraph mygraph {
 			
 			tail = current;
 		
+		if not head:
+			label = f"rpo = {block.rpo}";
+			head = label;
+			tail = label;
+		
 		headtails[id(block)] = (head, tail);
 	
 	for block in all_blocks:
@@ -52,22 +57,25 @@ digraph mygraph {
 		
 		for s in block.successors:
 			print(f"""
-				"{tail}" -> "{headtails[id(s)][0]}" [color="white:black:white" style=bold];
+				"{tail}" -> "{headtails[id(s)][0]}" [
+					color = "white:black:white"
+					style = bold
+				];
 			""", file = stream);
 	
 	for liverange in all_liveranges:
 		liverange.dotout(stream, denominator);
 	
-	for liveid, liverange in self.block.liveout.items():
-		print(f"""
-			"{liveid}" [
-				shape = note
-				label = "%lr{liveid}"
-			];
-			"{id(liverange)}" -> "{liveid}" [
-				dir = back
-			];
-		""", file = stream);
+#	for liveid, liverange in self.block.liveout.items():
+#		print(f"""
+#			"{liveid}" [
+#				shape = note
+#				label = "%lr{liveid}"
+#			];
+#			"{id(liverange)}" -> "{liveid}" [
+#				dir = back
+#			];
+#		""", file = stream);
 	
 	print("""
 }

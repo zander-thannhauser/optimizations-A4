@@ -1,35 +1,40 @@
 
 def liverange_dotout(self, stream, denominator):
 	
-	name = id(self);
-	
 #	label = f"Φ"
 	label = f"%lr{self.liveid}"
 #	label = f"{self.liveid}, {self.instance_id}"
 	
+	o, c = '{', '}';
+	
 	hue = self.liveid / denominator;
 	
-	print(f"""
-		"{name}" [
-			shape = circle
-			label = "{label}"
-			color = "{hue} 1 1"
-		];
-	""", file = stream);
+	last = None;
 	
-	for definer in self.definers:
+	for i, inst in enumerate(sorted(set.union(self.definers, self.users))):
+		name = f"{id(self)}_{i}";
+		
 		print(f"""
-			"{id(definer)}" -> "{name}" [
+			"{name}" [
+				shape = {"doublecircle" if inst in self.definers else "circle"}
+				label = "{label}"
 				color = "{hue} 1 1"
 			];
+			
+			{o}
+				rank = same;
+				"{id(inst)}"; "{name}";
+			{c}
 		""", file = stream);
 		
-	for user in self.users:
-		print(f"""
-			"{name}" -> "{id(user)}" [
-				color = "{hue} 1 1"
-			];
-		""", file = stream);
+		if last is not None:
+			print(f"""
+				"{last}" -> "{name}" [
+					dir = none
+				];
+			""", file = stream);
+			
+		last = name;
 	
 	
 

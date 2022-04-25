@@ -38,7 +38,9 @@ digraph mygraph {
 			
 			if tail:
 				print(f"""
-					"{tail}" -> "{current}" [style=bold];
+					"{tail}" -> "{current}" [
+						style = bold
+					];
 				""", file = stream);
 			else:
 				head = current;
@@ -52,7 +54,10 @@ digraph mygraph {
 		
 		for s in block.successors:
 			print(f"""
-				"{tail}" -> "{headtails[id(s)][0]}" [color="white:black:white" style=bold];
+				"{tail}" -> "{headtails[id(s)][0]}" [
+					color = "white:black:white"
+					style = bold
+				];
 			""", file = stream);
 	
 	if fillme is not None:
