@@ -34,6 +34,7 @@ from phases.live_in_out.self        import live_in_out_phase;
 from phases.live_inheritance.self   import live_inheritance_phase;
 from phases.live_instances.self     import live_instances_phase;
 from phases.build_interference.self import build_interference_phase;
+from phases.remove_i2is.self        import remove_i2is_phase;
 
 # dead code removal:
 #from phases.dead_code.self             import dead_code_phase;
@@ -140,6 +141,50 @@ def reverse_postorder_rank(b, x, n):
 	x += 1;
 	return x;
 
+def print_asm(block, p):
+	enter(f"print_asm(block.rpo = {block.rpo})");
+	
+	p.comment("block.rpo = %s:", block.rpo);
+	
+	if block.label and block.label != ".return":
+		p.printf("%s:", block.label, prefix = "");
+	
+	for inst in block.newest_instructions:
+		inst.print(p);
+	
+	if block.newest_jump is not None:
+		block.newest_jump.print(p);
+	
+	for i, child in enumerate(block.successors):
+		
+		dprint(f"children[{i}] = {child}");
+		
+		match (i, child.phase_counters.get("printed-assembly", 0)):
+			
+			# fallthrough child, assembly already printed
+			case (0, 1):
+				assert(child.label);
+				if child.label == ".return":
+					p.printf("ret");
+				else:
+					p.printf("jumpI -> %s", child.label);
+			
+			# not fallthrough, assembly already printed
+			case (_, 1):
+				# this block's jump will already go there
+				pass;
+			
+			# any child with assembly that has yet to print:
+			case (_, 0):
+				child.phase_counters["printed-assembly"] = 1;
+				print_asm(child, p);
+			
+			case conditions:
+				dprint(f"conditions = {conditions}");
+				assert(not "TODO");
+	
+	exit("return;");
+
 def process_frame(t, p):
 	
 	enter("process_frame");
@@ -233,16 +278,24 @@ def process_frame(t, p):
 				# if you see a usage:
 					# introduce instance into mapping
 		
-		## calculate_cost_phase(liverange), # top-down*:
+		## calculate_cost_phase(liverange), # top-down*
 		
-		# allocate_register(liverange), # expensive-cheap:
+		## allocate_register(liverange), # expensive-cheap:
 			# otherwise: push to spill-over phase
 		
-		# spill-over phase:
+		## spill-over phase: # expensive-cheap:
 			# given a live-range, insert loads and stores
 			# invoke live-range in/out reset on start again.
 		
+		## liveids_to_register_phase(liverange) # top-down*
+			# registers should take the form: f"%vr{}"
+			# to avoid confusion with other live ranges
+		
+		remove_i2is_phase(start), # top-down:
+			# only the ones that say: `i2i same => same`
 	];
+	
+	all_liveranges = set();
 	
 	args = {
 		"all_blocks": all_blocks,
@@ -259,16 +312,14 @@ def process_frame(t, p):
 		
 		"vnsets_to_liveid": {
 			# set of valnums -> live id (integer)
-			"next": 0
+			"next": 0,
 		},
 		
 		"defineset_to_liverange": dict(), # set of instructions -> liverange
 		
 		"phis": set(), # phi expressions
 		
-		"all_liveranges": set(),
-		
-		# a: set([b, c]), b: set([a, c]), c: set([a, b]);
+		"all_liveranges": all_liveranges,
 		
 		"interference": set(),
 		
@@ -282,6 +333,7 @@ def process_frame(t, p):
 			"union_valnum_sets": 1,
 			"rename_valnums_to_liveids": 1,
 			"build_interference": 1,
+			"remove_i2is": 1,
 		},
 	};
 	
@@ -297,12 +349,9 @@ def process_frame(t, p):
 			if me not in todo:
 				heappush(todo, me);
 	
-#	assert(not "rename to finalized liveranges");
-#	assert(not "remove `i2i same => same`");
-	
-#	p.indent();
-#	print_asm(start, p);
-#	p.unindent();
+	p.indent();
+	print_asm(start, p);
+	p.unindent();
 	
 	exit("process_frame");
 	

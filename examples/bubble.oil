@@ -9,3 +9,84 @@
 	   .string  .string_rformat, "%s"
 .text
 	.frame main, 64 
+		# block.rpo = 1:
+		.frame:
+		# block.rpo = 2:
+		  loadI 32 => %vr1
+		  loadI 1 => %vr10
+		  storeAI %vr1 => %vr0, -4
+		  loadI 11 => %vr2
+		  storeAI %vr2 => %vr0, -8
+		  loadI 111 => %vr1
+		  storeAI %vr1 => %vr0, -12
+		  loadI 88 => %vr1
+		  storeAI %vr1 => %vr0, -16
+		  storeAI %vr2 => %vr0, -20
+		  loadI 44 => %vr1
+		  storeAI %vr1 => %vr0, -24
+		  loadI 33 => %vr1
+		  storeAI %vr1 => %vr0, -28
+		  storeAI %vr1 => %vr0, -32
+		  loadI 22 => %vr1
+		  storeAI %vr1 => %vr0, -36
+		  loadI 77 => %vr1
+		  storeAI %vr1 => %vr0, -40
+		  loadI 45 => %vr1
+		  storeAI %vr1 => %vr0, -44
+		  loadI 65 => %vr1
+		  storeAI %vr1 => %vr0, -48
+		  loadI 76 => %vr1
+		  loadI 13 => %vr9
+		  storeAI %vr1 => %vr0, -52
+		  loadI 87 => %vr1
+		  loadI 14 => %vr5
+		  storeAI %vr1 => %vr0, -56
+		  loadI 34 => %vr1
+		  storeAI %vr1 => %vr0, -60
+		  i2i %vr10 -> %vr6
+		# block.rpo = 3:
+		.L1:
+		  addI %vr6, 1 -> %vr8
+		  i2i %vr6 -> %vr4
+		  i2i %vr8 -> %vr2
+		  cbr_GT %vr6, %vr5 -> .L2
+		# block.rpo = 4:
+		.L3:
+		  multI %vr2, -4 -> %vr1
+		  loadAO %vr0, %vr1 => %vr3
+		  multI %vr4, -4 -> %vr1
+		  loadAO %vr0, %vr1 => %vr1
+		  cbr_GE %vr3, %vr1 -> .L4
+		# block.rpo = 5:
+		  i2i %vr2 -> %vr4
+		# block.rpo = 6:
+		.L4:
+		  addI %vr2, 1 -> %vr3
+		  cmp_LE %vr2, %vr5 => %vr1
+		  i2i %vr3 -> %vr2
+		  cbr %vr1 -> .L3
+		# block.rpo = 7:
+		.L2:
+		  multI %vr6, -4 -> %vr3
+		  loadAO %vr0, %vr3 => %vr7
+		  multI %vr4, -4 -> %vr2
+		  loadAO %vr0, %vr2 => %vr1
+		  storeAI %vr1 => %vr0, %vr3
+		  storeAI %vr7 => %vr0, %vr2
+		  cmp_LE %vr6, %vr9 => %vr1
+		  i2i %vr8 -> %vr6
+		  cbr %vr1 -> .L1
+		# block.rpo = 8:
+		.L0:
+		  i2i %vr10 -> %vr2
+		# block.rpo = 9:
+		.L6:
+		  multI %vr2, -4 -> %vr1
+		  loadAO %vr0, %vr1 => %vr1
+		  iwrite %vr1
+		  addI %vr2, 1 -> %vr1
+		  cmp_LE %vr2, %vr5 => %vr3
+		  i2i %vr1 -> %vr2
+		  cbr %vr3 -> .L6
+		# block.rpo = 11:
+		  ret

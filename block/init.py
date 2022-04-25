@@ -23,6 +23,7 @@ def block_init(self, label, instructions, children_labels, jump = None):
 		"union_valnum_sets": 0,
 		"rename_valnums_to_liveids": 0,
 		"build_interference": 0,
+		"remove_i2is": 0,
 	}
 	
 	# lost_parent phase:
@@ -77,6 +78,10 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	self.liveout = None;
 	
 	# build_interference:
+	
+	# remove i2is:
+	self.newest_instructions = [];
+	self.newest_jump = None;
 
 
 

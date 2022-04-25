@@ -11,7 +11,7 @@ def calculate_cost_phase_process(self, interference, **_):
 	
 	cost = 0;
 	
-	if lr.liveid == 0:
+	if lr.liveid in [0, 1]:
 		cost = float('inf');
 	
 	if (len(lr.definers), len(lr.users)) == (1, 1):
@@ -27,7 +27,7 @@ def calculate_cost_phase_process(self, interference, **_):
 				user_index = len(block.newer_instructions);
 			dprint(f"definer_index, user_index = {definer_index, user_index}")
 			if definer_index + 1 == user_index:
-				cost = float('inf');
+				cost = 1000000;
 	
 	for inst in set.union(lr.definers, lr.users):
 		block = inst.block;

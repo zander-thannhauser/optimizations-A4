@@ -212,6 +212,40 @@ gimp-allocate_register: $(allocate_register)
 
 
 
+dot/liveids_to_register.mk:
+	find $(@D) -name '*-liveids_to_register.dot' | sort -V | sed 's/^/liveids_to_register += /;s/.dot$$/.png/' > $@
+
+include dot/liveids_to_register.mk
+
+mpv-liveids_to_register: $(liveids_to_register)
+	mpv $(liveids_to_register)
+
+eog-liveids_to_register: $(liveids_to_register)
+	eog $(liveids_to_register)
+
+gimp-liveids_to_register: $(liveids_to_register)
+	gimp $(liveids_to_register)
+
+
+
+
+dot/remove_i2is.mk:
+	find $(@D) -name '*-remove_i2is.dot' | sort -V | sed 's/^/remove_i2is += /;s/.dot$$/.png/' > $@
+
+include dot/remove_i2is.mk
+
+mpv-remove_i2is: $(remove_i2is)
+	mpv $(remove_i2is)
+
+eog-remove_i2is: $(remove_i2is)
+	eog $(remove_i2is)
+
+gimp-remove_i2is: $(remove_i2is)
+	gimp $(remove_i2is)
+
+
+
+
 
 
 

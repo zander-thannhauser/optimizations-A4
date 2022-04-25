@@ -33,6 +33,8 @@ class phase:
 	CALCULATE_COST            = 22;
 	ALLOCATE_REGISTER         = 23;
 	# while (spill);
+	LIVEIDS_TO_REGISTER       = 24;
+	REMOVE_I2IS               = 25;
 
 from .init import phase_init;
 

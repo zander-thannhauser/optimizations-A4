@@ -2,6 +2,7 @@
 from debug import *;
 
 from phases.allocate_register.self import allocate_register_phase;
+from phases.liveids_to_register.self import liveids_to_register_phase;
 
 def allocate_register_phase_process(self, num_registers, interference, **_):
 	enter(f"allocate_register.process(self.liverange = {self.liverange})");
@@ -28,6 +29,7 @@ def allocate_register_phase_process(self, num_registers, interference, **_):
 	
 	if len(available):
 		lr.register = min(available);
+		todo.append(liveids_to_register_phase(lr));
 	else:
 		assert(not "TODO");
 	
