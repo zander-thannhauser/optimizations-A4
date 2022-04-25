@@ -56,7 +56,9 @@ def read_block(t):
 			
 			# loadI
 			case "loadI":
-				const = int(t.token); t.next();
+				try: const = int(t.token);
+				except ValueError: const = t.token;
+				t.next();
 				assert(t.token == "=>"); t.next();
 				out = t.token; t.next();
 				dprint(out);

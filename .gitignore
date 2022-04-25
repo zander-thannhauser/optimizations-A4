@@ -1,4 +1,5 @@
 *.pdf
+interpreter
 __pycache__/
 dot/
 junk/

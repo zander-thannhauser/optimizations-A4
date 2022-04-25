@@ -69,7 +69,7 @@ def setup_start_block(t, p, et):
 	p.printf(".frame %s, %s %s", name, framesize, \
 		"".join(f", %vr{vn}" for vn in vn_args[4:]), prefix = "");
 	
-	start = block(".frame", [], ["(fallthrough)"]);
+	start = block("", [], ["(fallthrough)"]);
 	
 	start.vn_args = vn_args;
 	

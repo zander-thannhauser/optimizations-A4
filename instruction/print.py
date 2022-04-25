@@ -39,7 +39,7 @@ def instruction_print(self, p):
 			p.printf("storeAI %s => %s, %s", *self.ins, self.const);
 		
 		case "storeAO":
-			p.printf("storeAI %s => %s, %s", *self.ins);
+			p.printf("storeAO %s => %s, %s", *self.ins);
 		
 #		# calls:
 #		case "call":

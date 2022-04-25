@@ -10,7 +10,6 @@
 .text
 	.frame main, 64 
 		# block.rpo = 1:
-		.frame:
 		# block.rpo = 2:
 		  loadI 32 => %vr1
 		  loadI 1 => %vr10
@@ -71,8 +70,8 @@
 		  loadAO %vr0, %vr3 => %vr7
 		  multI %vr4, -4 -> %vr2
 		  loadAO %vr0, %vr2 => %vr1
-		  storeAI %vr1 => %vr0, %vr3
-		  storeAI %vr7 => %vr0, %vr2
+		  storeAO %vr1 => %vr0, %vr3
+		  storeAO %vr7 => %vr0, %vr2
 		  cmp_LE %vr6, %vr9 => %vr1
 		  i2i %vr8 -> %vr6
 		  cbr %vr1 -> .L1
