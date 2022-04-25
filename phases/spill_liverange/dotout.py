@@ -3,13 +3,13 @@ from debug import *;
 
 from phases.self import phase;
 
-def live_instances_phase_dotout(self, all_blocks, all_liveranges, vnsets_to_liveid, **_):
+def spill_liverange_phase_dotout(self, all_blocks, **_):
 	
-	enter("live_instances.dotout()");
+	enter("spill_liverange.dotout()");
 	
 	dprint(f"phase.frame_counter = {phase.frame_counter}");
 	
-	stream = open(f"dot/{phase.frame_counter}-live_instances.dot", "w");
+	stream = open(f"dot/{phase.frame_counter}-spill_liverange.dot", "w");
 	
 	print("""
 digraph mygraph {
@@ -25,8 +25,6 @@ digraph mygraph {
 	""", file = stream);
 	
 	headtails = dict();
-	
-	denominator = vnsets_to_liveid["next"]
 	
 	for block in all_blocks:
 		
@@ -62,9 +60,6 @@ digraph mygraph {
 					style = bold
 				];
 			""", file = stream);
-	
-	for liverange in all_liveranges:
-		liverange.dotout(stream, denominator);
 	
 	print("""
 }

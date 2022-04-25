@@ -7,7 +7,7 @@ def in_out_phase_dotout(self, all_blocks, **_):
 	
 	enter("in_out_phase_dotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}-inout.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-inout.dot", "w");
 	
 	print("""
 digraph mygraph {

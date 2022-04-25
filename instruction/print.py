@@ -24,7 +24,7 @@ def instruction_print(self, p):
 			p.printf("%s %s -> %s", self.op, self.ins[0], self.out);
 		
 		# 1 in, 1 constant, 1 out
-		case "addI" | "multI":
+		case "addI" | "multI" | "loadAI":
 			p.printf("%s %s, %s -> %s", self.op, self.ins[0], self.const, self.out);
 		
 		# 2 ins, 1 out:

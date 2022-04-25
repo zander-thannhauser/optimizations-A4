@@ -18,7 +18,7 @@ def liveids_to_register_phase_process(self, all_liveranges, **_):
 			assert(lr.liveid in u.ins);
 			u.ins[u.ins.index(lr.liveid)] = f"%vr{lr.register}";
 	else:
-		assert(not "TODO");
+		dprint(f"old liverange, ignoring...")
 	
 	exit(f"return");
 	return [];

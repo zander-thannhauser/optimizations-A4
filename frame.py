@@ -48,7 +48,7 @@ def setup_start_block(t, p, et):
 	
 	name = next(t);
 	assert(next(t) == ',');
-	framesize = next(t);
+	framesize = int(next(t));
 	
 	vr_args = [];
 	vn_args = [];
@@ -66,14 +66,11 @@ def setup_start_block(t, p, et):
 		vn_args.append(valnum);
 		parameters.append(param);
 	
-	p.printf(".frame %s, %s %s", name, framesize, \
-		"".join(f", %vr{vn}" for vn in vn_args[4:]), prefix = "");
-	
 	start = block("", [], ["(fallthrough)"]);
 	
 	start.vn_args = vn_args;
 	
-	return start, parameters;
+	return start, name, framesize, parameters;
 
 def setup_end_block():
 	ret = instruction("ret", [], []);
@@ -185,7 +182,7 @@ def print_asm(block, p):
 	
 	exit("return;");
 
-def process_frame(t, p):
+def process_frame(t, p, num_registers):
 	
 	enter("process_frame");
 	
@@ -193,7 +190,7 @@ def process_frame(t, p):
 	
 	instruction.counter = 0;
 	
-	start, parameters = setup_start_block(t, p, et);
+	start, name, framesize, parameters = setup_start_block(t, p, et);
 	
 	end = setup_end_block();
 	
@@ -300,6 +297,11 @@ def process_frame(t, p):
 	args = {
 		"all_blocks": all_blocks,
 		
+		"frame": {
+			"name": name,
+			"framesize": framesize
+		},
+		
 		"start": start,
 		
 		"end": end,
@@ -307,6 +309,10 @@ def process_frame(t, p):
 		"parameters": parameters,
 		
 		"expression_table": et,
+		
+		"phis": set(), # phi expressions
+		
+		"num_registers": num_registers,
 		
 		"valnum_to_vnsets": dict(), # valnum -> set of valnums
 		
@@ -317,14 +323,9 @@ def process_frame(t, p):
 		
 		"defineset_to_liverange": dict(), # set of instructions -> liverange
 		
-		"phis": set(), # phi expressions
-		
 		"all_liveranges": all_liveranges,
 		
 		"interference": set(),
-		
-#		"num_registers": 8,
-		"num_registers": 16,
 		
 		"phase_counters": {
 			"superfical-critical": 1,
@@ -348,6 +349,9 @@ def process_frame(t, p):
 		for me in addmes:
 			if me not in todo:
 				heappush(todo, me);
+	
+	p.printf(".frame %s, %s %s", name, framesize, \
+		"".join(f", %vr{p.liverange.register}" for p in parameters[4:]), prefix = "");
 	
 	p.indent();
 	print_asm(start, p);

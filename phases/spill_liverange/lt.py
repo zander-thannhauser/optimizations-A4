@@ -1,10 +1,10 @@
 
-def template_phase_lt(self, other):
+def spill_liverange_phase_lt(self, other):
 	if self.kind < other.kind:
 		return True;
 	elif self.kind > other.kind:
 		return False;
-	elif self.block.rpo < other.block.rpo:
+	elif self.liverange.cost < other.liverange.cost:
 		return True;
 
 

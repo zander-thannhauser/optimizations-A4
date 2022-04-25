@@ -7,7 +7,7 @@ def optimize_phase_subdotout(self, vrtovn, avin, inst, new_instructions, express
 	
 	enter("optimize_phase_subdotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}-optimize.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-optimize.dot", "w");
 	
 	print("""
 digraph mygraph {

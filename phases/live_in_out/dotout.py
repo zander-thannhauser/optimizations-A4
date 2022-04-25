@@ -7,7 +7,7 @@ def live_in_out_phase_dotout(self, all_blocks, **_):
 	
 	enter("live_in_out_phase_dotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}-liveinout.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-liveinout.dot", "w");
 	
 	print("""
 digraph mygraph {

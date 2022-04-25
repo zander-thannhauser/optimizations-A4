@@ -9,7 +9,7 @@ def critical_phase_dotout(self, all_blocks, parameters, expression_table, **_):
 	
 	dprint(f"phase.frame_counter = {phase.frame_counter}");
 	
-	stream = open(f"dot/{phase.frame_counter}-critical.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-critical.dot", "w");
 	
 	print("""
 digraph mygraph {

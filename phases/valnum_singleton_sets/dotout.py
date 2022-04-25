@@ -9,7 +9,7 @@ def valnum_singleton_sets_phase_dotout(self, valnum_to_vnsets, **_):
 	
 	dprint(f"phase.frame_counter = {phase.frame_counter}");
 	
-	stream = open(f"dot/{phase.frame_counter}-valnum_singleton_sets.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-valnum_singleton_sets.dot", "w");
 	
 	print("""
 graph mygraph {

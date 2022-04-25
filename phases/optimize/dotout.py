@@ -11,7 +11,7 @@ def optimize_phase_dotout(self, all_blocks, expression_table, **_):
 	
 	dprint(f"phase.frame_counter = {phase.frame_counter}");
 	
-	stream = open(f"dot/{phase.frame_counter}-optimize.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-optimize.dot", "w");
 	
 	print("""
 digraph mygraph {

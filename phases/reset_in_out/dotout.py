@@ -7,7 +7,7 @@ def reset_in_out_phase_dotout(self, all_blocks, **_):
 	
 	enter("reset_in_out_phase_dotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}-reset-in-out.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-reset-in-out.dot", "w");
 	
 	print("""
 digraph mygraph {

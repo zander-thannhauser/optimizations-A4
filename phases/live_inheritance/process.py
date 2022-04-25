@@ -2,6 +2,7 @@
 from debug import *;
 
 from phases.phi.self import phi_phase;
+from phases.live_instances.self import live_instances_phase;
 from phases.live_inheritance.self import live_inheritance_phase;
 
 def live_inheritance_phase_process(self, all_blocks, phase_counters, **_):
@@ -39,6 +40,7 @@ def live_inheritance_phase_process(self, all_blocks, phase_counters, **_):
 	dprint(f"given = {given}");
 	
 	if block.live_given != given:
+		todo.append(live_instances_phase(block));
 		for successor in block.successors:
 			todo.append(live_inheritance_phase(successor));
 		block.live_given = given;

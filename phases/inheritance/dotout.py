@@ -7,7 +7,7 @@ def inheritance_phase_dotout(self, all_blocks, **_):
 	
 	enter("inheritance_phase_dotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}-inheritance.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-inheritance.dot", "w");
 	
 	print("""
 digraph mygraph {

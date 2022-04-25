@@ -245,6 +245,22 @@ gimp-remove_i2is: $(remove_i2is)
 
 
 
+dot/spill_liverange.mk:
+	find $(@D) -name '*-spill_liverange.dot' | sort -V | sed 's/^/spill_liverange += /;s/.dot$$/.png/' > $@
+
+include dot/spill_liverange.mk
+
+mpv-spill_liverange: $(spill_liverange)
+	mpv $(spill_liverange)
+
+eog-spill_liverange: $(spill_liverange)
+	eog $(spill_liverange)
+
+gimp-spill_liverange: $(spill_liverange)
+	gimp $(spill_liverange)
+
+
+
 
 
 

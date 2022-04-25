@@ -1,6 +1,7 @@
 
 from debug import *;
 
+from phases.spill_liverange.self import spill_liverange_phase;
 from phases.allocate_register.self import allocate_register_phase;
 from phases.liveids_to_register.self import liveids_to_register_phase;
 
@@ -31,7 +32,7 @@ def allocate_register_phase_process(self, num_registers, interference, **_):
 		lr.register = min(available);
 		todo.append(liveids_to_register_phase(lr));
 	else:
-		assert(not "TODO");
+		todo.append(spill_liverange_phase(lr));
 	
 	exit(f"return {[str(t) for t in todo]}");
 	return todo;

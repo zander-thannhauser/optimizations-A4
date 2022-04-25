@@ -20,6 +20,7 @@ def live_instances_phase_process(self, start, parameters, all_liveranges, define
 			new = liverange(p.liveid);
 			all_liveranges.add(new);
 			liveout[p.liveid] = new;
+			p.liverange = new;
 			todo.append(calculate_cost_phase(new));
 	else:
 		for parent in block.predecessors:

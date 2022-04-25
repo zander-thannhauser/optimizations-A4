@@ -7,7 +7,7 @@ def post_dominators_phase_dotout(self, all_blocks, **_):
 	
 	enter("post_dominators_phase_dotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}-postdominators.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-postdominators.dot", "w");
 	
 	print("""
 digraph mygraph {

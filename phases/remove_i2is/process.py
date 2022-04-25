@@ -12,7 +12,7 @@ def remove_i2is_phase_process(self, phase_counters, **_):
 	
 	for inst in block.newer_instructions:
 		if inst.op == "i2i" and inst.ins[0] == inst.out:
-			assert(not "TODO");
+			pass
 		else:
 			newest_instructions.append(inst);
 	

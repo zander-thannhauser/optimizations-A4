@@ -8,11 +8,12 @@ from printer import printer;
 from data import process_data;
 from text import process_text;
 
-if len(argv) < 2:
-	print(f"{argv[0]}: missing filename!", file = stderr);
+if len(argv) < 3:
+	print(f"usage: {argv[0]} <assembly.il> <number-of-registers>", file = stderr);
 	exit(1);
 
 filename = argv[1];
+num_registers = int(argv[2]);
 
 t = tokenizer(filename);
 p = printer(filename[:-3] + ".oil");
@@ -21,7 +22,7 @@ next(t);
 
 process_data(t, p);
 
-process_text(t, p);
+process_text(t, p, num_registers);
 
 if t.token != "":
 	fprintf(stderr, "%s: unknown token: \"%s\"!\n", argv[0], t.token);

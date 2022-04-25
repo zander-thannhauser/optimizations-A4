@@ -11,7 +11,7 @@ def phi_phase_dotout(self, all_blocks, expression_table, **_):
 	
 	dprint(f"phase.frame_counter = {phase.frame_counter}")
 	
-	stream = open(f"dot/{phase.frame_counter}-phi.txt", "w");
+	stream = open(f"dot/{phase.frame_counter}-phi.dot", "w");
 	
 	def draw_phi(valnum, reg):
 		hue = valnum / expression_table.valcounter;

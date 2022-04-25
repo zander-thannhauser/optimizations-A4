@@ -32,9 +32,10 @@ class phase:
 	BUILD_INTERFERENCE        = 21;
 	CALCULATE_COST            = 22;
 	ALLOCATE_REGISTER         = 23;
+	SPILL_LIVERANGE           = 24;
 	# while (spill);
-	LIVEIDS_TO_REGISTER       = 24;
-	REMOVE_I2IS               = 25;
+	LIVEIDS_TO_REGISTER       = 25;
+	REMOVE_I2IS               = 26;
 
 from .init import phase_init;
 
