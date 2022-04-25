@@ -27,11 +27,15 @@ def build_interference_phase_process(self, all_blocks, all_liveranges, vnsets_to
 			assert(inst.out in liveout);
 			# remove instance from mapping
 			bye = liveout.pop(inst.out);
+			
 			# mark this instance as iterfering with
 			# all other instances in current mapping
 			for other in liveout.values():
+				# just for graphviz:
+				other.interference_points.add(inst);
+				other.interference_with[inst] = bye;
 				interference.add((min(bye, other), max(bye, other)));
-		
+			
 		for i in inst.ins:
 			liveout[i] = inst.live_use_list[i];
 		

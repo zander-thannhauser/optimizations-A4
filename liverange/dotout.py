@@ -1,24 +1,39 @@
 
 def liverange_dotout(self, stream, denominator):
 	
-#	label = f"Φ"
 	label = f"%lr{self.liveid}"
-#	label = f"{self.liveid}, {self.instance_id}"
 	
 	o, c = '{', '}';
 	
-	hue = self.liveid / denominator;
+	color = f"{self.liveid / denominator} 1 1";
 	
 	last = None;
 	
-	for i, inst in enumerate(sorted(set.union(self.definers, self.users))):
-		name = f"{id(self)}_{i}";
+	all = set.union(self.definers, self.users, self.interference_points);
+	
+	for i, inst in enumerate(sorted(all)):
+		name = f"{id(self)}_{id(inst)}";
+		
+		other = "";
+		
+		if inst in self.definers:
+			shape = "doublecircle";
+			thiscolor = color;
+		elif inst in self.users:
+			shape = "circle";
+			thiscolor = color;
+		else:
+			other = self.interference_with[inst];
+			thiscolor = f"{other.liveid / denominator} 1 1";
+			other = "width = 0.1";
+			shape = "point";
 		
 		print(f"""
 			"{name}" [
-				shape = {"doublecircle" if inst in self.definers else "circle"}
+				shape = "{shape}"
 				label = "{label}"
-				color = "{hue} 1 1"
+				color = "{thiscolor}"
+				{other}
 			];
 			
 			{o}

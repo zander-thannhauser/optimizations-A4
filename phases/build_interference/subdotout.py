@@ -47,6 +47,11 @@ digraph mygraph {
 			
 			tail = current;
 		
+		if not head:
+			label = f"rpo = {block.rpo}";
+			head = label;
+			tail = label;
+		
 		headtails[id(block)] = (head, tail);
 	
 	for block in all_blocks:
@@ -69,25 +74,7 @@ digraph mygraph {
 		""", file = stream);
 	
 	for liverange in all_liveranges:
-		liverange.newdotout(stream, denominator);
-	
-	for liveid, liverange in liveout.items():
-		print(f"""
-			"{liveid}" [
-				shape = note
-				label = "%lr{liveid}"
-			];
-			"{id(liverange)}" -> "{liveid}" [
-				dir = back
-			];
-		""", file = stream);
-	
-	for a, b in interference:
-		print(f"""
-			"{id(a)}" -> "{id(b)}" [
-				dir = none
-			];
-		""", file = stream);
+		liverange.dotout(stream, denominator);
 	
 	print("""
 }
