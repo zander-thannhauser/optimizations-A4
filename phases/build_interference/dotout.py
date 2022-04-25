@@ -3,7 +3,7 @@ from debug import *;
 
 from phases.self import phase;
 
-def build_interference_phase_dotout(self, all_blocks, all_liveranges, vnsets_to_liveid, interference, **_):
+def build_interference_phase_dotout(self, all_blocks, all_liveranges, interference, num_registers, **_):
 	
 	enter("build_interference.dotout()");
 	
@@ -26,15 +26,13 @@ digraph mygraph {
 	
 	headtails = dict();
 	
-	denominator = vnsets_to_liveid["next"]
-	
 	for block in all_blocks:
 		
 		head, tail = None, None;
 		
 		for inst in block.newer_instructions + ([] if block.newer_jump is None else [block.newer_jump]):
 			
-			current = inst.newerdotout(stream, denominator);
+			current = inst.newerdotout(stream);
 			
 			if tail:
 				print(f"""
@@ -64,7 +62,7 @@ digraph mygraph {
 			""", file = stream);
 	
 	for liverange in all_liveranges:
-		liverange.dotout(stream, denominator);
+		liverange.dotout(stream);
 	
 	print("""
 }

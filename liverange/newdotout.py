@@ -1,37 +1,25 @@
 
-#def liverange_newdotout(self, stream, denominator):
-#	
-#	label = f"%lr{self.liveid}"
-#	
-#	o, c = '{', '}';
-#	
-#	hue = self.liveid / denominator;
-#	
-#	last = None;
-#	
-#	for i, inst in enumerate(sorted(set.union(self.definers, self.users))):
-#		name = f"{id(self)}_{i}";
-#		
-#		print(f"""
-#			"{name}" [
-#				shape = {"doublecircle" if inst in self.definers else "circle"}
-#				label = "{label}"
-#				color = "{hue} 1 1"
-#			];
-#			
-#			{o}
-#				rank = same;
-#				"{id(inst)}"; "{name}";
-#			{c}
-#		""", file = stream);
-#		
-#		if last is not None:
-#			print(f"""
-#				"{last}" -> "{name}" [
-#					dir = none
-#				];
-#			""", file = stream);
-#			
-#		last = name;
-#	
-#	
+import math;
+
+def liverange_newdotout(self, stream):
+	
+	label = f"%lr{self.liveid}"
+	
+	color = f"{self.hue} 1 1";
+	
+	points = set.union(self.definers, self.users, self.interference_points);
+	
+	assert(self.register is not None);
+	
+	for p in points:
+		print(f"""
+			"{id(p)}_{self.register}" [
+				label = "{label}"
+				color = "{color}"
+				style = filled
+				fontcolor = black
+			];
+		""", file = stream);
+	
+	
+

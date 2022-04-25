@@ -1,6 +1,7 @@
 
 from debug import *;
 
+from phases.calculate_cost.self import calculate_cost_phase;
 from phases.build_interference.self import build_interference_phase;
 
 def build_interference_phase_process(self, all_blocks, all_liveranges, vnsets_to_liveid, interference, phase_counters, **_):
@@ -20,6 +21,8 @@ def build_interference_phase_process(self, all_blocks, all_liveranges, vnsets_to
 		
 		self.subdotout(all_blocks, all_liveranges, vnsets_to_liveid, interference, liveout, inst);
 	
+	todo = [];
+	
 	for inst in block.newer_instructions[::-1]:
 		dprint(f"inst = {inst}");
 		
@@ -36,12 +39,12 @@ def build_interference_phase_process(self, all_blocks, all_liveranges, vnsets_to
 				other.interference_with[inst] = bye;
 				interference.add((min(bye, other), max(bye, other)));
 			
+			todo.append(calculate_cost_phase(bye));
+			
 		for i in inst.ins:
 			liveout[i] = inst.live_use_list[i];
 		
 		self.subdotout(all_blocks, all_liveranges, vnsets_to_liveid, interference, liveout, inst);
-		
-	todo = [];
 	
 	block.phase_counters["build_interference"] = phase_counters["build_interference"]
 	

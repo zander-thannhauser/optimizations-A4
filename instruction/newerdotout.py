@@ -1,11 +1,13 @@
 
-def instruction_newerdotout(self, stream, denominator):
+def instruction_newerdotout(self, stream, denominator = None):
 
 	name  = f"{id(self)}";
 	color =  "white";
 	
 	if self.out is not None:
-		color = f"{self.out / denominator} 1 1"
+		if denominator is not None:
+			self.hue = self.out / denominator;
+		color = f"{self.hue} 1 1"
 	
 	label = f"{self.op}"
 	
@@ -24,7 +26,7 @@ def instruction_newerdotout(self, stream, denominator):
 			shape = "record"
 			fillcolor = "{color}"
 			color = "{color}"
-			{"style=filled fontcolor=black" if self.is_critical else ""}
+			{"style = filled fontcolor=black" if self.is_critical else ""}
 		];
 	""", file = stream);
 	

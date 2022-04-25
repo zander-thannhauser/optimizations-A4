@@ -11,6 +11,10 @@ def liverange_init(self, liveid):
 	self.interference_with = dict() # defintion instruction -> set of liveranges
 	self.interference_points = set(); # set of instructions
 	
+	self.cost = None;
+	self.register = None;
+	self.hue = None;
+	
 	liverange.instance_counter += 1;
 	
 

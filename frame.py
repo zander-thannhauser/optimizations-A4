@@ -24,6 +24,8 @@ from phases.optimize.self              import optimize_phase;
 from phases.superfical_critical.self   import superfical_critical_phase;
 from phases.dead_code.self             import dead_code_phase;
 
+from phases.loop_depth.self            import loop_depth_phase;
+
 from phases.valnum_singleton_sets.self     import valnum_singleton_sets_phase;
 from phases.union_valnum_sets.self         import union_valnum_sets_phase;
 from phases.rename_valnums_to_liveids.self import rename_valnums_to_liveids_phase;
@@ -176,6 +178,8 @@ def process_frame(t, p):
 		## critical(),  # bottom-up
 		dead_code_phase(start),             # top-down*
 		
+		loop_depth_phase(start),            # top-down?
+		
 		valnum_singleton_sets_phase(start), # top-down*:
 			# create singleton sets of each valnum used/defined
 			# create mapping valnum -> valnum-set
@@ -229,17 +233,15 @@ def process_frame(t, p):
 				# if you see a usage:
 					# introduce instance into mapping
 		
-		# assign live range to register:
-			# if possible: push to rename phase
+		## calculate_cost_phase(liverange), # top-down*:
+		
+		# allocate_register(liverange), # expensive-cheap:
 			# otherwise: push to spill-over phase
 		
 		# spill-over phase:
 			# given a live-range, insert loads and stores
 			# invoke live-range in/out reset on start again.
 		
-		# rename phase:
-			# if this live range is of the current (last) batch
-			# rename uses and defintions and remove `i2i same -> same`s
 	];
 	
 	args = {
@@ -270,6 +272,9 @@ def process_frame(t, p):
 		
 		"interference": set(),
 		
+#		"num_registers": 8,
+		"num_registers": 16,
+		
 		"phase_counters": {
 			"superfical-critical": 1,
 			"dead-code": 1,
@@ -291,6 +296,9 @@ def process_frame(t, p):
 		for me in addmes:
 			if me not in todo:
 				heappush(todo, me);
+	
+#	assert(not "rename to finalized liveranges");
+#	assert(not "remove `i2i same => same`");
 	
 #	p.indent();
 #	print_asm(start, p);

@@ -3,11 +3,13 @@ from debug import *;
 
 from phases.self import phase;
 
-def lost_parent_phase_dotout(self, all_blocks, **_):
+def loop_depth_phase_dotout(self, all_blocks, expression_table, **_):
 	
-	enter("lost_parent_phase_dotout()");
+	enter("loop_depth.dotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}-lost-parent.dot", "w");
+	dprint(f"phase.frame_counter = {phase.frame_counter}");
+	
+	stream = open(f"dot/{phase.frame_counter}-loop_depth.dot", "w");
 	
 	print("""
 digraph mygraph {
@@ -22,14 +24,22 @@ digraph mygraph {
 	
 	""", file = stream);
 	
+	max_depth = max(b.loop_depth for b in all_blocks if b.loop_depth is not None) + 1;
+	
 	for block in all_blocks:
 		bid = id(block);
 		
+		if block.loop_depth is None:
+			color = f"black"
+		else:
+			color = f"0 0 { block.loop_depth / max_depth }"
+		
 		print(f"""
 			"{bid}" [
-				label="rpo = {block.rpo}"
-				color="{block.hue} 1 1"
-				{"style=bold" if block == self.block else ""}
+				label = "rpo = {block.rpo}"
+				fillcolor = "{color}"
+				color = white
+				style = "filled{",bold" if block == self.block else ""}"
 			];
 		""", file = stream);
 		
@@ -49,6 +59,14 @@ digraph mygraph {
 	phase.frame_counter += 1;
 	
 	exit("return;");
+
+
+
+
+
+
+
+
 
 
 

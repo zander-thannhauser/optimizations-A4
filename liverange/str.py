@@ -1,5 +1,8 @@
 
 def liverange_str(self):
-	return f"liverange(liveid = {self.liveid}, instance = {self.instance_id})"
+	x = f"liverange(liveid = {self.liveid}, instance = {self.instance_id}"
+	if self.cost is not None:
+		x += f", cost = {self.cost}"
+	return x + ")";
 
 

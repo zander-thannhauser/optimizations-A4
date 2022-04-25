@@ -58,6 +58,10 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	# critical phase:
 	self.is_critical = False;
 	
+	# loop-depth phase:
+	self.loop_depth = None;
+	self.public_loop_depth = None;
+	
 	# rename_valnums_to_liveids:
 	self.newer_instructions = [];
 	self.newer_jump = None;

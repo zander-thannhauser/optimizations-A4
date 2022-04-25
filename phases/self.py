@@ -19,16 +19,20 @@ class phase:
 	CRITICAL              = 12;
 	DEAD_CODE             = 13;
 	
-	# register-allocation (A4):
-	VALNUM_SINGLETON_SETS     = 14;
-	UNION_VALNUM_SETS         = 15;
-	RENAME_VALNUMS_TO_LIVEIDS = 16;
-	# while changed:
-	LIVE_IN_OUT               = 17;
-	LIVE_INHERITANCE          = 18;
-	LIVE_INSTANCES            = 19;
-	BUILD_INTERFERENCE        = 20;
+	LOOP_DEPTH            = 14;
 	
+	# register-allocation (A4):
+	VALNUM_SINGLETON_SETS     = 15;
+	UNION_VALNUM_SETS         = 16;
+	RENAME_VALNUMS_TO_LIVEIDS = 17;
+	# do:
+	LIVE_IN_OUT               = 18;
+	LIVE_INHERITANCE          = 19;
+	LIVE_INSTANCES            = 20;
+	BUILD_INTERFERENCE        = 21;
+	CALCULATE_COST            = 22;
+	ALLOCATE_REGISTER         = 23;
+	# while (spill);
 
 from .init import phase_init;
 

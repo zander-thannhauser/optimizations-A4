@@ -49,6 +49,22 @@ gimp-critical: $(critical)
 	gimp $(critical)
 
 
+dot/loop_depth.mk:
+	find $(@D) -name '*-loop_depth.dot' | sort -V | sed 's/^/loop_depth += /;s/.dot$$/.png/' > $@
+
+include dot/loop_depth.mk
+
+mpv-loop_depth: $(loop_depth)
+	mpv $(loop_depth)
+
+eog-loop_depth: $(loop_depth)
+	eog $(loop_depth)
+
+gimp-loop_depth: $(loop_depth)
+	gimp $(loop_depth)
+
+
+
 
 dot/valnum_singleton_sets.mk:
 	find $(@D) -name '*-valnum_singleton_sets.dot' | sort -V | sed 's/^/valnum_singleton_sets += /;s/.dot$$/.png/' > $@
@@ -155,6 +171,43 @@ eog-build_interference: $(build_interference)
 
 gimp-build_interference: $(build_interference)
 	gimp $(build_interference)
+
+
+
+
+
+dot/calculate_cost.mk:
+	find $(@D) -name '*-calculate_cost.dot' | sort -V | sed 's/^/calculate_cost += /;s/.dot$$/.png/' > $@
+
+include dot/calculate_cost.mk
+
+mpv-calculate_cost: $(calculate_cost)
+	mpv $(calculate_cost)
+
+eog-calculate_cost: $(calculate_cost)
+	eog $(calculate_cost)
+
+gimp-calculate_cost: $(calculate_cost)
+	gimp $(calculate_cost)
+
+
+
+
+
+
+dot/allocate_register.mk:
+	find $(@D) -name '*-allocate_register.dot' | sort -V | sed 's/^/allocate_register += /;s/.dot$$/.png/' > $@
+
+include dot/allocate_register.mk
+
+mpv-allocate_register: $(allocate_register)
+	mpv $(allocate_register)
+
+eog-allocate_register: $(allocate_register)
+	eog $(allocate_register)
+
+gimp-allocate_register: $(allocate_register)
+	gimp $(allocate_register)
 
 
 
