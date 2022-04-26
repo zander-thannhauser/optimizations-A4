@@ -80,7 +80,7 @@ def live_instances_phase_process(self, start, parameters, all_liveranges, define
 	dprint(f"liveout = {liveout}");
 	
 	for livein in list(liveout.keys()):
-		if livein not in needed:
+		if livein not in needed and livein not in [0, 1, 2, 3]:
 			del liveout[livein];
 	
 	dprint(f"liveout = {liveout}");

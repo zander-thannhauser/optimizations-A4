@@ -9,7 +9,7 @@ from data import process_data;
 from text import process_text;
 
 if len(argv) < 3:
-	print(f"usage: {argv[0]} <assembly.il> <number-of-registers>", file = stderr);
+	print(f"usage: {argv[0]} <assembly.il> <number-of-working-registers>", file = stderr);
 	exit(1);
 
 filename = argv[1];

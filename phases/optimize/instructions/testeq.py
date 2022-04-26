@@ -20,7 +20,7 @@ def optimize_testeq_vr(stuff, ivn, out = None):
 		
 		# substitutions:
 		case expression(op = "comp", ins = [X, Y]):
-			valnum = consider(stuff, "cmp_GE", (X, Y), out = out);
+			valnum = consider(stuff, "cmp_EQ", (X, Y), out = out);
 		
 		# default:
 		case (iex):

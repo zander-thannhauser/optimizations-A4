@@ -9,7 +9,7 @@ from phases.spill_liverange.self import spill_liverange_phase;
 from phases.live_inheritance.self import live_inheritance_phase;
 from phases.build_interference.self import build_interference_phase;
 
-def spill_liverange_phase_process(self, frame, start, end, all_blocks, all_liveranges, vnsets_to_liveid, defineset_to_liverange, interference, phase_counters, **_):
+def spill_liverange_phase_process(self, frame, start, end, parameters, all_blocks, all_liveranges, vnsets_to_liveid, defineset_to_liverange, interference, phase_counters, **_):
 	enter(f"spill_liverange.process(self.liverange = {self.liverange})");
 	
 	lr = self.liverange;
@@ -42,13 +42,20 @@ def spill_liverange_phase_process(self, frame, start, end, all_blocks, all_liver
 		else:
 			offset = frame["framesize"];
 			
-			for inst in lr.definers:
-				block = inst.block;
-				index = block.newer_instructions.index(inst);
+			if len(lr.definers) == 0:
+				assert(any(lr.liveid == p.liveid for p in parameters));
 				storeAI = instruction("storeAI", [lr.liveid, 0], const = -offset);
-				storeAI.block = block;
+				storeAI.block = start;
 				storeAI.is_critical = True;
-				block.newer_instructions.insert(index + 1, storeAI);
+				start.newer_instructions.append(storeAI);
+			else:
+				for inst in lr.definers:
+					block = inst.block;
+					index = block.newer_instructions.index(inst);
+					storeAI = instruction("storeAI", [lr.liveid, 0], const = -offset);
+					storeAI.block = block;
+					storeAI.is_critical = True;
+					block.newer_instructions.insert(index + 1, storeAI);
 				
 			for inst in lr.users:
 				block = inst.block;

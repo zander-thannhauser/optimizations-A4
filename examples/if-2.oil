@@ -1,4 +1,24 @@
 .data
 .text
-	.frame test, 0 , %vr(.valnum = 4, .is_new = True), %vr(.valnum = 5, .is_new = True)
+	.frame test, 0 , %vr5, %vr6
+		# block.rpo = 1:
+		# block.rpo = 2:
+		  loadI 0 => %vr4
+		  cbr_EQ %vr6, %vr4 -> .L1
+		# block.rpo = 3:
+		  addI %vr5, 2 -> %vr4
+		  iwrite %vr4
+		# block.rpo = 6:
+		.L1:
+		  addI %vr5, 2 -> %vr4
+		  iwrite %vr4
+		# block.rpo = 7:
+		  ret
 	.frame main, 0 
+		# block.rpo = 1:
+		# block.rpo = 2:
+		  loadI 2 => %vr5
+		  loadI 3 => %vr4
+		  call test, %vr5, %vr4
+		# block.rpo = 3:
+		  ret

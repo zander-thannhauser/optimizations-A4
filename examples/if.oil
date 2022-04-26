@@ -1,0 +1,10 @@
+.data
+.text
+	.frame main, 12 
+		# block.rpo = 1:
+		# block.rpo = 6:
+		.L1:
+		  loadI 8 => %vr4
+		  iwrite %vr4
+		# block.rpo = 7:
+		  ret

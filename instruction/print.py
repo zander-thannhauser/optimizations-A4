@@ -42,9 +42,9 @@ def instruction_print(self, p):
 			p.printf("storeAO %s => %s, %s", *self.ins);
 		
 #		# calls:
-#		case "call":
-#			p.printf("%s %s%s", self.op, self.label, "".join(f", {e}" for e in self.ins));
-#		
+		case "call":
+			p.printf("%s %s%s", self.op, self.label, "".join(f", {e}" for e in self.ins));
+		
 #		case "icall":
 #			p.printf("%s %s%s => %s", self.op, self.label, "".join(f", {e}" for e in self.ins), self.out);
 #		
@@ -52,7 +52,7 @@ def instruction_print(self, p):
 		case "cbr" | "cbrne":
 			p.printf("%s %s -> %s", self.op, self.ins[0], self.label);
 		
-		case "cbr_GT" | "cbr_GE":
+		case "cbr_GT" | "cbr_GE" | "cbr_EQ" | "cbr_LE":
 			p.printf("%s %s, %s -> %s", self.op, *self.ins, self.label);
 		
 		case _:

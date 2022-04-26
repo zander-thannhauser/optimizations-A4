@@ -24,8 +24,7 @@ def optimize_cbr_vn(stuff, ivn, volatile, label):
 		
 		case expression(op = "cmp_LE", ins = [X, Y]) \
 			if X not in volatile and Y not in volatile:
-			# ops.append(Instruction("cbr_LE", [X, Y], out, label));
-			assert(not "TODO");
+			ops.append(instruction("cbr_LE", [X, Y], label = label));
 		
 		case expression(op = "cmp_GT", ins = [X, Y]) \
 			if X not in volatile and Y not in volatile:
@@ -34,12 +33,10 @@ def optimize_cbr_vn(stuff, ivn, volatile, label):
 		case expression(op = "cmp_GE", ins = [X, Y]) \
 			if X not in volatile and Y not in volatile:
 			ops.append(instruction("cbr_GE", [X, Y], label = label));
-			assert(not "TODO");
 		
 		case expression(op = "cmp_EQ", ins = [X, Y]) \
 			if X not in volatile and Y not in volatile:
-			# ops.append(("cbr_EQ", [X, Y], "->", outs));
-			assert(not "TODO");
+			ops.append(instruction("cbr_EQ", [X, Y], label = label));
 		
 		case expression(op = "cmp_NE", ins = [X, Y]) \
 			if X not in volatile and Y not in volatile:

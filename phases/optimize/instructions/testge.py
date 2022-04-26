@@ -5,6 +5,7 @@ from expression_table.constant.self import constant;
 from expression_table.expression.self import expression;
 
 from .common import load_literal;
+from .common import consider;
 
 def optimize_testge_vr(stuff, ivn, out = None):
 	enter(f"optimize_testge_vr(ivn = {ivn}, out = {out})");
@@ -18,8 +19,7 @@ def optimize_testge_vr(stuff, ivn, out = None):
 		
 		# substitutions:
 		case expression(op = "comp", ins = [X, Y]):
-			# valnum = consider(ops, et, "cmp_GE", (X, Y), out);
-			assert(not "TODO");
+			valnum = consider(stuff, "cmp_GE", (X, Y), out = out);
 		
 		# default:
 		case (iex):

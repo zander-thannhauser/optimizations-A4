@@ -15,8 +15,7 @@ def optimize_testle_vr(stuff, ivn, out = None):
 	match (et.vntoex(ivn)):
 		# constant-fold:
 		case constant(value = c):
-			# valnum = load_literal(vrtovn, et, 1 if c <= 0 else 0, out);
-			assert(not "TODO");
+			valnum = load_literal(stuff, 1 if c <= 0 else 0, out);
 		
 		# substitutions:
 		case expression(op = "comp", ins = [X, Y]):

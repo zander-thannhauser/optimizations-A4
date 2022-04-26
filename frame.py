@@ -312,7 +312,7 @@ def process_frame(t, p, num_registers):
 		
 		"phis": set(), # phi expressions
 		
-		"num_registers": num_registers,
+		"num_registers": num_registers + 4, # 4 registers are reserved.
 		
 		"valnum_to_vnsets": dict(), # valnum -> set of valnums
 		

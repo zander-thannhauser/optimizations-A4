@@ -47,7 +47,7 @@ def read_block(t):
 			
 			# those who take two in and one out:
 			case "add" | "sub" | "mult" | "mod" | "comp" \
-					| "fadd" | "fmult" | "or" | "and":
+					| "fadd" | "fmult" | "or" | "and" | "rshift":
 				ins.append(t.token); t.next();
 				assert(t.token == ","); t.next();
 				ins.append(t.token); t.next();
@@ -72,14 +72,12 @@ def read_block(t):
 			
 			# calls:
 			case "call":
-				func_label = t.token
+				label = t.token
 				t.next();
 				while t.token == ",":
 					t.next();
 					ins.append(t.token);
 					t.next();
-				# dprint(f"ins = {ins}");
-				appendme = instruction(operation, ins, out = out, label = func_label);
 			
 			case "icall":
 				assert(not "TODO");

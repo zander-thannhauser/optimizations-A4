@@ -1,0 +1,3 @@
+.data
+	   .string     .str_const_0, "howdy"
+.text

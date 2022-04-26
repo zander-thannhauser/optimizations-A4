@@ -11,7 +11,7 @@ def calculate_cost_phase_process(self, interference, **_):
 	
 	cost = 0;
 	
-	if lr.liveid == 0:
+	if lr.liveid in [0, 1, 2, 3]:
 		cost = float('inf');
 	
 	if (len(lr.definers), len(lr.users)) == (1, 1):

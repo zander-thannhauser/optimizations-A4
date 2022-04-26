@@ -3,7 +3,7 @@ from debug import *;
 
 from phases.live_in_out.self import live_in_out_phase;
 
-def live_in_out_phase_process(self, all_blocks, parameters, **_):
+def live_in_out_phase_process(self, start, parameters, **_):
 	enter(f"live_in_out_phase.process(block.rpo = {self.block.rpo})");
 	
 	block = self.block;
@@ -18,7 +18,29 @@ def live_in_out_phase_process(self, all_blocks, parameters, **_):
 	
 	todo = [];
 	
-	if block == all_blocks[0]:
+	dprint(f"ins = {ins}");
+	dprint(f"outs = {outs}");
+	
+	# the last instruction might need something too (conditional branch):
+	if block.newer_jump:
+		ins.update(block.newer_jump.ins);
+	
+	for inst in block.newer_instructions[::-1]:
+		dprint(f"inst = {inst}");
+		
+		# is it publishing something?
+		if inst.out is not None:
+			inst.define_set = set([inst]);
+			if inst.out not in outs:
+				outs[inst.out] = inst;
+		
+		ins.discard(inst.out);
+		ins.update(inst.ins);
+		
+	dprint(f"ins = {ins}");
+	dprint(f"outs = {outs}");
+		
+	if block == start:
 		# I'm the start block
 		# so I should look like I produce the parameter's registers:
 		
@@ -29,29 +51,7 @@ def live_in_out_phase_process(self, all_blocks, parameters, **_):
 		if len(ins):
 			dprint(f"ins = {ins}")
 			assert(not "undefined register used!");
-	else:
-		dprint(f"ins = {ins}");
-		dprint(f"outs = {outs}");
-		
-		# the last instruction might need something too (conditional branch):
-		if block.newer_jump:
-			ins.update(block.newer_jump.ins);
-		
-		for inst in block.newer_instructions[::-1]:
-			dprint(f"inst = {inst}");
-			
-			# is it publishing something?
-			if inst.out is not None:
-				inst.define_set = set([inst]);
-				if inst.out not in outs:
-					outs[inst.out] = inst;
-			
-			ins.discard(inst.out);
-			ins.update(inst.ins);
-			
-		dprint(f"ins = {ins}");
-		dprint(f"outs = {outs}");
-		
+	
 	dprint(f"ins = {ins}, outs = {outs}");
 	
 	if block.live_ins != ins:

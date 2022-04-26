@@ -34,7 +34,8 @@ def optimize_sub_vr(stuff, lvn, rvn, out = None):
 			if a - b == 0:
 				valnum = optimize_sub_vr(stuff, X, Y, out);
 			else:
-				assert(not "TODO");
+				subvn = optimize_sub_vr(stuff, X, Y);
+				valnum = consider(stuff, "addI", (subvn, ), const = a - b, out = out);
 		
 		# (X + a) - b => X + (a - b)
 		case (expression(op = "addI", ins = (X, ), const = a), constant(value = b)):

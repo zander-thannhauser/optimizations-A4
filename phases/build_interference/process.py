@@ -15,6 +15,40 @@ def build_interference_phase_process(self, start, parameters, all_blocks, all_li
 	
 	todo = [];
 	
+	if block.newer_jump:
+		inst = block.newer_jump;
+		
+		dprint(f"inst = {inst}");
+		
+		for i in inst.ins:
+			liveout[i] = inst.live_use_list[i];
+		
+		self.subdotout(all_blocks, all_liveranges, vnsets_to_liveid, interference, liveout, inst);
+	
+	for inst in block.newer_instructions[::-1]:
+		dprint(f"inst = {inst}");
+		
+		if inst.out is not None:
+			assert(inst.out in liveout);
+			
+			# remove instance from mapping
+			bye = liveout.pop(inst.out);
+			
+			# mark this instance as iterfering with
+			# all other instances in current mapping
+			for other in liveout.values():
+				# just for graphviz:
+				other.interference_points.add(inst);
+				other.interference_with[inst] = bye;
+				interference.add((min(bye, other), max(bye, other)));
+			
+			todo.append(calculate_cost_phase(bye));
+			
+		for i in inst.ins:
+			liveout[i] = inst.live_use_list[i];
+		
+		self.subdotout(all_blocks, all_liveranges, vnsets_to_liveid, interference, liveout, inst);
+	
 	if block == start:
 		# all parameters need to interfere with each other:
 		for param in parameters:
@@ -34,39 +68,6 @@ def build_interference_phase_process(self, start, parameters, all_blocks, all_li
 				todo.append(calculate_cost_phase(bye));
 		
 		self.subdotout(all_blocks, all_liveranges, vnsets_to_liveid, interference, liveout, None);
-	
-	if block.newer_jump:
-		inst = block.newer_jump;
-		
-		dprint(f"inst = {inst}");
-		
-		for i in inst.ins:
-			liveout[i] = inst.live_use_list[i];
-		
-		self.subdotout(all_blocks, all_liveranges, vnsets_to_liveid, interference, liveout, inst);
-	
-	for inst in block.newer_instructions[::-1]:
-		dprint(f"inst = {inst}");
-		
-		if inst.out is not None:
-			assert(inst.out in liveout);
-			# remove instance from mapping
-			bye = liveout.pop(inst.out);
-			
-			# mark this instance as iterfering with
-			# all other instances in current mapping
-			for other in liveout.values():
-				# just for graphviz:
-				other.interference_points.add(inst);
-				other.interference_with[inst] = bye;
-				interference.add((min(bye, other), max(bye, other)));
-			
-			todo.append(calculate_cost_phase(bye));
-			
-		for i in inst.ins:
-			liveout[i] = inst.live_use_list[i];
-		
-		self.subdotout(all_blocks, all_liveranges, vnsets_to_liveid, interference, liveout, inst);
 	
 	block.phase_counters["build_interference"] = phase_counters["build_interference"]
 	

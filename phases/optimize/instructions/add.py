@@ -58,6 +58,9 @@ def optimize_add_vr(stuff, lvn, rvn, out = None):
 		case (_, expression(op = "multI", ins = (X, ), const = a)) if lvn == X:
 			assert(not "TODO");
 		
+		case (expression(op = "multI"), constant(value = a)):
+			valnum = consider(stuff, "addI", ins = (lvn, ), const = a, out = out);
+		
 		case (phi() | parameter(), constant(value = a)):
 			valnum = consider(stuff, "addI", ins = (lvn, ), const = a, out = out);
 		

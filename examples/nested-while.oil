@@ -1,6 +1,6 @@
 .data
 .text
-	.frame main, 4 
+	.frame main, 12 
 		# block.rpo = 1:
 		# block.rpo = 2:
 		  loadI 2 => %vr4
@@ -8,5 +8,11 @@
 		# block.rpo = 3:
 		.L0:
 		  iwrite %vr4
+		# block.rpo = 4:
+		.L2:
+		  iwrite %vr4
 		# block.rpo = 5:
+		.L3:
+		  iwrite %vr4
+		# block.rpo = 7:
 		  ret

@@ -39,11 +39,10 @@ def dead_code_phase_process(self, start, all_blocks, phase_counters, **_):
 		
 		for parent in block.predecessors:
 			if parent.new_jump and parent.new_jump.label == block.label:
-#				if not child.label:
-#					assert(not "TODO");
-#				parent.jump.label = child.label;
-#				parent.children[1] = child;
-				assert(not "TODO");
+				if not child.label:
+					assert(not "TODO");
+				parent.new_jump.label = child.label;
+				parent.successors[1] = child;
 			else:
 				parent.successors[0] = child;
 			dprint(f"{str(parent)}.successors = {[s.po for s in parent.successors]}")

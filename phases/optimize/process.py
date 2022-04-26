@@ -14,6 +14,7 @@ from expression_table.constant.self import constant;
 from .instructions.add     import optimize_add;
 from .instructions._and    import optimize_and;
 from .instructions._assert import optimize_assert;
+from .instructions.call    import optimize_call;
 from .instructions.cbr     import optimize_cbr;
 from .instructions.cbrne   import optimize_cbrne;
 from .instructions.comp    import optimize_comp;
@@ -26,6 +27,7 @@ from .instructions.mult    import optimize_mult;
 from .instructions._not    import optimize_not;
 from .instructions._or     import optimize_or;
 from .instructions.ret     import optimize_ret;
+from .instructions.rshift  import optimize_rshift;
 from .instructions.sub     import optimize_sub;
 from .instructions.store   import optimize_store;
 from .instructions.swrite  import optimize_swrite;
@@ -41,6 +43,7 @@ lookup = {
 	"add":    optimize_add,
 	"and":    optimize_and,
 	"assert": optimize_assert,
+	"call":   optimize_call,
 	"cbr":    optimize_cbr,
 	"cbrne":  optimize_cbrne,
 	"comp":   optimize_comp,
@@ -53,6 +56,7 @@ lookup = {
 	"not":    optimize_not,
 	"or":     optimize_or,
 	"ret":    optimize_ret,
+	"rshift": optimize_rshift,
 	"sub":    optimize_sub,
 	"store":  optimize_store,
 	"swrite": optimize_swrite,
@@ -71,6 +75,10 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 	vrtovn = dict();
 	
 	block = self.block;
+	
+	if not block.is_reachable:
+		exit();
+		return [];
 	
 	avin = set();
 	
@@ -169,7 +177,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 					
 					case _ if before.op == after.op: pass;
 					
-					case ('cbr' | 'cbrne', 'cbr_GT' | 'cbr_GE'):
+					case ('cbr' | 'cbrne', 'cbr_GT' | 'cbr_GE' | 'cbr_EQ' | 'cbr_LE'):
 						pass;
 					
 					# always jump:
