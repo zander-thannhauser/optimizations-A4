@@ -28,6 +28,7 @@ from .instructions._or     import optimize_or;
 from .instructions.ret     import optimize_ret;
 from .instructions.sub     import optimize_sub;
 from .instructions.store   import optimize_store;
+from .instructions.swrite  import optimize_swrite;
 from .instructions.testeq  import optimize_testeq;
 from .instructions.testge  import optimize_testge;
 from .instructions.testgt  import optimize_testgt;
@@ -54,6 +55,7 @@ lookup = {
 	"ret":    optimize_ret,
 	"sub":    optimize_sub,
 	"store":  optimize_store,
+	"swrite": optimize_swrite,
 	"testeq": optimize_testeq,
 	"testge": optimize_testge,
 	"testgt": optimize_testgt,

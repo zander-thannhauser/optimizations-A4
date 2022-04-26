@@ -1,11 +1,12 @@
 
 from debug import *;
 
+from expression_table.phi.self        import phi;
+from expression_table.label.self      import label;
+from expression_table.unknown.self    import unknown;
 from expression_table.constant.self   import constant;
 from expression_table.expression.self import expression;
 from expression_table.parameter.self  import parameter;
-from expression_table.phi.self        import phi;
-from expression_table.unknown.self    import unknown;
 
 from phases.critical.self import critical_phase;
 
@@ -33,6 +34,7 @@ def critical_phase_process(self, expression_table, **_):
 	
 	for valnum in instruction.ins:
 		ex = expression_table.vntoex(valnum);
+		
 		match ex:
 			case parameter():
 				pass;
@@ -45,7 +47,7 @@ def critical_phase_process(self, expression_table, **_):
 							feeder.is_critical = True;
 					p.is_critical = True;
 			
-			case (unknown() | constant() | expression()) as ex:
+			case (label() | unknown() | constant() | expression()) as ex:
 				finger = block;
 				found = None;
 				

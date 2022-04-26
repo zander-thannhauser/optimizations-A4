@@ -1,6 +1,9 @@
 
 from debug import *;
 
+from instruction.self import instruction;
+from expression_table.label.self import label;
+
 from .common import load_literal;
 
 def optimize_loadI(const, out, **stuff):
@@ -9,8 +12,23 @@ def optimize_loadI(const, out, **stuff):
 	if type(const) is int:
 		load_literal(stuff, const, out);
 	else:
-		assert(not "TODO");
+		exp = label(const);
+		
+		et = stuff["expression_table"];
+		avin = stuff["avin"];
+		ops = stuff["ops"];
+		vrtovn = stuff["vrtovn"];
+		
+		result = et.extovn(exp);
+		
+		if result.valnum not in avin:
+			new = instruction("loadI", [], const = const, out = result.valnum);
+			dprint(f"new = {new}")
+			avin.add(result.valnum);
+			ops.append(new);
 	
+		vrtovn[out] = result.valnum;
+		
 	exit("return;");
 	return [];
 

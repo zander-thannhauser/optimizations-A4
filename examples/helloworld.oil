@@ -2,3 +2,9 @@
 	   .string  .string_const_0, "Hello world!"
 .text
 	.frame main, 42 
+		# block.rpo = 1:
+		# block.rpo = 2:
+		  loadI .string_const_0 => %vr0
+		  swrite %vr0
+		# block.rpo = 3:
+		  ret

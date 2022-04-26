@@ -1,3 +1,25 @@
 .data
 .text
-	.frame main, 42 , %vr4, %vr5
+	.frame main, 42 , %vr0, %vr1
+		# block.rpo = 1:
+		# block.rpo = 2:
+		  cbr %vr0 -> .L2
+		# block.rpo = 3:
+		.L1:
+		  loadI 2 => %vr0
+		# block.rpo = 7:
+		.L3:
+		  iwrite %vr0
+		# block.rpo = 8:
+		  ret
+		# block.rpo = 4:
+		.L2:
+		  cbr %vr1 -> .L22
+		# block.rpo = 5:
+		.L21:
+		  loadI 3 => %vr0
+		  jumpI -> .L3
+		# block.rpo = 6:
+		.L22:
+		  loadI 4 => %vr0
+		  jumpI -> .L3

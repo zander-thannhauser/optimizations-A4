@@ -4,7 +4,6 @@ from debug import *;
 from liverange.self import liverange;
 
 from phases.live_instances.self import live_instances_phase;
-from phases.calculate_cost.self import calculate_cost_phase;
 
 def live_instances_phase_process(self, start, parameters, all_liveranges, defineset_to_liverange, **_):
 	enter(f"live_instances.process(self.block.rpo = {self.block.rpo})");
@@ -21,7 +20,6 @@ def live_instances_phase_process(self, start, parameters, all_liveranges, define
 			all_liveranges.add(new);
 			liveout[p.liveid] = new;
 			p.liverange = new;
-			todo.append(calculate_cost_phase(new));
 	else:
 		for parent in block.predecessors:
 			if parent.liveout is not None:
