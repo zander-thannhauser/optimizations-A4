@@ -11,3 +11,91 @@
 	   .global          main_fp, 4, 4
 .text
 	.frame main, 44 
+		# block.rpo = 1:
+		# block.rpo = 2:
+		  loadI main_fp => %vr4
+		  store %vr0 => %vr4
+		  addI %vr0, -4 -> %vr8
+		  call init, %vr8
+		  call writearray, %vr8
+		  loadI 1 => %vr4
+		  i2i %vr4 -> %vr6
+		# block.rpo = 3:
+		.L1:
+		  multI %vr6, -4 -> %vr5
+		  add %vr0, %vr5 => %vr7
+		  loadAO %vr0, %vr5 => %vr4
+		  mult %vr6, %vr4 => %vr4
+		  storeAO %vr4 => %vr0, %vr5
+		  call inc, %vr7
+		  addI %vr6, 1 -> %vr5
+		  loadI 9 => %vr4
+		  cmp_GT %vr4, %vr6 => %vr4
+		  i2i %vr5 -> %vr6
+		  cbr %vr4 -> .L1
+		# block.rpo = 4:
+		.L0:
+		  call writearray, %vr8
+		# block.rpo = 5:
+		  ret
+	.frame init, 0 , %vr9
+		# block.rpo = 1:
+		# block.rpo = 2:
+		  loadI 1 => %vr4
+		  loadI 10 => %vr6
+		  i2i %vr4 -> %vr5
+		  i2i %vr6 -> %vr8
+		# block.rpo = 3:
+		.L3:
+		  i2f %vr5 -> %vr6
+		  loadI .float_const_0 => %vr4
+		  fload %vr4 -> %vr4
+		  fmult %vr6, %vr4 => %vr6
+		  i2f %vr8 -> %vr4
+		  fadd %vr6, %vr4 => %vr4
+		  f2i %vr4 -> %vr6
+		  multI %vr5, -4 -> %vr4
+		  add %vr9, %vr4 => %vr4
+		  storeAI %vr6 => %vr4, -4
+		  addI %vr5, 1 -> %vr7
+		  addI %vr8, 1 -> %vr6
+		  loadI 9 => %vr4
+		  cmp_GT %vr4, %vr5 => %vr4
+		  i2i %vr7 -> %vr5
+		  i2i %vr6 -> %vr8
+		  cbr %vr4 -> .L3
+		# block.rpo = 5:
+		  ret
+	.frame writearray, 0 , %vr5
+		# block.rpo = 1:
+		# block.rpo = 2:
+		  load %vr5 -> %vr4
+		  iwrite %vr4
+		  loadAI %vr5, -4 -> %vr4
+		  iwrite %vr4
+		  loadAI %vr5, -8 -> %vr4
+		  iwrite %vr4
+		  loadAI %vr5, -12 -> %vr4
+		  iwrite %vr4
+		  loadAI %vr5, -16 -> %vr4
+		  iwrite %vr4
+		  loadAI %vr5, -20 -> %vr4
+		  iwrite %vr4
+		  loadAI %vr5, -24 -> %vr4
+		  iwrite %vr4
+		  loadAI %vr5, -28 -> %vr4
+		  iwrite %vr4
+		  loadAI %vr5, -32 -> %vr4
+		  iwrite %vr4
+		  loadAI %vr5, -36 -> %vr4
+		  iwrite %vr4
+		# block.rpo = 3:
+		  ret
+	.frame inc, 0 , %vr5
+		# block.rpo = 1:
+		# block.rpo = 2:
+		  load %vr5 -> %vr4
+		  addI %vr4, 1 -> %vr4
+		  store %vr4 => %vr5
+		# block.rpo = 3:
+		  ret

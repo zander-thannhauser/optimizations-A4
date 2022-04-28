@@ -21,6 +21,9 @@ def critical_phase_process(self, expression_table, **_):
 	
 	block = instruction.block;
 	
+	dprint(f"block = {block}")
+	assert(block is not None);
+	
 	instruction.is_critical = True;
 	
 	if not block.is_critical:
@@ -52,9 +55,11 @@ def critical_phase_process(self, expression_table, **_):
 				found = None;
 				
 				while found is None and finger != finger.immediate_dominator:
+					dprint(f"finger = {finger}")
 					for inst in finger.new_instructions[::-1]:
 						if inst.out == valnum:
 							found = inst;
+					dprint(f"finger.immediate_dominator = {finger.immediate_dominator}")
 					finger = finger.immediate_dominator;
 				
 				assert(found);

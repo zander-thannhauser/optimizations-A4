@@ -34,7 +34,16 @@ def optimize_comp_vn(stuff, lvn, rvn, out = None):
 			subrvn = load_literal(stuff, b - a);
 			valnum = optimize_comp_vn(stuff, X, subrvn, out);
 		
-		case (parameter() | phi() | unknown(), constant() | unknown()):
+		case (expression(op = "addI", ins = (X, ), const = a), phi()):
+			if X == lvn:
+				assert(not "TODO");
+			else:
+				valnum = consider(stuff, "comp", (lvn, rvn), out = out);
+		
+		case (parameter() | phi() | unknown() | expression(op = "f2i"), constant() | unknown()):
+			valnum = consider(stuff, "comp", (lvn, rvn), out = out);
+		
+		case (constant() | unknown(), parameter() | phi() | unknown() | expression(op = "f2i")):
 			valnum = consider(stuff, "comp", (lvn, rvn), out = out);
 		
 		case (lex, rex):

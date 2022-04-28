@@ -2,8 +2,9 @@
 from debug import *;
 
 from expression_table.phi.self import phi;
-from expression_table.parameter.self import parameter;
 from expression_table.constant.self import constant;
+from expression_table.unknown.self import unknown;
+from expression_table.parameter.self import parameter;
 from expression_table.expression.self import expression;
 
 from .common import consider;
@@ -37,16 +38,23 @@ def optimize_sub_vr(stuff, lvn, rvn, out = None):
 				subvn = optimize_sub_vr(stuff, X, Y);
 				valnum = consider(stuff, "addI", (subvn, ), const = a - b, out = out);
 		
+		# (X + a) - a => X
 		# (X + a) - b => X + (a - b)
 		case (expression(op = "addI", ins = (X, ), const = a), constant(value = b)):
 			if a - b == 0:
-				assert(not "TODO");
+				if out is not None: vrtovn[out] = X;
+				valnum = X;
 			else:
 				valnum = consider(stuff, "addI", (X, ), const = a - b, out = out);
 		
 		# (X + a) - Y => (X - Y) + a
 		case (expression(op = "addI", ins = (X, ), const = a), _):
 			subvn = optimize_sub_vr(stuff, X, rvn);
+			valnum = consider(stuff, "addI", (subvn, ), const = a, out = out);
+		
+		# X - (Y + a) => (X - Y) + a
+		case (_, expression(op = "addI", ins = (Y, ), const = a)):
+			subvn = optimize_sub_vr(stuff, lvn, Y);
 			valnum = consider(stuff, "addI", (subvn, ), const = a, out = out);
 		
 		# a * X - b * X => (a - b) * X
@@ -77,8 +85,11 @@ def optimize_sub_vr(stuff, lvn, rvn, out = None):
 			subrvn = consider(stuff, "multI", ins = (X, ), const = -a);
 			valnum = consider(stuff, "add", ins = (lvn, subrvn), out = out);
 		
-		# X - c => (X - c)
-		case (phi() | parameter(), constant(value = a)):
+		# X - c => (X + -c)
+		case (phi() | parameter() | unknown(), constant(value = a)):
+			valnum = consider(stuff, "addI", ins = (lvn, ), const = -a, out = out);
+		
+		case (expression(op = "add"), constant(value = a)):
 			valnum = consider(stuff, "addI", ins = (lvn, ), const = -a, out = out);
 		
 		case (lex, rex):

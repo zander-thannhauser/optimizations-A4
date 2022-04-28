@@ -28,7 +28,7 @@ def instruction_print(self, p):
 			p.printf("%s %s, %s -> %s", self.op, self.ins[0], self.const, self.out);
 		
 		# 2 ins, 1 out:
-		case "comp" | "add" | "fadd" | "sub" | "mult" | "fmult" | "mod" | "or" | "rshift" | "loadAO" | "cmp_LE":
+		case "comp" | "add" | "fadd" | "sub" | "mult" | "fmult" | "mod" | "or" | "rshift" | "loadAO" | "cmp_LE" | "cmp_LT" | "cmp_GT":
 			p.printf("%s %s, %s => %s", self.op, *self.ins, self.out);
 		
 		# stores:
@@ -52,7 +52,7 @@ def instruction_print(self, p):
 		case "cbr" | "cbrne":
 			p.printf("%s %s -> %s", self.op, self.ins[0], self.label);
 		
-		case "cbr_GT" | "cbr_GE" | "cbr_EQ" | "cbr_LE":
+		case "cbr_GT" | "cbr_GE" | "cbr_EQ" | "cbr_LE" | "cbr_NE":
 			p.printf("%s %s, %s -> %s", self.op, *self.ins, self.label);
 		
 		case _:

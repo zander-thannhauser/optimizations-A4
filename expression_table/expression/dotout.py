@@ -2,14 +2,20 @@
 from debug import *;
 
 operator = {
-	"add":  "+",
-	"addI": "+",
-	"comp": "≶?",
+	"add":   "+",
+	"fadd": "f+",
+	"addI":  "+",
+	"comp":  "≶?",
 	"cmp_GE": "≥",
 	"cmp_GT": ">",
 	"cmp_LT": "<",
 	"cmp_LE": "≤",
 	"cmp_EQ": "=",
+	"cmp_NE": "≠",
+	"i2f": "i2f",
+	"f2i": "f2i",
+	"mult": "×",
+	"fmult": "f×",
 	"multI": "×",
 	"mod": "\\%",
 	"not": "¬",
@@ -30,7 +36,7 @@ def expression_dotout(self, stream, drawn, et, **_):
 	
 	match self.op:
 		# those who have one value-number:
-		case "not":
+		case "not" | "i2f" | "f2i":
 			ivn = self.ins[0];
 			print(f"""
 				"{self.valnum}" [
@@ -54,7 +60,7 @@ def expression_dotout(self, stream, drawn, et, **_):
 			""", file = stream);
 		
 		# those who have two value-numbers:
-		case "comp" | "cmp_GT" | "cmp_LT" | "cmp_LE" | "cmp_GE" | "cmp_EQ" | "mod" | "add":
+		case "comp" | "cmp_GT" | "cmp_LT" | "cmp_LE" | "cmp_GE" | "cmp_EQ" | "cmp_NE" | "mod" | "add" | "fadd" | "mult" | "fmult":
 			lvn, rvn = self.ins
 			print(f"""
 				"{self.valnum}" [

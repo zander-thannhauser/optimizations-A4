@@ -2,6 +2,7 @@
 from debug import *;
 
 from expression_table.phi.self import phi;
+from expression_table.unknown.self import unknown;
 from expression_table.constant.self import constant;
 from expression_table.expression.self import expression;
 
@@ -41,8 +42,26 @@ def optimize_mult_vr(stuff, lvn, rvn, out = None):
 			subvn = consider(stuff, "multI", (X, ), const = b);
 			valnum = consider(stuff, "addI", (subvn, ), const = a * b, out = out);
 		
+		# (X * a) * b => X * (a * b)
+		case (expression(op = "multI", ins = (X, ), const = a), constant(value = b)):
+			valnum = consider(stuff, "multI", (X, ), const = a * b, out = out);
+		
+		# (a * X) * Y => a * (X * Y)
+		case (expression(op = "multI", ins = (X, ), const = a), phi()):
+			subvn = optimize_mult_vr(stuff, X, rvn);
+			valnum = consider(stuff, "multI", (subvn, ), const = a, out = out);
+			assert(not "CHECK");
+		
+		# c * X => (c * X)
 		case (constant(value = a), phi()):
 			valnum = consider(stuff, "multI", (rvn, ), const = a, out = out);
+		
+		# X * c => (c * X)
+		case (phi() | unknown(), constant(value = a)):
+			valnum = consider(stuff, "multI", (lvn, ), const = a, out = out);
+		
+		case (unknown(), phi()):
+			valnum = consider(stuff, "mult", (min(lvn, rvn), max(lvn, rvn)), out = out);
 		
 		case (lex, rex):
 			dprint(f"lex, rex = {str(lex), str(rex)}");

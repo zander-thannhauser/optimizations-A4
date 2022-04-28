@@ -2,8 +2,9 @@
 from debug import *;
 
 from expression_table.phi.self import phi;
-from expression_table.parameter.self import parameter;
 from expression_table.constant.self import constant;
+from expression_table.parameter.self import parameter;
+from expression_table.unknown.self import unknown;
 from expression_table.expression.self import expression;
 
 from .common import consider;
@@ -31,8 +32,29 @@ def optimize_add_vr(stuff, lvn, rvn, out = None):
 #			valnum = rvn;
 			assert(not "TODO");
 		
+		# X + X => (2 * X)
 		case (_, _) if lvn == rvn:
 			assert(not "TODO");
+		
+		# (X + a) + (Y + -a) => (X + Y)
+		# (X + a) + (Y +  b) => (X + Y) + (a + b)
+		case (expression(op = "addI", ins = (X, ), const = a), \
+		      expression(op = "addI", ins = (Y, ), const = b)):
+			if a + b == 0:
+				assert(not "TODO");
+			else:
+				subvn = optimize_add_vr(stuff, X, Y);
+				valnum = consider(stuff, "addI", ins = (subvn, ), const = a + b, out = out);
+		
+		# (X + a) + Y => (X + Y) + a
+		case (expression(op = "addI", ins = (X, ), const = a), _):
+			subvn = optimize_add_vr(stuff, X, rvn);
+			valnum = consider(stuff, "addI", ins = (subvn, ), const = a, out = out);
+		
+		# X + (Y + a) => (X + Y) + a
+		case (_, expression(op = "addI", ins = (X, ), const = a)):
+			subvn = optimize_add_vr(stuff, lvn, X);
+			valnum = consider(stuff, "addI", ins = (subvn, ), const = a, out = out);
 		
 		# a * X + b * X => (a + b) * X
 		case (expression(op = "multI", ins = (X, ), const = a), \
@@ -58,11 +80,17 @@ def optimize_add_vr(stuff, lvn, rvn, out = None):
 		case (_, expression(op = "multI", ins = (X, ), const = a)) if lvn == X:
 			assert(not "TODO");
 		
+		case (phi() | parameter() | unknown(), constant(value = a)):
+			valnum = consider(stuff, "addI", ins = (lvn, ), const = a, out = out);
+		
+		case (constant(value = a), phi() | parameter()):
+			valnum = consider(stuff, "addI", ins = (rvn, ), const = a, out = out);
+		
 		case (expression(op = "multI"), constant(value = a)):
 			valnum = consider(stuff, "addI", ins = (lvn, ), const = a, out = out);
 		
-		case (phi() | parameter(), constant(value = a)):
-			valnum = consider(stuff, "addI", ins = (lvn, ), const = a, out = out);
+		case (expression(op = "multI"), phi()):
+			valnum = consider(stuff, "add", ins = (min(lvn, rvn), max(lvn, rvn)), out = out);
 		
 		case (lex, rex):
 			dprint(f"lex, rex = {str(lex), str(rex)}");

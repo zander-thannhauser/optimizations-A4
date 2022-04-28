@@ -102,7 +102,7 @@ def read_block(t):
 				ins.append(t.token); t.next();
 				assert(t.token == "->"); t.next();
 				branch_label = t.token; t.next();
-				jump = instruction(operation, ins, out, label = branch_label);
+				jump = instruction(operation, ins, label = branch_label);
 				children.append(branch_label);
 				break;
 			
@@ -110,15 +110,13 @@ def read_block(t):
 				assert(t.token == "->"); t.next();
 				branch_label = t.token; t.next();
 				children = [branch_label];
-				operation = None;
 				break;
 			
 			case "iret":
-				assert(not "TODO");
-#				ins.append(t.token); t.next();
-#				jump = instruction(operation, ins, out, ".return");
-#				children = [".return"];
-#				break;
+				ins.append(t.token); t.next();
+				jump = instruction(operation, ins, label = ".return");
+				children = [".return"];
+				break;
 			
 			case "ret":
 				children = [".return"];

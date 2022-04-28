@@ -18,8 +18,14 @@ from .instructions.call    import optimize_call;
 from .instructions.cbr     import optimize_cbr;
 from .instructions.cbrne   import optimize_cbrne;
 from .instructions.comp    import optimize_comp;
+from .instructions.f2i     import optimize_f2i;
+from .instructions.fadd    import optimize_fadd;
+from .instructions.fload   import optimize_fload;
+from .instructions.fmult   import optimize_fmult;
 from .instructions.loadI   import optimize_loadI;
 from .instructions.i2i     import optimize_i2i;
+from .instructions.i2f     import optimize_i2f;
+from .instructions.iread   import optimize_iread;
 from .instructions.iwrite  import optimize_iwrite;
 from .instructions.load    import optimize_load;
 from .instructions.mod     import optimize_mod;
@@ -36,6 +42,7 @@ from .instructions.testge  import optimize_testge;
 from .instructions.testgt  import optimize_testgt;
 from .instructions.testle  import optimize_testle;
 from .instructions.testlt  import optimize_testlt;
+from .instructions.testne  import optimize_testne;
 
 from instruction.self import instruction;
 
@@ -47,7 +54,13 @@ lookup = {
 	"cbr":    optimize_cbr,
 	"cbrne":  optimize_cbrne,
 	"comp":   optimize_comp,
+	"f2i":    optimize_f2i,
+	"fadd":   optimize_fadd,
+	"fload":  optimize_fload,
+	"fmult":  optimize_fmult,
 	"i2i":    optimize_i2i,
+	"i2f":    optimize_i2f,
+	"iread":  optimize_iread,
 	"iwrite": optimize_iwrite,
 	"load":   optimize_load,
 	"loadI":  optimize_loadI,
@@ -65,6 +78,7 @@ lookup = {
 	"testgt": optimize_testgt,
 	"testle": optimize_testle,
 	"testlt": optimize_testlt,
+	"testne": optimize_testne,
 };
 
 def optimize_phase_process(self, start, expression_table, parameters, **_):
@@ -101,6 +115,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				dprint(f"inherited nothing from {predecessor}");
 		
 		avin = block.immediate_dominator.avin.copy();
+		# avin = max(filter((lambda d: d != block and d.vrtovn is not None), block.dominators), key = lambda b: b.rpo).avin.copy();
 		
 		# introduce phi nodes entering this block into
 		# the expression_table:
@@ -177,7 +192,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 					
 					case _ if before.op == after.op: pass;
 					
-					case ('cbr' | 'cbrne', 'cbr_GT' | 'cbr_GE' | 'cbr_EQ' | 'cbr_LE'):
+					case ('cbr' | 'cbrne', 'cbrne' | 'cbr_GT' | 'cbr_GE' | 'cbr_EQ' | 'cbr_LE' | 'cbr_NE' | 'cbr_EQ'):
 						pass;
 					
 					# always jump:

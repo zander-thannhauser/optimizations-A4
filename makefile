@@ -34,6 +34,22 @@ mpv-all: $(alls)
 	mpv $(alls) --no-save-position-on-quit
 
 
+dot/optimize.mk:
+	find $(@D) -name '*-optimize.dot' | sort -V | sed 's/^/optimize += /;s/.dot$$/.png/' > $@
+
+include dot/optimize.mk
+
+mpv-optimize: $(optimize)
+	mpv $(optimize)
+
+eog-optimize: $(optimize)
+	eog $(optimize)
+
+gimp-optimize: $(optimize)
+	gimp $(optimize)
+
+
+
 dot/critical.mk:
 	find $(@D) -name '*-critical.dot' | sort -V | sed 's/^/critical += /;s/.dot$$/.png/' > $@
 

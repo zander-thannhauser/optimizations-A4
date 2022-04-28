@@ -36,17 +36,20 @@ def rename_valnums_to_liveids_phase_process(self, start, parameters, valnum_to_v
 			const = inst.const, \
 			label = inst.label,
 			out = (None if inst.out is None else get_id(inst.out)));
+		
 		new.block = block;
 		
 		if True \
 			and last is not None \
+			and last.op == "i2i" \
 			and (last.op, last.ins, last.out) == (new.op, new.ins, new.out):
 			# remove duplicate i2is:
-			assert(last.op == "i2i");
+			dprint(f"last = {last}")
+			dprint(f"new = {new}")
 		else:
 			newer_instructions.append(new);
+			last = new;
 		
-		last = new;
 	
 	block.newer_instructions = newer_instructions;
 	

@@ -36,7 +36,7 @@ def superfical_critical_phase_process(self, phase_counters, **_):
 		match block.new_jump.op:
 			case "ret" | "iret":
 				todo.append(critical_phase(block.new_jump));
-			case "cbr" | "cbr_GT" | "cbr_GE" | "cbr_LE" | "cbr_EQ" | "cbr_LT" | "cbrne":
+			case "cbr" | "cbr_GT" | "cbr_GE" | "cbr_LE" | "cbr_EQ" | "cbr_LT" | "cbr_NE" | "cbrne":
 				pass;
 			case jop:
 				dprint(f"jop = {jop}");

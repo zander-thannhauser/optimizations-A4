@@ -1,3 +1,2 @@
 .data
 .text
-	.frame pre_example, 4 , %vr(.valnum = 4, .is_new = True), %vr(.valnum = 5, .is_new = True), %vr(.valnum = 6, .is_new = True)

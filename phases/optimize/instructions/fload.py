@@ -12,8 +12,8 @@ from .mult import optimize_mult_vr;
 
 from .common import load_literal;
 
-def optimize_load(ops, vrtovn, ins, out, avin, expression_table, id, **_):
-	enter(f"optimize_load(ins = {ins}, out = {out})");
+def optimize_fload(ops, vrtovn, ins, out, avin, expression_table, id, **_):
+	enter(f"optimize_fload(ins = {ins}, out = {out})");
 	
 	ivn = vrtovn[ins[0]];
 	
@@ -25,25 +25,27 @@ def optimize_load(ops, vrtovn, ins, out, avin, expression_table, id, **_):
 		loadex = expression_table.vntoex(ovn);
 	
 	match (expression_table.vntoex(ivn)):
-		# load X, (Y + c) => loadAI X -> Y, c
+		# fload X, (Y + c) => floadAI X -> Y, c
 		case expression(op = "addI", ins = (Y, ), const = c):
-			load = instruction("loadAI", [Y], const = c, out = ovn);
+			fload = instruction("floadAI", [Y], const = c, out = ovn);
+			assert(not "CHECK");
 		
-		# load (X + Y) -> Z => loadAO X, Y -> Z
+		# fload (X + Y) -> Z => floadAO X, Y -> Z
 		case expression(op = "add", ins = (X, Y)):
-			load = instruction("loadAO", [X, Y], out = ovn);
+			fload = instruction("floadAO", [X, Y], out = ovn);
+			assert(not "CHECK");
 		
 		case label() | parameter():
-			load = instruction("load", [ivn], out = ovn);
+			fload = instruction("fload", [ivn], out = ovn);
 		
 		# default:
 		case (oexp):
 			dprint(f"oexp == {oexp}");
-			load = instruction("load", [ivn], out = ovn);
+			fload = instruction("fload", [ivn], out = ovn);
 			assert(not "TODO");
 	
-	loadex.instruction = load;
-	ops.append(load);
+	loadex.instruction = fload;
+	ops.append(fload);
 	
 	vrtovn[out] = ovn;
 	avin.add(ovn);

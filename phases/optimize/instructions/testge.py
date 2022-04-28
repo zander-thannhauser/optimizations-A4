@@ -19,6 +19,7 @@ def optimize_testge_vr(stuff, ivn, out = None):
 		
 		# substitutions:
 		case expression(op = "comp", ins = [X, Y]):
+			assert(not "TODO");
 			valnum = consider(stuff, "cmp_GE", (X, Y), out = out);
 		
 		# default:

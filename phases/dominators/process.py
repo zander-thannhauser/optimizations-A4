@@ -12,7 +12,7 @@ def dominators_phase_process(self, all_blocks, phase_counters, **_):
 	match len(block.predecessors):
 		case 0:
 			dominators = set();
-			immediate_dominator = None;
+			immediate_dominator = block;
 		case 1:
 			parent, = block.predecessors;
 			dominators = parent.dominators.copy();
