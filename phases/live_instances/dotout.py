@@ -36,9 +36,20 @@ digraph mygraph {
 			
 			current = inst.newerdotout(stream);
 			
+#			if inst.define_set is not None:
+#				print(f"""
+#					"{current}_note" [
+#						shape = note
+#						label = "{[str(x) for x in inst.define_set]}"
+#					];
+#					"{current}_note" -> "{current}";
+#				""", file = stream);
+			
 			if tail:
 				print(f"""
-					"{tail}" -> "{current}" [style=bold];
+					"{tail}" -> "{current}" [
+						style = bold
+					];
 				""", file = stream);
 			else:
 				head = current;

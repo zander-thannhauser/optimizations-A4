@@ -19,7 +19,13 @@ def optimize_testle_vr(stuff, ivn, out = None):
 		
 		# substitutions:
 		case expression(op = "comp", ins = [X, Y]):
-			valnum = consider(stuff, "cmp_GT", (Y, X), out = out);
+			match (et.vntoex(X), et.vntoex(Y)):
+				case (constant(value = 0), _):
+					assert(not "TODO");
+				case (_, constant(value = 0)):
+					assert(not "TODO");
+				case _:
+					valnum = consider(stuff, "cmp_LE", (X, Y), out = out);
 		
 		# default:
 		case (iex):

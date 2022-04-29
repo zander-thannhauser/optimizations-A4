@@ -27,7 +27,7 @@ def optimize_testne_vr(stuff, ivn, out = None):
 					assert(not "TODO");
 				case _:
 					assert(not "TODO");
-					valnum = consider(stuff, "cmp_NE", (X, Y), out = out);
+					valnum = consider(stuff, "cmp_NE", (min(X, Y), max(X, Y)), out = out);
 		
 		# default:
 		case (iex):

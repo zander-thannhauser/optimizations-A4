@@ -12,7 +12,7 @@ def loop_depth_phase_process(self, start, **_):
 		loop_depth = 0;
 		public_loop_depth = 0;
 	else:
-		loop_depth = max(
+		loop_depth = min(
 			p.public_loop_depth \
 			for p in block.predecessors \
 			if p.public_loop_depth is not None);
@@ -24,7 +24,7 @@ def loop_depth_phase_process(self, start, **_):
 		public_loop_depth = loop_depth;
 		
 		# am I a loop-footer?
-		if any(block in s.post_dominators for s in block.successors):
+		if any(s in block.dominators for s in block.successors):
 			public_loop_depth -= 1;
 	
 	block.loop_depth = loop_depth;

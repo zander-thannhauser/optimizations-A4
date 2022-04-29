@@ -14,28 +14,33 @@ def live_inheritance_phase_process(self, all_blocks, phase_counters, **_):
 	
 	todo = [];
 	
-	dprint(f"block.ins = {block.ins}")
+	dprint(f"block.live_ins = {block.live_ins}")
 	
 	for predecessor in block.predecessors:
 		if predecessor.live_given is not None:
 			giving = predecessor.live_given.copy();
 			
 			for reg, inst in predecessor.live_outs.items():
-				dprint(f"inst = {inst}")
 				if inst is None: # (parameter):
 					giving[reg] = set();
 				else:
+					dprint(f"inst = {inst}")
 					giving[reg] = set([inst]);
 			
 			dprint(f"{predecessor}.giving = {[str(g) for g in giving]}");
 			
 			for register in block.live_ins:
 				assert(register in giving);
-				original = given.setdefault(register, set());
-				more = giving[register];
-				original.update(more);
-				for o in original:
-					o.define_set = original;
+				original = given.get(register, set());
+				dprint(f"giving[register] = {giving[register]}")
+				if len(giving[register]):
+					more = set.union(*(x.define_set for x in giving[register]));
+				else:
+					more = dict();
+				new = set.union(original, more);
+				for o in new:
+					o.define_set = new;
+				given[register] = new;
 	
 	dprint(f"given = {given}");
 	

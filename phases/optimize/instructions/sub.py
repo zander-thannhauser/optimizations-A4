@@ -29,6 +29,12 @@ def optimize_sub_vr(stuff, lvn, rvn, out = None):
 			if out is not None: vrtovn[out] = lvn;
 			valnum = lvn;
 		
+		case (constant(value = 0), _):
+			valnum = consider(stuff, "multI", (rvn, ), const = -1, out = out);
+		
+		case (_, _) if lvn == rvn:
+			valnum = load_literal(stuff, literal = 0, out = out);
+		
 		# (X + a) - (Y + b) => (X - Y) + (a - b)
 		case (expression(op = "addI", ins = (X, ), const = a), \
 		      expression(op = "addI", ins = (Y, ), const = b)):
@@ -52,10 +58,10 @@ def optimize_sub_vr(stuff, lvn, rvn, out = None):
 			subvn = optimize_sub_vr(stuff, X, rvn);
 			valnum = consider(stuff, "addI", (subvn, ), const = a, out = out);
 		
-		# X - (Y + a) => (X - Y) + a
+		# X - (Y + a) => (X - Y) - a
 		case (_, expression(op = "addI", ins = (Y, ), const = a)):
 			subvn = optimize_sub_vr(stuff, lvn, Y);
-			valnum = consider(stuff, "addI", (subvn, ), const = a, out = out);
+			valnum = consider(stuff, "addI", (subvn, ), const = -a, out = out);
 		
 		# a * X - b * X => (a - b) * X
 		case (expression(op = "multI", ins = (X, ), const = a), \
@@ -81,8 +87,8 @@ def optimize_sub_vr(stuff, lvn, rvn, out = None):
 			assert(not "TODO");
 		
 		# X - a * Y => X + (-a) * Y
-		case (_, expression(op = "multI", ins = (Y, ), const = a)) if lvn != X:
-			subrvn = consider(stuff, "multI", ins = (X, ), const = -a);
+		case (_, expression(op = "multI", ins = (Y, ), const = a)) if lvn != Y:
+			subrvn = consider(stuff, "multI", ins = (Y, ), const = -a);
 			valnum = consider(stuff, "add", ins = (lvn, subrvn), out = out);
 		
 		# X - c => (X + -c)

@@ -9,40 +9,41 @@
 	   .string  .string_rformat, "%s"
 .text
 	.frame main, 44 
+		# block.rpo = 1:
 		# block.rpo = 2:
-		  loadI   0             -> %vr9
-		  loadI   1             -> %vr4
+		  loadI 1 => %vr4
+		  i2i %vr4 -> %vr5
 		# block.rpo = 3:
 		.L1:
-		  multI   %vr4, -4     => %vr16
-		  storeAO %vr4         => %vr0, %vr16
-		  addI    %vr4, 1     => %vr18
-		  loadI   9             -> %vr19
-		  cmp_LE  %vr4, %vr19 => %vr21
-		  i2i     %vr18         => %vr4
-		  cbr     %vr21         -> .L1
+		  multI %vr5, -4 -> %vr4
+		  storeAO %vr5 => %vr0, %vr4
+		  addI %vr5, 1 -> %vr4
+		  loadI 9 => %vr7
+		  cmp_LE %vr5, %vr7 => %vr6
+		  i2i %vr4 -> %vr5
+		  cbr %vr6 -> .L1
 		# block.rpo = 4:
 		.L0:
-		  loadI   1             -> %vr5
+		  loadI 1 => %vr4
+		  i2i %vr4 -> %vr5
 		# block.rpo = 5:
 		.L3:
-		  loadI   5             -> %vr22
-		  cbr_GE  %vr5, %vr22 -> .L4
+		  loadI 5 => %vr4
+		  cbr_GE %vr5, %vr4 -> .L4
 		# block.rpo = 6:
-		  multI   %vr5, -4     => %vr31
-		  loadAO  %vr0, %vr31 => %vr33
-		  iwrite  %vr33              
+		  multI %vr5, -4 -> %vr4
+		  loadAO %vr0, %vr4 => %vr4
+		  iwrite %vr4
 		# block.rpo = 8:
 		.L5:
-		  addI    %vr5, 1     => %vr34
-		  loadI   9             -> %vr35
-		  cmp_LE  %vr5, %vr35 => %vr37
-		  i2i     %vr34         => %vr5
-		  cbr     %vr37         -> .L3
+		  addI %vr5, 1 -> %vr4
+		  cmp_LE %vr5, %vr7 => %vr6
+		  i2i %vr4 -> %vr5
+		  cbr %vr6 -> .L3
 		# block.rpo = 10:
-		.return:
 		  ret
 		# block.rpo = 7:
 		.L4:
-		  iwrite  %vr9              
+		  loadI 0 => %vr4
+		  iwrite %vr4
 		  jumpI -> .L5

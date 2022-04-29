@@ -12,7 +12,8 @@ def union_valnum_sets_phase_process(self, end, phis, valnum_to_vnsets, expressio
 	
 	for phi_valnum in block.incoming_phis.values():
 		phi = expression_table.vntoex(phi_valnum);
-		phis.add(phi);
+		if phi.is_critical:
+			phis.add(phi);
 	
 	if block == end:
 		
@@ -23,16 +24,17 @@ def union_valnum_sets_phase_process(self, end, phis, valnum_to_vnsets, expressio
 		for p in phis:
 			regtophis.setdefault(p.register, set()).add(p);
 		
-		dprint(f"regtophis = {regtophis}")
+		dprint(f"regtophis = {[(str(x), [str(z) for z in y]) for x, y in regtophis.items()]}")
 		
 		for reg, phis in regtophis.items():
+			dprint(f"reg = {reg}")
 			if len(phis) > 1:
 				union = set();
 				for p in phis:
+					dprint(f"p.valnum = {p.valnum}")
 					union.update(valnum_to_vnsets[p.valnum]);
 				for me in union:
 					valnum_to_vnsets[me] = union;
-		
 	else:
 		block.phase_counters["union_valnum_sets"] = phase_counters["union_valnum_sets"]
 	

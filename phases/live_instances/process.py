@@ -45,7 +45,7 @@ def live_instances_phase_process(self, start, parameters, all_liveranges, define
 		if inst.out is not None:
 			define_set = tuple(sorted(inst.define_set));
 			
-			# dprint(f"define_set = {[str(d) for d in define_set]}")
+			dprint(f"define_set = {[str(d) for d in define_set]}")
 			
 			if define_set in defineset_to_liverange:
 				lr = defineset_to_liverange[define_set];

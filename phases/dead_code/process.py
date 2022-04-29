@@ -11,6 +11,10 @@ def dead_code_phase_process(self, start, all_blocks, phase_counters, **_):
 	
 	block = self.block;
 	
+	if not block.is_reachable:
+		exit();
+		return [];
+	
 	new_instructions = [];
 	
 	for inst in block.new_instructions:
@@ -18,15 +22,17 @@ def dead_code_phase_process(self, start, all_blocks, phase_counters, **_):
 			new_instructions.append(inst);
 	
 	if block.new_jump is not None and not block.new_jump.is_critical:
-#		# who are my children?
-#		for child in block.successors:
-#			child.predecessors.remove(block);
-#			todo.append(lost_parent_phase(child));
-#		child = block.post_immediate_dominator;
-#		child.predecessors.append(block);
-#		block.successors = [child];
-#		block.jump = None;
-		assert(not "TODO");
+		dprint(f"new_jump is not critical")
+		# who are my children?
+		for child in block.successors:
+			child.predecessors.remove(block);
+			todo.append(lost_parent_phase(child));
+			dprint(f"goodbye {child}");
+		newchild = block.post_immediate_dominator;
+		newchild.predecessors.append(block);
+		dprint(f"hello {newchild}");
+		block.successors = [newchild];
+		block.new_jump = None;
 	
 	if len(new_instructions) == 0 and block.new_jump is None and block != start:
 		dprint(f"block.rpo = {block.rpo}");

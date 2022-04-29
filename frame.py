@@ -36,10 +36,7 @@ from phases.live_instances.self     import live_instances_phase;
 from phases.build_interference.self import build_interference_phase;
 from phases.remove_i2is.self        import remove_i2is_phase;
 
-# dead code removal:
-#from phases.dead_code.self             import dead_code_phase;
-
-# register allocation:
+from print_asm import print_asm;
 
 from debug import *;
 
@@ -73,8 +70,9 @@ def setup_start_block(t, p, et):
 	return start, name, framesize, parameters;
 
 def setup_end_block():
+	global return_counter;
 	ret = instruction("ret", [], []);
-	end = block(".return", [], [], ret);
+	end = block(f".return", [], [], ret);
 	return end;
 
 def read_all_blocks(t, start, end):
@@ -124,7 +122,8 @@ def resolve_references(all_blocks):
 def postorder_rank(b, x):
 	if b.po: return x;
 	b.po = 1;
-	for c in b.successors: x = postorder_rank(c, x);
+	for c in sorted(b.successors, key = lambda s: s.edges_from_end):
+		x = postorder_rank(c, x);
 	b.po = x;
 	x += 1;
 	return x;
@@ -132,55 +131,39 @@ def postorder_rank(b, x):
 def reverse_postorder_rank(b, x, n):
 	if b.rpo: return x;
 	b.rpo = 1;
-	for c in b.predecessors: x = reverse_postorder_rank(c, x, n);
+	for c in sorted(b.predecessors, key = lambda s: s.edges_from_start):
+		x = reverse_postorder_rank(c, x, n);
 	b.rpo = x;
 	b.hue = (x - 1) / n;
 	x += 1;
 	return x;
 
-def print_asm(block, p):
-	enter(f"print_asm(block.rpo = {block.rpo})");
+def assign_ranks(start, end, all_blocks):
 	
-	p.comment("block.rpo = %s:", block.rpo);
+	start.edges_from_start = 0;
+	end.edges_from_end = 0;
 	
-	if block.label and block.label != ".return":
-		p.printf("%s:", block.label, prefix = "");
-	
-	for inst in block.newest_instructions:
-		inst.print(p);
-	
-	if block.newest_jump is not None:
-		block.newest_jump.print(p);
-	
-	for i, child in enumerate(block.successors):
-		
-		dprint(f"children[{i}] = {child}");
-		
-		match (i, child.phase_counters.get("printed-assembly", 0)):
+	changed = True;
+	while changed:
+		changed = False;
+		for b in all_blocks:
+			es = [p.edges_from_start for p in b.predecessors if p.edges_from_start is not None];
+			ee = [s.edges_from_end for s in b.successors if s.edges_from_end is not None];
 			
-			# fallthrough child, assembly already printed
-			case (0, 1):
-				assert(child.label);
-				if child.label == ".return":
-					p.printf("ret");
-				else:
-					p.printf("jumpI -> %s", child.label);
-			
-			# not fallthrough, assembly already printed
-			case (_, 1):
-				# this block's jump will already go there
-				pass;
-			
-			# any child with assembly that has yet to print:
-			case (_, 0):
-				child.phase_counters["printed-assembly"] = 1;
-				print_asm(child, p);
-			
-			case conditions:
-				dprint(f"conditions = {conditions}");
-				assert(not "TODO");
+			if len(es) and b.edges_from_start != (edges_from_start := min(es) + 1):
+				changed = True;
+				b.edges_from_start = edges_from_start;
+				
+			if len(ee) and b.edges_from_end != (edges_from_end := min(ee) + 1):
+				changed = True;
+				b.edges_from_end = edges_from_end;
 	
-	exit("return;");
+	postorder_rank(start, 1);
+	reverse_postorder_rank(end, 1, len(all_blocks));
+	
+	for b in all_blocks:
+		dprint(f"{b}, {b.edges_from_start}, {b.edges_from_end}")
+	
 
 def process_frame(t, p, num_registers):
 	
@@ -198,9 +181,7 @@ def process_frame(t, p, num_registers):
 	
 	resolve_references(all_blocks);
 	
-	postorder_rank(start, 1);
-	
-	reverse_postorder_rank(end, 1, len(all_blocks));
+	assign_ranks(start, end, all_blocks)
 	
 	todo = [
 		# call lost_parent_phase on all blocks:
@@ -292,8 +273,6 @@ def process_frame(t, p, num_registers):
 			# only the ones that say: `i2i same => same`
 	];
 	
-	all_liveranges = set();
-	
 	args = {
 		"all_blocks": all_blocks,
 		
@@ -323,7 +302,7 @@ def process_frame(t, p, num_registers):
 		
 		"defineset_to_liverange": dict(), # set of instructions -> liverange
 		
-		"all_liveranges": all_liveranges,
+		"all_liveranges": set(),
 		
 		"interference": set(),
 		
@@ -350,12 +329,7 @@ def process_frame(t, p, num_registers):
 			if me not in todo:
 				heappush(todo, me);
 	
-	p.printf(".frame %s, %s %s", name, framesize, \
-		"".join(f", %vr{p.liverange.register}" for p in parameters[4:]), prefix = "");
-	
-	p.indent();
-	print_asm(start, p);
-	p.unindent();
+	print_asm(p, **args);
 	
 	exit("process_frame");
 	

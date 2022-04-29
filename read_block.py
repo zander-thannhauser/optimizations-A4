@@ -80,18 +80,14 @@ def read_block(t):
 					t.next();
 			
 			case "icall":
-				assert(not "TODO");
-#				func_label = t.token
-#				t.next();
-#				while t.token == ",":
-#					t.next();
-#					ins.append(t.token);
-#					t.next();
-#				dprint(f"ins = {ins}");
-#				assert(t.token == "=>"); t.next();
-#				out = t.token; t.next();
-#				dprint(f"out = {out}");
-#				instructions.append(instruction(operation, ins, out, func_label));
+				label = t.token
+				t.next();
+				while t.token == ",":
+					t.next();
+					ins.append(t.token);
+					t.next();
+				assert(t.token == "=>"); t.next();
+				out = t.token; t.next();
 			
 			# nop:
 			case "nop":

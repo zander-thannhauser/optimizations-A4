@@ -43,7 +43,7 @@ def optimize_comp_vn(stuff, lvn, rvn, out = None):
 		case (parameter() | phi() | unknown() | expression(op = "f2i"), constant() | unknown()):
 			valnum = consider(stuff, "comp", (lvn, rvn), out = out);
 		
-		case (constant() | unknown(), parameter() | phi() | unknown() | expression(op = "f2i")):
+		case (constant() | phi() | unknown(), parameter() | phi() | unknown() | expression(op = "f2i")):
 			valnum = consider(stuff, "comp", (lvn, rvn), out = out);
 		
 		case (lex, rex):

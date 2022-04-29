@@ -7,6 +7,7 @@ from expression_table.parameter.self import parameter;
 from expression_table.unknown.self import unknown;
 from expression_table.expression.self import expression;
 
+from .common import s;
 from .common import consider;
 from .common import load_literal;
 
@@ -59,7 +60,7 @@ def optimize_add_vr(stuff, lvn, rvn, out = None):
 		# a * X + b * X => (a + b) * X
 		case (expression(op = "multI", ins = (X, ), const = a), \
 		      expression(op = "multI", ins = (Y, ), const = b)) if X == Y:
-			assert(not "TODO");
+			valnum = consider(stuff, "multI", ins = (X, ), const = s(a + b), out = out);
 		
 		# a * X + a * Y => a * (X + Y)
 		case (expression(op = "multI", ins = (X, ), const = a), \

@@ -4,6 +4,7 @@ from debug import *;
 from expression_table.phi.self import phi;
 from expression_table.unknown.self import unknown;
 from expression_table.constant.self import constant;
+from expression_table.parameter.self import parameter;
 from expression_table.expression.self import expression;
 
 from .common import consider;
@@ -57,7 +58,7 @@ def optimize_mult_vr(stuff, lvn, rvn, out = None):
 			valnum = consider(stuff, "multI", (rvn, ), const = a, out = out);
 		
 		# X * c => (c * X)
-		case (phi() | unknown(), constant(value = a)):
+		case (phi() | unknown() | parameter(), constant(value = a)):
 			valnum = consider(stuff, "multI", (lvn, ), const = a, out = out);
 		
 		case (unknown(), phi()):

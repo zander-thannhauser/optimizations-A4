@@ -43,11 +43,11 @@ def in_out_phase_process(self, all_blocks, parameters, **_):
 			dprint(f"inst = {inst}");
 			
 			if (inst.out in ins) or inst.op in \
-					["i2i", "iwrite", "iread", "store", "assert", "ret", "swrite", "call"]:
+					["iwrite", "iread", "store", "assert", "ret", "swrite", "call"]:
 				# (either it's useful or protected)
 				
 				# is it publishing something?
-				if inst.op == "i2i" and inst.out not in outs:
+				if inst.out is not None and inst.out not in outs:
 					outs.insert(0, inst.out);
 				
 				ins.discard(inst.out);

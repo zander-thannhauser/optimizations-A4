@@ -25,6 +25,8 @@ from .instructions.fmult   import optimize_fmult;
 from .instructions.loadI   import optimize_loadI;
 from .instructions.i2i     import optimize_i2i;
 from .instructions.i2f     import optimize_i2f;
+from .instructions.icall   import optimize_icall;
+from .instructions.iret    import optimize_iret;
 from .instructions.iread   import optimize_iread;
 from .instructions.iwrite  import optimize_iwrite;
 from .instructions.load    import optimize_load;
@@ -60,6 +62,8 @@ lookup = {
 	"fmult":  optimize_fmult,
 	"i2i":    optimize_i2i,
 	"i2f":    optimize_i2f,
+	"icall":  optimize_icall,
+	"iret":   optimize_iret,
 	"iread":  optimize_iread,
 	"iwrite": optimize_iwrite,
 	"load":   optimize_load,
@@ -115,7 +119,6 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				dprint(f"inherited nothing from {predecessor}");
 		
 		avin = block.immediate_dominator.avin.copy();
-		# avin = max(filter((lambda d: d != block and d.vrtovn is not None), block.dominators), key = lambda b: b.rpo).avin.copy();
 		
 		# introduce phi nodes entering this block into
 		# the expression_table:
@@ -192,7 +195,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 					
 					case _ if before.op == after.op: pass;
 					
-					case ('cbr' | 'cbrne', 'cbrne' | 'cbr_GT' | 'cbr_GE' | 'cbr_EQ' | 'cbr_LE' | 'cbr_NE' | 'cbr_EQ'):
+					case ('cbr' | 'cbrne', 'cbrne' | 'cbr_LT' | 'cbr_GT' | 'cbr_GE' | 'cbr_EQ' | 'cbr_LE' | 'cbr_NE' | 'cbr_EQ'):
 						pass;
 					
 					# always jump:

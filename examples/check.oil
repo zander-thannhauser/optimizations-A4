@@ -10,3 +10,10 @@
 	   .string  .string_const_0, "SUCCESS"
 .text
 	.frame main, 0 
+		# block.rpo = 1:
+		# block.rpo = 6:
+		.L0:
+		  loadI .string_const_0 => %vr4
+		  swrite %vr4
+		# block.rpo = 7:
+		  ret

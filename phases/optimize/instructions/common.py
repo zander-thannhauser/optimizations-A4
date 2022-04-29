@@ -61,6 +61,44 @@ def consider(stuff, op, ins, const = None, out = None):
 	exit(f"return {result.valnum}")
 	return result.valnum;
 
+def s(x):
+	return u(x + (1 << 31)) - (1 << 31);
+
+def u(x):
+	limit = 1 << 32
+	while x < 0: x += limit;
+	while x > limit: x -= limit;
+	return x;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

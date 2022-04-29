@@ -45,14 +45,14 @@ def instruction_print(self, p):
 		case "call":
 			p.printf("%s %s%s", self.op, self.label, "".join(f", {e}" for e in self.ins));
 		
-#		case "icall":
-#			p.printf("%s %s%s => %s", self.op, self.label, "".join(f", {e}" for e in self.ins), self.out);
-#		
+		case "icall":
+			p.printf("%s %s%s => %s", self.op, self.label, "".join(f", {e}" for e in self.ins), self.out);
+		
 		# jumps:
 		case "cbr" | "cbrne":
 			p.printf("%s %s -> %s", self.op, self.ins[0], self.label);
 		
-		case "cbr_GT" | "cbr_GE" | "cbr_EQ" | "cbr_LE" | "cbr_NE":
+		case "cbr_GT" | "cbr_GE" | "cbr_EQ" | "cbr_LE" | "cbr_NE" | "cbr_LT":
 			p.printf("%s %s, %s -> %s", self.op, *self.ins, self.label);
 		
 		case _:

@@ -65,6 +65,22 @@ gimp-critical: $(critical)
 	gimp $(critical)
 
 
+dot/postdominators.mk:
+	find $(@D) -name '*-postdominators.dot' | sort -V | sed 's/^/postdominators += /;s/.dot$$/.png/' > $@
+
+include dot/postdominators.mk
+
+mpv-postdominators: $(postdominators)
+	mpv $(postdominators)
+
+eog-postdominators: $(postdominators)
+	eog $(postdominators)
+
+gimp-postdominators: $(postdominators)
+	gimp $(postdominators)
+
+
+
 dot/loop_depth.mk:
 	find $(@D) -name '*-loop_depth.dot' | sort -V | sed 's/^/loop_depth += /;s/.dot$$/.png/' > $@
 

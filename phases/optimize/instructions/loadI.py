@@ -4,13 +4,14 @@ from debug import *;
 from instruction.self import instruction;
 from expression_table.label.self import label;
 
+from .common import s;
 from .common import load_literal;
 
 def optimize_loadI(const, out, **stuff):
 	enter(f"optimize_loadI(const = {const}, out = {out})");
 	
 	if type(const) is int:
-		load_literal(stuff, const, out);
+		load_literal(stuff, literal = s(const), out = out);
 	else:
 		exp = label(const);
 		

@@ -11,6 +11,8 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	# after reading assembly:
 	self.predecessors = [];
 	self.successors = [];
+	self.edges_from_start = None;
+	self.edges_from_end = None;
 	self.po  = 0;
 	self.rpo = 0;
 	self.hue = 0;
