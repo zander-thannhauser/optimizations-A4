@@ -13,8 +13,8 @@
 	   .global          main_fp, 4, 4
 .text
 	.frame main, 96 
-		# block.rpo = 1:
-		# block.rpo = 2:
+		# block.rpo = (1, 0):
+		# block.rpo = (2, 0):
 		  loadI main_fp => %vr4
 		  store %vr0 => %vr4
 		  loadI 1 => %vr7
@@ -32,21 +32,22 @@
 		  storeAI %vr7 => %vr0, -92
 		  call quicksort, %vr6, %vr5, %vr4
 		  call writearray
-		# block.rpo = 3:
+		# block.rpo = (3, 0):
 		.return:
 		  ret
 	.frame readarray, 14 
-		# block.rpo = 1:
-		# block.rpo = 2:
+		# block.rpo = (1, 0):
+		# block.rpo = (2, 0):
 		  loadI .string_const_0 => %vr4
 		  swrite %vr4
 		  loadI 1 => %vr4
 		  i2i %vr4 -> %vr5
-		# block.rpo = 3:
+		# block.rpo = (2, 1):
+		  loadI main_fp => %vr7
+		# block.rpo = (3, 0):
 		.L1:
 		  iwrite %vr5
-		  loadI main_fp => %vr4
-		  load %vr4 -> %vr6
+		  load %vr7 -> %vr6
 		  multI %vr5, -4 -> %vr4
 		  add %vr6, %vr4 => %vr4
 		  addI %vr4, -4 -> %vr4
@@ -56,19 +57,20 @@
 		  cmp_LT %vr5, %vr4 => %vr4
 		  i2i %vr6 -> %vr5
 		  cbr %vr4 -> .L1
-		# block.rpo = 5:
+		# block.rpo = (5, 0):
 		  ret
 	.frame writearray, 0 
-		# block.rpo = 1:
-		# block.rpo = 2:
+		# block.rpo = (1, 0):
+		# block.rpo = (2, 0):
 		  loadI .string_const_1 => %vr4
 		  swrite %vr4
 		  loadI 1 => %vr4
 		  i2i %vr4 -> %vr5
-		# block.rpo = 3:
+		# block.rpo = (2, 1):
+		  loadI main_fp => %vr7
+		# block.rpo = (3, 0):
 		.L3:
-		  loadI main_fp => %vr4
-		  load %vr4 -> %vr6
+		  load %vr7 -> %vr6
 		  multI %vr5, -4 -> %vr4
 		  add %vr6, %vr4 => %vr4
 		  loadAI %vr4, -4 -> %vr4
@@ -78,11 +80,11 @@
 		  cmp_LT %vr5, %vr4 => %vr4
 		  i2i %vr6 -> %vr5
 		  cbr %vr4 -> .L3
-		# block.rpo = 5:
+		# block.rpo = (5, 0):
 		  ret
 	.frame partition, 0 , %vr8, %vr5, %vr7
-		# block.rpo = 1:
-		# block.rpo = 2:
+		# block.rpo = (1, 0):
+		# block.rpo = (2, 0):
 		  load %vr5 -> %vr4
 		  multI %vr4, -4 -> %vr4
 		  loadAO %vr8, %vr4 => %vr9
@@ -96,7 +98,7 @@
 		  i2i %vr6 -> %vr7
 		  i2i %vr5 -> %vr6
 		  cbrne %vr4 -> .return
-		# block.rpo = 3:
+		# block.rpo = (3, 0):
 		.L5:
 		  addI %vr6, -1 -> %vr5
 		  multI %vr6, -4 -> %vr4
@@ -104,7 +106,7 @@
 		  loadAI %vr4, 4 -> %vr4
 		  i2i %vr5 -> %vr6
 		  cbr_LE %vr4, %vr9 -> .L6
-		# block.rpo = 4:
+		# block.rpo = (4, 0):
 		.L7:
 		  addI %vr6, -1 -> %vr5
 		  multI %vr6, -4 -> %vr4
@@ -112,7 +114,7 @@
 		  loadAI %vr4, 4 -> %vr4
 		  i2i %vr5 -> %vr6
 		  cbr_LT %vr9, %vr4 -> .L7
-		# block.rpo = 5:
+		# block.rpo = (5, 0):
 		.L6:
 		  addI %vr7, 1 -> %vr5
 		  multI %vr7, -4 -> %vr4
@@ -120,7 +122,7 @@
 		  loadAI %vr4, -4 -> %vr4
 		  i2i %vr5 -> %vr7
 		  cbr_LE %vr9, %vr4 -> .L8
-		# block.rpo = 6:
+		# block.rpo = (6, 0):
 		.L9:
 		  addI %vr7, 1 -> %vr5
 		  multI %vr7, -4 -> %vr4
@@ -128,34 +130,34 @@
 		  loadAI %vr4, -4 -> %vr4
 		  i2i %vr5 -> %vr7
 		  cbr_LT %vr4, %vr9 -> .L9
-		# block.rpo = 7:
+		# block.rpo = (7, 0):
 		.L8:
 		  cbr_GE %vr7, %vr6 -> .L10
-		# block.rpo = 8:
+		# block.rpo = (8, 0):
 		  multI %vr7, -4 -> %vr10
 		  loadAO %vr8, %vr10 => %vr11
 		  multI %vr6, -4 -> %vr5
 		  loadAO %vr8, %vr5 => %vr4
 		  storeAO %vr4 => %vr8, %vr10
 		  storeAO %vr11 => %vr8, %vr5
-		# block.rpo = 9:
+		# block.rpo = (9, 0):
 		.L11:
 		  fload %vr12 -> %vr4
 		  f2i %vr4 -> %vr4
 		  cbr %vr4 -> .L5
-		# block.rpo = 12:
+		# block.rpo = (12, 0):
 		  ret
-		# block.rpo = 11:
+		# block.rpo = (11, 0):
 		.L10:
 		  iret %vr6
 		  ret
 	.frame quicksort, 12 , %vr7, %vr5, %vr8
-		# block.rpo = 1:
-		# block.rpo = 2:
+		# block.rpo = (1, 0):
+		# block.rpo = (2, 0):
 		  load %vr5 -> %vr6
 		  load %vr8 -> %vr4
 		  cbr_GE %vr6, %vr4 -> .return
-		# block.rpo = 3:
+		# block.rpo = (3, 0):
 		  icall partition, %vr7, %vr5, %vr8 => %vr4
 		  addI %vr0, -4 -> %vr6
 		  storeAI %vr4 => %vr0, -4
@@ -165,5 +167,5 @@
 		  addI %vr0, -8 -> %vr5
 		  storeAI %vr4 => %vr0, -8
 		  call quicksort, %vr7, %vr5, %vr8
-		# block.rpo = 5:
+		# block.rpo = (5, 0):
 		  ret

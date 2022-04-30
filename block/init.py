@@ -19,6 +19,9 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	
 	# all phases:
 	self.phase_counters = {
+		"syntax-lookup": 0,
+		"earliest": 0,
+		"insert-delete": 0,
 		"superfical-critical": 0,
 		"dead-code": 0,
 		"valnum_singleton_sets": 0,
@@ -30,6 +33,26 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	
 	# lost_parent phase:
 	self.is_reachable = True;
+	
+	# available phase:
+	self.avin = None;
+	self.avloc = set();
+	self.avout = set();
+	self.avkill = set();
+	
+	# anticipation phase:
+	self.antin = None;
+	self.antout = set();
+	self.antloc = set();
+	self.antkill = set();
+	
+	# later phase:
+	self.laterin = None;
+	self.delete = set();
+	
+	# insert & delete:
+	self.subparent_po = 1;
+	self.subchild_rpo = 1;
 	
 	# in-out phase:
 	self.ins = None; # set of registers

@@ -26,6 +26,8 @@ def optimize_testle_vr(stuff, ivn, out = None):
 					assert(not "TODO");
 				case (_, constant(value = 0)):
 					assert(not "TODO");
+				case (expression(op = "addI"), unknown() | phi()):
+					valnum = consider(stuff, "cmp_LE", (X, Y), out = out);
 				case (unknown() | phi(), unknown() | constant()):
 					valnum = consider(stuff, "cmp_LE", (X, Y), out = out);
 				case _:

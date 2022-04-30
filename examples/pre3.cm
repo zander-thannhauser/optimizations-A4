@@ -1,0 +1,14 @@
+linked fn write<T>(_: T);
+
+fn pre_example(x: int, y: int, z: int) {
+	let a = 0;
+	while (a < 5) {
+		z = x + y;
+		a += 1;
+	}
+	write(z);
+}
+
+fn main() {
+	pre_example(3, 1, 2);
+}

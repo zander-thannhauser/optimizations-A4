@@ -20,8 +20,9 @@ operator = {
 	"mod": "\\%",
 	"and": "∧",
 	"or":  "∨",
+	"sub": "-",
 	"not": "¬",
-	"rshiftI": "≫",
+	"rshiftI": ">>",
 };
 
 def expression_dotout(self, stream, drawn, et, **_):
@@ -63,7 +64,7 @@ def expression_dotout(self, stream, drawn, et, **_):
 			""", file = stream);
 		
 		# those who have two value-numbers:
-		case "comp" | "cmp_GT" | "cmp_LT" | "cmp_LE" | "cmp_GE" | "cmp_EQ" | "cmp_NE" | "mod" | "add" | "fadd" | "mult" | "fmult" | "or":
+		case "comp" | "cmp_GT" | "cmp_LT" | "cmp_LE" | "cmp_GE" | "cmp_EQ" | "cmp_NE" | "mod" | "add" | "fadd" | "sub" | "mult" | "fmult" | "or":
 			lvn, rvn = self.ins
 			print(f"""
 				"{self.valnum}" [

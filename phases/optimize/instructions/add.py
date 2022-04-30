@@ -90,7 +90,7 @@ def optimize_add_vr(stuff, lvn, rvn, out = None):
 		case (expression(op = "multI"), constant(value = a)):
 			valnum = consider(stuff, "addI", ins = (lvn, ), const = a, out = out);
 		
-		case (phi() | expression(op = "multI"), phi()):
+		case (phi() | parameter() | expression(op = "multI"), phi() | parameter()):
 			valnum = consider(stuff, "add", ins = (min(lvn, rvn), max(lvn, rvn)), out = out);
 		
 		case (lex, rex):

@@ -61,6 +61,10 @@ def optimize_mult_vr(stuff, lvn, rvn, out = None):
 		case (phi() | unknown() | parameter(), constant(value = a)):
 			valnum = consider(stuff, "multI", (lvn, ), const = a, out = out);
 		
+		# X * Y => (X * Y)
+		case (expression(op = "addI"), phi()):
+			valnum = consider(stuff, "mult", (min(lvn, rvn), max(lvn, rvn)), out = out);
+		
 		case (unknown(), phi()):
 			valnum = consider(stuff, "mult", (min(lvn, rvn), max(lvn, rvn)), out = out);
 		

@@ -9,11 +9,17 @@
 	   .string  .string_rformat, "%s"
 .text
 	.frame main, 3964 
-		# block.rpo = 1:
-		# block.rpo = 2:
+		# block.rpo = (1, 0):
+		# block.rpo = (2, 0):
+		  loadI 30 => %vr18
 		  loadI 1 => %vr7
 		  i2i %vr7 -> %vr5
-		# block.rpo = 3:
+		# block.rpo = (2, 1):
+		  loadI -244 => %vr4
+		  loadI 4 => %vr6
+		  i2i %vr4 -> %vr16
+		  i2i %vr6 -> %vr11
+		# block.rpo = (3, 0):
 		.L1:
 		  addI %vr5, -1 -> %vr6
 		  multI %vr5, -120 -> %vr4
@@ -27,88 +33,108 @@
 		  cmp_LE %vr5, %vr4 => %vr4
 		  i2i %vr6 -> %vr5
 		  cbr %vr4 -> .L1
-		# block.rpo = 4:
+		# block.rpo = (4, 0):
 		.L0:
 		  i2i %vr7 -> %vr5
-		# block.rpo = 5:
+		# block.rpo = (4, 2):
+		  loadI 2 => %vr4
+		  i2i %vr4 -> %vr17
+		# block.rpo = (5, 0):
 		.L3:
-		  addI %vr5, -1 -> %vr7
-		  multI %vr5, -4 -> %vr4
-		  add %vr0, %vr4 => %vr6
-		  storeAI %vr7 => %vr6, -360
-		  multI %vr5, 2 -> %vr4
-		  storeAI %vr4 => %vr6, -120
+		  addI %vr5, -1 -> %vr6
+		  add %vr0, %vr16 => %vr7
+		  addI %vr5, 29 -> %vr4
+		  mult %vr11, %vr4 => %vr4
+		  sub %vr7, %vr4 => %vr4
+		  store %vr6 => %vr4
+		  multI %vr5, 2 -> %vr7
+		  mult %vr11, %vr6 => %vr4
+		  sub %vr0, %vr4 => %vr4
+		  storeAI %vr7 => %vr4, -124
 		  addI %vr5, 1 -> %vr6
 		  loadI 29 => %vr4
 		  cmp_LE %vr5, %vr4 => %vr4
 		  i2i %vr6 -> %vr5
 		  cbr %vr4 -> .L3
-		# block.rpo = 6:
+		# block.rpo = (6, 0):
 		.L2:
-		  loadI 2 => %vr4
-		  storeAI %vr4 => %vr0, -3964
-		# block.rpo = 7:
+		  i2i %vr17 -> %vr14
+		  cbr_LT %vr18, %vr17 -> .L4
+		# block.rpo = (7, 0):
 		.L5:
-		  loadI 2 => %vr4
-		  i2i %vr4 -> %vr7
-		# block.rpo = 8:
+		  i2i %vr17 -> %vr10
+		  cbr_LT %vr18, %vr17 -> .L6
+		# block.rpo = (7, 1):
+		  multI %vr14, 30 -> %vr15
+		# block.rpo = (8, 0):
 		.L7:
-		  loadAI %vr0, -3964 -> %vr4
-		  multI %vr4, 30 -> %vr4
-		  add %vr7, %vr4 => %vr4
-		  multI %vr4, -4 -> %vr4
-		  add %vr0, %vr4 => %vr5
-		  loadAI %vr5, -116 -> %vr4
-		  storeAI %vr4 => %vr5, -240
-		  loadAI %vr0, -3964 -> %vr4
-		  multI %vr4, -4 -> %vr4
-		  add %vr0, %vr4 => %vr4
-		  loadAI %vr4, -120 -> %vr6
-		  multI %vr7, -4 -> %vr4
-		  loadAO %vr0, %vr4 => %vr4
-		  cbr_EQ %vr6, %vr4 -> .L8
-		# block.rpo = 9:
-		  loadAI %vr5, -240 -> %vr4
+		  addI %vr14, -1 -> %vr9
+		  addI %vr10, -1 -> %vr12
+		  add %vr10, %vr15 => %vr7
+		  addI %vr7, -31 -> %vr13
+		  add %vr0, %vr16 => %vr8
+		  addI %vr7, -32 -> %vr4
+		  mult %vr11, %vr4 => %vr4
+		  sub %vr8, %vr4 => %vr4
+		  load %vr4 -> %vr5
+		  addI %vr7, -1 -> %vr4
+		  mult %vr11, %vr4 => %vr4
+		  sub %vr8, %vr4 => %vr6
+		  store %vr5 => %vr6
+		  mult %vr11, %vr9 => %vr4
+		  sub %vr0, %vr4 => %vr4
+		  loadAI %vr4, -124 -> %vr5
+		  mult %vr11, %vr12 => %vr4
+		  sub %vr0, %vr4 => %vr4
+		  loadAI %vr4, -4 -> %vr4
+		  cbr_EQ %vr5, %vr4 -> .L8
+		# block.rpo = (9, 0):
+		  load %vr6 -> %vr4
 		  addI %vr4, 1 -> %vr4
-		  storeAI %vr4 => %vr5, -240
-		# block.rpo = 10:
+		  store %vr4 => %vr6
+		# block.rpo = (10, 0):
 		.L8:
-		  loadAI %vr5, -120 -> %vr6
-		  loadAI %vr5, -240 -> %vr4
-		  cbr_GE %vr6, %vr4 -> .L9
-		# block.rpo = 11:
-		  loadAI %vr5, -120 -> %vr4
+		  mult %vr11, %vr13 => %vr4
+		  sub %vr8, %vr4 => %vr5
+		  load %vr5 -> %vr9
+		  load %vr6 -> %vr4
+		  cbr_GE %vr9, %vr4 -> .L9
+		# block.rpo = (11, 0):
+		  load %vr5 -> %vr4
 		  addI %vr4, 1 -> %vr4
-		  storeAI %vr4 => %vr5, -240
-		# block.rpo = 12:
+		  store %vr4 => %vr6
+		# block.rpo = (12, 0):
 		.L9:
-		  loadAI %vr5, -236 -> %vr6
-		  loadAI %vr5, -240 -> %vr4
-		  cbr_GE %vr6, %vr4 -> .L10
-		# block.rpo = 13:
-		  loadAI %vr5, -236 -> %vr4
+		  addI %vr7, -2 -> %vr4
+		  mult %vr11, %vr4 => %vr4
+		  sub %vr8, %vr4 => %vr5
+		  load %vr5 -> %vr7
+		  load %vr6 -> %vr4
+		  cbr_GE %vr7, %vr4 -> .L10
+		# block.rpo = (13, 0):
+		  load %vr5 -> %vr4
 		  addI %vr4, 1 -> %vr4
-		  storeAI %vr4 => %vr5, -240
-		# block.rpo = 14:
+		  store %vr4 => %vr6
+		# block.rpo = (14, 0):
 		.L10:
-		  addI %vr7, 1 -> %vr5
+		  addI %vr10, 1 -> %vr5
 		  loadI 29 => %vr4
-		  cmp_LE %vr7, %vr4 => %vr4
-		  i2i %vr5 -> %vr7
+		  cmp_LE %vr10, %vr4 => %vr4
+		  i2i %vr5 -> %vr10
 		  cbr %vr4 -> .L7
-		# block.rpo = 15:
+		# block.rpo = (15, 0):
 		.L6:
-		  loadAI %vr0, -3964 -> %vr4
-		  addI %vr4, 1 -> %vr6
-		  loadI 29 => %vr5
-		  loadAI %vr0, -3964 -> %vr4
-		  cmp_LE %vr4, %vr5 => %vr5
-		  i2i %vr6 -> %vr4
-		  storeAI %vr4 => %vr0, -3964
-		  cbr %vr5 -> .L5
-		# block.rpo = 16:
+		  addI %vr14, 1 -> %vr5
+		  loadI 29 => %vr4
+		  cmp_LE %vr14, %vr4 => %vr4
+		  i2i %vr5 -> %vr14
+		  cbr %vr4 -> .L5
+		# block.rpo = (16, 0):
 		.L4:
-		  loadAI %vr0, -3960 -> %vr4
+		  add %vr0, %vr16 => %vr5
+		  multI %vr11, -929 -> %vr4
+		  loadAO %vr5, %vr4 => %vr4
 		  iwrite %vr4
-		# block.rpo = 17:
+		# block.rpo = (17, 0):
+		.return:
 		  ret

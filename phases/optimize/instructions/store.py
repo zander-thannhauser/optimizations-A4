@@ -25,7 +25,7 @@ def optimize_store(ops, vrtovn, ins, out, expression_table, **_):
 		case expression(op = "add", ins = [Y, Z]):
 			ops.append(instruction("storeAO", [ivn, Y, Z]));
 		
-		case label() | parameter():
+		case label() | parameter() | expression(op = "sub"):
 			ops.append(instruction("store", [ivn, ovn]));
 		
 		# default:

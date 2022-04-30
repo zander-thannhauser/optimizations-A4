@@ -12,7 +12,18 @@ from read_block import read_block;
 from expression_table.self import expression_table;
 from expression_table.parameter.self import parameter;
 
+# remove unreachable:
 from phases.lost_parent.self           import lost_parent_phase;
+
+# code motion:
+from phases.syntax_lookup.self         import syntax_lookup_phase;
+from phases.available.self             import available_phase;
+from phases.anticipation.self          import anticipation_phase;
+from phases.earliest.self              import earliest_phase;
+from phases.later.self                 import later_phase;
+from phases.insert_delete.self         import insert_delete_phase;
+
+# SSA-redundancy elmination:
 from phases.reset_dominators.self      import reset_dominators_phase;
 from phases.dominators.self            import dominators_phase;
 from phases.reset_post_dominators.self import reset_post_dominators_phase;
@@ -26,10 +37,10 @@ from phases.dead_code.self             import dead_code_phase;
 
 from phases.loop_depth.self            import loop_depth_phase;
 
+# live ranges & register allocation:
 from phases.valnum_singleton_sets.self     import valnum_singleton_sets_phase;
 from phases.union_valnum_sets.self         import union_valnum_sets_phase;
 from phases.rename_valnums_to_liveids.self import rename_valnums_to_liveids_phase;
-
 from phases.live_in_out.self        import live_in_out_phase;
 from phases.live_inheritance.self   import live_inheritance_phase;
 from phases.live_instances.self     import live_instances_phase;
@@ -124,7 +135,7 @@ def postorder_rank(b, x):
 	b.po = 1;
 	for c in sorted(b.successors, key = lambda s: s.edges_from_end):
 		x = postorder_rank(c, x);
-	b.po = x;
+	b.po = (x, 0);
 	x += 1;
 	return x;
 
@@ -133,7 +144,7 @@ def reverse_postorder_rank(b, x, n):
 	b.rpo = 1;
 	for c in sorted(b.predecessors, key = lambda s: s.edges_from_start):
 		x = reverse_postorder_rank(c, x, n);
-	b.rpo = x;
+	b.rpo = (x, 0);
 	b.hue = (x - 1) / n;
 	x += 1;
 	return x;
@@ -187,6 +198,15 @@ def process_frame(t, p, num_registers):
 		# call lost_parent_phase on all blocks:
 		lost_parent_phase(block) for block in all_blocks
 	] + [
+#		# code motion:
+#		syntax_lookup_phase(start),         # top-down
+#		available_phase(start),             # top-down
+#		anticipation_phase(end),            # bottom-up
+#		earliest_phase(start),              # top-down
+#		later_phase(start),                 # top-down
+#		insert_delete_phase(start),         # top-down
+		
+		# SSA-redundancy elmination:
 		reset_dominators_phase(start),      # top-down*
 		dominators_phase(start),            # top-down
 		reset_post_dominators_phase(end),   # bottom-up*
@@ -194,15 +214,17 @@ def process_frame(t, p, num_registers):
 		## reset_in_out_phase(end),         # bottom-up
 		in_out_phase(end),                  # bottom-up
 		inheritance_phase(start),           # top-down
-		phi_phase(start),                   # top-down*
+		## phi_phase(start),                # top-down*
 		optimize_phase(start),              # top-down
 		
+		# dead-code elmination:
 		superfical_critical_phase(start),   # top-down
 		## critical(),  # bottom-up
 		dead_code_phase(start),             # top-down*
 		
 		loop_depth_phase(start),            # top-down?
 		
+		# register allocation:
 		valnum_singleton_sets_phase(start), # top-down*:
 			# create singleton sets of each valnum used/defined
 			# create mapping valnum -> valnum-set
@@ -285,12 +307,25 @@ def process_frame(t, p, num_registers):
 		
 		"end": end,
 		
+		# code motion:
+		"syntax_lookup": dict(), # destination -> instruction
+		
+		"usage": dict(), # this valnum is used by -> these valnums (kill them)
+		
+		"earliest": dict(), # (p, s) -> set of instructions
+		
+		"later": dict(), # (p, s) -> set of instructions
+		
+		"insert": dict(), # (p, s) -> set of instructions
+		
+		# SSA redundancy elmination:
 		"parameters": parameters,
 		
 		"expression_table": et,
 		
 		"phis": set(), # phi expressions
 		
+		# register allocation:
 		"num_registers": num_registers + 4, # 4 registers are reserved.
 		
 		"valnum_to_vnsets": dict(), # valnum -> set of valnums
@@ -307,6 +342,9 @@ def process_frame(t, p, num_registers):
 		"interference": set(),
 		
 		"phase_counters": {
+			"syntax-lookup": 1,
+			"earliest": 1,
+			"insert-delete": 1,
 			"superfical-critical": 1,
 			"dead-code": 1,
 			"valnum_singleton_sets": 1,

@@ -33,7 +33,7 @@ def optimize_load(ops, vrtovn, ins, out, avin, expression_table, id, **_):
 		case expression(op = "add", ins = (X, Y)):
 			load = instruction("loadAO", [X, Y], out = ovn);
 		
-		case label() | parameter():
+		case label() | parameter() | expression(op = "sub"):
 			load = instruction("load", [ivn], out = ovn);
 		
 		# default:

@@ -1,6 +1,7 @@
 
 from debug import *;
 
+from expression_table.unknown.self import unknown;
 from expression_table.constant.self import constant;
 from expression_table.expression.self import expression;
 
@@ -27,9 +28,8 @@ def optimize_testne_vr(stuff, ivn, out = None):
 				case (_, constant(value = 0)):
 					if out is not None: vrtovn[out] = X;
 					valnum = X;
-#				case _:
-#					assert(not "TODO");
-#					valnum = consider(stuff, "cmp_NE", (min(X, Y), max(X, Y)), out = out);
+				case (unknown(), unknown()):
+					valnum = consider(stuff, "cmp_NE", (min(X, Y), max(X, Y)), out = out);
 				case _:
 					assert(not "TODO");
 		

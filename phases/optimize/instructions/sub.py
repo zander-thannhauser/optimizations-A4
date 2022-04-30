@@ -63,6 +63,12 @@ def optimize_sub_vr(stuff, lvn, rvn, out = None):
 			subvn = optimize_sub_vr(stuff, lvn, Y);
 			valnum = consider(stuff, "addI", (subvn, ), const = -a, out = out);
 		
+		# (X + Y) - a * X => (1 - b) * X + Y
+		# (X + Y) - a * Y => X + (1 - b) * Y
+		case (expression(op = "add", ins = (X, Y), const = a), \
+		      expression(op = "multI", ins = (Z, ), const = b)) if Z in (X, Y):
+			assert(not "TODO");
+		
 		# a * X - b * X => (a - b) * X
 		case (expression(op = "multI", ins = (X, ), const = a), \
 		      expression(op = "multI", ins = (Y, ), const = b)) if X == Y:
@@ -97,6 +103,9 @@ def optimize_sub_vr(stuff, lvn, rvn, out = None):
 		
 		case (expression(op = "add" | "mod"), constant(value = a)):
 			valnum = consider(stuff, "addI", ins = (lvn, ), const = -a, out = out);
+		
+		case (parameter() | expression(op = "add"), expression(op = "mult")):
+			valnum = consider(stuff, "sub", ins = (lvn, rvn), out = out);
 		
 		case (lex, rex):
 			dprint(f"lex, rex = {str(lex), str(rex)}");
