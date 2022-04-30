@@ -1,2 +1,17 @@
 .data
 .text
+	.frame test, 0 , %vr4
+		# block.rpo = 1:
+		# block.rpo = 2:
+		  loadI 0 => %vr4
+		  iwrite %vr4
+		# block.rpo = 3:
+		.return:
+		  ret
+	.frame main, 0 
+		# block.rpo = 1:
+		# block.rpo = 2:
+		  loadI 42 => %vr4
+		  call test, %vr4
+		# block.rpo = 3:
+		  ret

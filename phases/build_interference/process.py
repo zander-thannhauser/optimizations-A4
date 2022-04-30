@@ -2,6 +2,7 @@
 from debug import *;
 
 from phases.calculate_cost.self import calculate_cost_phase;
+from phases.allocate_register.self import allocate_register_phase;
 from phases.build_interference.self import build_interference_phase;
 
 def build_interference_phase_process(self, start, parameters, all_blocks, all_liveranges, vnsets_to_liveid, interference, phase_counters, **_):
@@ -53,19 +54,12 @@ def build_interference_phase_process(self, start, parameters, all_blocks, all_li
 		# all parameters need to interfere with each other:
 		for param in parameters:
 			dprint(f"param.liveid = {param.liveid}");
+			bye = param.liverange
 			
-			# well, only the actually used ones:
-			if (param.liveid in liveout):
-				
-				# remove instance from mapping
-				bye = liveout.pop(param.liveid);
-				
-				# mark this instance as iterfering with
-				# all other instances in current mapping
-				for other in liveout.values():
-					interference.add((min(bye, other), max(bye, other)));
-				
-				todo.append(calculate_cost_phase(bye));
+			for other in liveout.values():
+				interference.add((min(bye, other), max(bye, other)));
+			
+			todo.append(calculate_cost_phase(bye));
 		
 		self.subdotout(all_blocks, all_liveranges, vnsets_to_liveid, interference, liveout, None);
 	
