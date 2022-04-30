@@ -10,6 +10,10 @@ def optimize_and_vr(vrtovn, et, lvn, rvn, out = None):
 	
 	assert(not "TODO");
 	
+	# ( X and !Y) =>  (X > Y)
+	# (!X and  Y) =>  (X < Y)
+	# (!X and !Y) => !(X or Y)
+	
 #	match (et.vntoex(lvn), et.vntoex(rvn)):
 #		# constant-folding:
 #		case (constant(value = a), constant(value = b)):

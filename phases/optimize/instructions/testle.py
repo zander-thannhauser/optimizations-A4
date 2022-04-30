@@ -1,6 +1,8 @@
 
 from debug import *;
 
+from expression_table.phi.self import phi;
+from expression_table.unknown.self import unknown;
 from expression_table.constant.self import constant;
 from expression_table.expression.self import expression;
 
@@ -24,8 +26,10 @@ def optimize_testle_vr(stuff, ivn, out = None):
 					assert(not "TODO");
 				case (_, constant(value = 0)):
 					assert(not "TODO");
-				case _:
+				case (unknown() | phi(), unknown() | constant()):
 					valnum = consider(stuff, "cmp_LE", (X, Y), out = out);
+				case _:
+					assert(not "TODO");
 		
 		# default:
 		case (iex):

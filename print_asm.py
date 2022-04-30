@@ -12,7 +12,8 @@ def print_block_asm(block, p):
 	
 	if block.label and (block.label != ".return" or first_time):
 		p.printf("%s:", block.label, prefix = "");
-		first_time = False;
+		if block.label == ".return":
+			first_time = False;
 	
 	for inst in block.newest_instructions:
 		inst.print(p);

@@ -1,6 +1,7 @@
 
 from debug import *;
 
+from expression_table.unknown.self import unknown;
 from expression_table.constant.self import constant;
 from expression_table.expression.self import expression;
 
@@ -24,8 +25,10 @@ def optimize_testgt_vr(stuff, ivn, out = None):
 					assert(not "TODO");
 				case (_, constant(value = 0)):
 					assert(not "TODO");
-				case _:
+				case (unknown(), unknown()):
 					valnum = consider(stuff, "cmp_LT", (Y, X), out = out);
+				case _:
+					assert(not "TODO");
 		
 		# default:
 		case (iex):

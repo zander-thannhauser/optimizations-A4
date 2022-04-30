@@ -1,7 +1,9 @@
 
 from debug import *;
 
+from expression_table.unknown.self import unknown;
 from expression_table.constant.self import constant;
+from expression_table.parameter.self import parameter;
 from expression_table.expression.self import expression;
 
 from .common import consider;
@@ -80,7 +82,10 @@ def optimize_mod_vr(stuff, lvn, rvn, out = None):
 ##				assert(not "TODO");
 #			assert(not "TODO");
 		
-		case (constant(), constant()):
+		case (parameter(), constant()):
+			valnum = consider(stuff, "mod", (lvn, rvn), out = out);
+		
+		case (constant() | unknown(), constant() | unknown()):
 			valnum = consider(stuff, "mod", (lvn, rvn), out = out);
 		
 		case (lex, rex):

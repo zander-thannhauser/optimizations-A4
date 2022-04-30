@@ -2,6 +2,7 @@
 from debug import *;
 
 from expression_table.phi.self import phi;
+from expression_table.unknown.self import unknown;
 from expression_table.constant.self import constant;
 from expression_table.parameter.self import parameter;
 from expression_table.expression.self import expression;
@@ -18,16 +19,6 @@ def optimize_not_vr(stuff, ivn, out = None):
 		# constant-folding:
 		case (constant(value = a)):
 			# retval = load_literal(ops, et, a + b, out);
-			assert(not "TODO");
-		
-		case (expression(op = "and", ins = A)):
-#			new = set([optimize_not_vr(vrtovn, et, p) for p in A]);
-#			valnum = consider_un(vrtovn, et, "or", new, out);
-			assert(not "TODO");
-		
-		case (expression(op = "or", ins = A)):
-#			new = set([optimize_not_vr(vrtovn, et, p) for p in A]);
-#			valnum = consider_un(vrtovn, et, "and", new, out);
 			assert(not "TODO");
 		
 		case (expression(op = "not", ins = A)):
@@ -69,7 +60,7 @@ def optimize_not_vr(stuff, ivn, out = None):
 		case (expression(op = "cmp_lt", ins = A)):
 			assert(not "TODO");
 		
-		case phi() | expression(op = "f2i"):
+		case unknown() | phi() | expression(op = "f2i" | "or" | "and"):
 			valnum = consider(stuff, "not", (ivn,), out = out);
 		
 		case (iex):

@@ -21,16 +21,16 @@ def optimize_rshift_vr(stuff, lvn, rvn, out = None):
 		
 		# identities:
 		# 0 >> X = 0
-		case (Constant(value = 0), _):
+		case (constant(value = 0), _):
 			assert(not "TODO");
+		
 		# X >> 0 = X
-		case (_, Constant(value = 0)):
+		case (_, constant(value = 0)):
 			assert(not "TODO");
 		
 		# rshift X, c => rshiftI X, c:
-		case (_, Constant(value = c)):
-#			consider(ops, et, "rshiftI", (lvn, c), out);
-			assert(not "TODO");
+		case (_, constant(value = c)):
+			valnum = consider(stuff, "rshiftI", (lvn, ), const = c, out = out);
 		
 		case (lex, rex):
 			dprint(f"lex, rex = {str(lex), str(rex)}");

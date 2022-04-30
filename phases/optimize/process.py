@@ -34,6 +34,7 @@ from .instructions.mod     import optimize_mod;
 from .instructions.mult    import optimize_mult;
 from .instructions._not    import optimize_not;
 from .instructions._or     import optimize_or;
+from .instructions.putchar import optimize_putchar;
 from .instructions.ret     import optimize_ret;
 from .instructions.rshift  import optimize_rshift;
 from .instructions.sub     import optimize_sub;
@@ -49,40 +50,41 @@ from .instructions.testne  import optimize_testne;
 from instruction.self import instruction;
 
 lookup = {
-	"add":    optimize_add,
-	"and":    optimize_and,
-	"assert": optimize_assert,
-	"call":   optimize_call,
-	"cbr":    optimize_cbr,
-	"cbrne":  optimize_cbrne,
-	"comp":   optimize_comp,
-	"f2i":    optimize_f2i,
-	"fadd":   optimize_fadd,
-	"fload":  optimize_fload,
-	"fmult":  optimize_fmult,
-	"i2i":    optimize_i2i,
-	"i2f":    optimize_i2f,
-	"icall":  optimize_icall,
-	"iret":   optimize_iret,
-	"iread":  optimize_iread,
-	"iwrite": optimize_iwrite,
-	"load":   optimize_load,
-	"loadI":  optimize_loadI,
-	"mod":    optimize_mod,
-	"mult":   optimize_mult,
-	"not":    optimize_not,
-	"or":     optimize_or,
-	"ret":    optimize_ret,
-	"rshift": optimize_rshift,
-	"sub":    optimize_sub,
-	"store":  optimize_store,
-	"swrite": optimize_swrite,
-	"testeq": optimize_testeq,
-	"testge": optimize_testge,
-	"testgt": optimize_testgt,
-	"testle": optimize_testle,
-	"testlt": optimize_testlt,
-	"testne": optimize_testne,
+	"add":     optimize_add,
+	"and":     optimize_and,
+	"assert":  optimize_assert,
+	"call":    optimize_call,
+	"cbr":     optimize_cbr,
+	"cbrne":   optimize_cbrne,
+	"comp":    optimize_comp,
+	"f2i":     optimize_f2i,
+	"fadd":    optimize_fadd,
+	"fload":   optimize_fload,
+	"fmult":   optimize_fmult,
+	"i2i":     optimize_i2i,
+	"i2f":     optimize_i2f,
+	"icall":   optimize_icall,
+	"iret":    optimize_iret,
+	"iread":   optimize_iread,
+	"iwrite":  optimize_iwrite,
+	"load":    optimize_load,
+	"loadI":   optimize_loadI,
+	"mod":     optimize_mod,
+	"mult":    optimize_mult,
+	"not":     optimize_not,
+	"or":      optimize_or,
+	"putchar": optimize_putchar,
+	"ret":     optimize_ret,
+	"rshift":  optimize_rshift,
+	"sub":     optimize_sub,
+	"store":   optimize_store,
+	"swrite":  optimize_swrite,
+	"testeq":  optimize_testeq,
+	"testge":  optimize_testge,
+	"testgt":  optimize_testgt,
+	"testle":  optimize_testle,
+	"testlt":  optimize_testlt,
+	"testne":  optimize_testne,
 };
 
 def optimize_phase_process(self, start, expression_table, parameters, **_):
@@ -127,114 +129,115 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 			vrtovn[register] = valnum;
 			avin.add(valnum);
 		
-		dprint(f"avin = {avin}");
+	dprint(f"avin = {avin}");
+	
+	# process instructions, pushing order_sensitive:
+	new_instructions = [];
+	
+	for inst in block.instructions:
+		dprint(inst);
+		lookup[inst.op](
+			avin = avin,
+			id = inst.id,
+			ins = inst.ins,
+			out = inst.out,
+			vrtovn = vrtovn,
+			const = inst.const,
+			label = inst.label,
+			ops = new_instructions,
+			expression_table = expression_table);
+		self.subdotout(vrtovn, avin, inst, new_instructions, expression_table);
+	
+	volatile = set();
+	
+	# generate the i2is, the order they were read in:
+	for register in block.outs:
+		if register in block.outgoing_phis:
+			src_valnum = vrtovn[register];
+			for dst_valnum in block.outgoing_phis[register]:
+				dprint(f"register   = {register}")
+				dprint(f"src_valnum = {src_valnum}")
+				dprint(f"dst_valnum = {dst_valnum}")
+				i2i = instruction("i2i", [src_valnum], dst_valnum);
+				i2i.acting_i2i = True;
+				dprint(i2i);
+				phi = expression_table.vntoex(dst_valnum);
+				phi.feeders[block] = i2i;
+				new_instructions.append(i2i);
+				volatile.add(dst_valnum);
+				self.subdotout(vrtovn, avin, i2i, new_instructions, expression_table);
+	
+	if block.jump is not None:
+		before = block.jump
 		
-		# process instructions, pushing order_sensitive:
-		new_instructions = [];
+		jump = [];
 		
-		for inst in block.instructions:
-			dprint(inst);
-			lookup[inst.op](
-				avin = avin,
-				id = inst.id,
-				ins = inst.ins,
-				out = inst.out,
-				vrtovn = vrtovn,
-				const = inst.const,
-				label = inst.label,
-				ops = new_instructions,
-				expression_table = expression_table);
-			self.subdotout(vrtovn, avin, inst, new_instructions, expression_table);
+		dprint(before);
 		
-		volatile = set();
+		lookup[before.op](
+			ops = jump,
+			vrtovn = vrtovn,
+			avin = avin,
+			id = before.id,
+			ins = before.ins,
+			out = before.out,
+			const = before.const,
+			label = before.label,
+			expression_table = expression_table,
+			volatile = volatile);
 		
-		# generate the i2is, the order they were read in:
-		for register in block.outs:
-			if register in block.outgoing_phis:
-				src_valnum = vrtovn[register];
-				for dst_valnum in block.outgoing_phis[register]:
-					dprint(f"register   = {register}")
-					dprint(f"src_valnum = {src_valnum}")
-					dprint(f"dst_valnum = {dst_valnum}")
-					i2i = instruction("i2i", [src_valnum], dst_valnum);
-					i2i.acting_i2i = True;
-					dprint(i2i);
-					phi = expression_table.vntoex(dst_valnum);
-					phi.feeders[block] = i2i;
-					new_instructions.append(i2i);
-					volatile.add(dst_valnum);
-					self.subdotout(vrtovn, avin, i2i, new_instructions, expression_table);
+		self.subdotout(vrtovn, avin, before, new_instructions + jump, expression_table);
 		
-		if block.jump is not None:
-			before = block.jump
+		if len(jump):
+			after, = jump
 			
-			jump = [];
+			dprint(f"before.op, after.op = {before.op, after.op}");
 			
-			dprint(before);
-			
-			lookup[before.op](
-				ops = jump,
-				vrtovn = vrtovn,
-				avin = avin,
-				id = before.id,
-				ins = before.ins,
-				out = before.out,
-				const = before.const,
-				label = before.label,
-				expression_table = expression_table,
-				volatile = volatile);
-			
-			self.subdotout(vrtovn, avin, before, new_instructions + jump, expression_table);
-			
-			if len(jump):
-				after, = jump
+			match (before.op, after.op):
 				
-				dprint(f"before.op, after.op = {before.op, after.op}");
+				case _ if before.op == after.op: pass;
 				
-				match (before.op, after.op):
-					
-					case _ if before.op == after.op: pass;
-					
-					case ('cbr' | 'cbrne', 'cbrne' | 'cbr_LT' | 'cbr_GT' | 'cbr_GE' | 'cbr_EQ' | 'cbr_LE' | 'cbr_NE' | 'cbr_EQ'):
-						pass;
-					
-					# always jump:
-					case ('cbr', 'jumpI'):
-						lose, keep = block.successors;
-						block.jump = None;
-					
-					case _: assert(not "TODO");
+				case ('cbr' | 'cbrne',
+				      'cbr' | 'cbrne' | 'cbr_LT' | 'cbr_GT' | 'cbr_GE' | 'cbr_EQ' | 'cbr_LE' | 'cbr_NE' | 'cbr_EQ'):
+					pass;
 				
-				after.block = block;
-				block.new_jump = after;
-			else:
-				# always fallthrough:
-				keep, lose = block.successors;
-				block.jump = None;
+				# always jump:
+				case ('cbr', 'jumpI'):
+					lose, keep = block.successors;
+					block.jump = None;
+				
+				case _: assert(not "TODO");
 			
-			if block.jump is None:
-				dprint(f"keep, lose = {str(keep), str(lose)}")
-				lose.predecessors.remove(block);
-				block.successors.remove(lose);
-				# maybe it's unreachable now?
-				todo.append(lost_parent_phase(lose));
-				# for sure it's dominators have changed, reset and redo:
-				todo.append(reset_dominators_phase(lose));
-				# same with post-dominators:
-				todo.append(reset_post_dominators_phase(block));
-				# the things the parent needs to provide for it's children
-				# might have changed:
-				todo.append(reset_in_out_phase(block));
-				# the things the child can get from it's parent
-				# might have changed:
-				todo.append(inheritance_phase(lose));
-				todo.append(phi_phase(lose));
-				block.new_jump = None;
+			after.block = block;
+			block.new_jump = after;
+		else:
+			# always fallthrough:
+			keep, lose = block.successors;
+			block.jump = None;
 		
-		for n in new_instructions:
-			n.block = block;
-		
-		block.new_instructions = new_instructions;
+		if block.jump is None:
+			dprint(f"keep, lose = {str(keep), str(lose)}")
+			lose.predecessors.remove(block);
+			block.successors.remove(lose);
+			# maybe it's unreachable now?
+			todo.append(lost_parent_phase(lose));
+			# for sure it's dominators have changed, reset and redo:
+			todo.append(reset_dominators_phase(lose));
+			# same with post-dominators:
+			todo.append(reset_post_dominators_phase(block));
+			# the things the parent needs to provide for it's children
+			# might have changed:
+			todo.append(reset_in_out_phase(block));
+			# the things the child can get from it's parent
+			# might have changed:
+			todo.append(inheritance_phase(lose));
+			todo.append(phi_phase(lose));
+			block.new_jump = None;
+	
+	for n in new_instructions:
+		n.block = block;
+	
+	block.new_instructions = new_instructions;
 	
 	dprint(f"block.vrtovn = {block.vrtovn}")
 	dprint(f"vrtovn       = {vrtovn}")

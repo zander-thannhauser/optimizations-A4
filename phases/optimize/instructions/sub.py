@@ -95,7 +95,7 @@ def optimize_sub_vr(stuff, lvn, rvn, out = None):
 		case (phi() | parameter() | unknown(), constant(value = a)):
 			valnum = consider(stuff, "addI", ins = (lvn, ), const = -a, out = out);
 		
-		case (expression(op = "add"), constant(value = a)):
+		case (expression(op = "add" | "mod"), constant(value = a)):
 			valnum = consider(stuff, "addI", ins = (lvn, ), const = -a, out = out);
 		
 		case (lex, rex):

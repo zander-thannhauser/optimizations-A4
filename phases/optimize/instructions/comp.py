@@ -40,6 +40,13 @@ def optimize_comp_vn(stuff, lvn, rvn, out = None):
 			else:
 				valnum = consider(stuff, "comp", (lvn, rvn), out = out);
 		
+		# (a % b) vs. c => ???
+		case (expression(op = "mod", ins = (a, b)), constant(value = c)):
+			valnum = consider(stuff, "comp", (lvn, rvn), out = out);
+		
+		case (expression(op = "or"), constant()):
+			valnum = consider(stuff, "comp", (lvn, rvn), out = out);
+		
 		case (parameter() | phi() | unknown() | expression(op = "f2i"), constant() | unknown()):
 			valnum = consider(stuff, "comp", (lvn, rvn), out = out);
 		

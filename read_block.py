@@ -31,7 +31,7 @@ def read_block(t):
 		match (operation):
 			
 			# those who take one in and zero out:
-			case "iwrite" | "swrite" | "iread" | "assert":
+			case "iwrite" | "swrite" | "iread" | "assert" | "putchar":
 				ins.append(t.token); t.next();
 			
 			# those who take one in and one out:

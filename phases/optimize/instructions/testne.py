@@ -11,6 +11,7 @@ def optimize_testne_vr(stuff, ivn, out = None):
 	enter(f"optimize_testne_vr(ivn = {ivn}, out = {out})");
 	
 	et = stuff["expression_table"];
+	vrtovn = stuff["vrtovn"];
 	
 	match (et.vntoex(ivn)):
 		# constant-fold:
@@ -24,10 +25,13 @@ def optimize_testne_vr(stuff, ivn, out = None):
 				case (constant(value = 0), _):
 					assert(not "TODO");
 				case (_, constant(value = 0)):
-					assert(not "TODO");
+					if out is not None: vrtovn[out] = X;
+					valnum = X;
+#				case _:
+#					assert(not "TODO");
+#					valnum = consider(stuff, "cmp_NE", (min(X, Y), max(X, Y)), out = out);
 				case _:
 					assert(not "TODO");
-					valnum = consider(stuff, "cmp_NE", (min(X, Y), max(X, Y)), out = out);
 		
 		# default:
 		case (iex):

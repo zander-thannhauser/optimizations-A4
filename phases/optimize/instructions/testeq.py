@@ -27,8 +27,10 @@ def optimize_testeq_vr(stuff, ivn, out = None):
 					valnum = optimize_not_vr(stuff, Y, out = out)
 				case (_, constant(value = 0)):
 					valnum = optimize_not_vr(stuff, X, out = out)
+#				case _:
+#					valnum = consider(stuff, "cmp_EQ", (min(X, Y), max(X, Y)), out = out);
 				case _:
-					valnum = consider(stuff, "cmp_EQ", (min(X, Y), max(X, Y)), out = out);
+					assert(not "TODO");
 		
 		# default:
 		case (iex):

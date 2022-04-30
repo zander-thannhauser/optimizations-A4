@@ -147,8 +147,8 @@ def assign_ranks(start, end, all_blocks):
 	while changed:
 		changed = False;
 		for b in all_blocks:
-			es = [p.edges_from_start for p in b.predecessors if p.edges_from_start is not None];
-			ee = [s.edges_from_end for s in b.successors if s.edges_from_end is not None];
+			es = [p.edges_from_start for p in b.predecessors];
+			ee = [s.edges_from_end for s in b.successors];
 			
 			if len(es) and b.edges_from_start != (edges_from_start := min(es) + 1):
 				changed = True;

@@ -1,3 +1,33 @@
 .data
 	   .string     .str_const_0, "howdy"
 .text
+	.frame main, 16 
+		# block.rpo = 1:
+		# block.rpo = 2:
+		  loadI 0 => %vr5
+		  addI %vr0, -4 -> %vr4
+		  storeAI %vr5 => %vr0, -4
+		  iread %vr4
+		  loadI 3 => %vr5
+		  loadAI %vr0, -4 -> %vr4
+		  cbr_LE %vr4, %vr5 -> .L0
+		# block.rpo = 3:
+		  loadAI %vr0, -4 -> %vr4
+		  multI %vr4, 2 -> %vr5
+		  loadAI %vr0, -4 -> %vr4
+		  addI %vr4, 3 -> %vr4
+		  iwrite %vr5
+		# block.rpo = 6:
+		.L1:
+		  iwrite %vr4
+		# block.rpo = 7:
+		.return:
+		  ret
+		# block.rpo = 4:
+		.L0:
+		  loadAI %vr0, -4 -> %vr4
+		  addI %vr4, 3 -> %vr5
+		  loadI .str_const_0 => %vr4
+		  swrite %vr4
+		  i2i %vr5 -> %vr4
+		  jumpI -> .L1

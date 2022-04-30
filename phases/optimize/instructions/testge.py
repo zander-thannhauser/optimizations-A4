@@ -1,7 +1,10 @@
 
 from debug import *;
 
+from expression_table.phi.self import phi;
+from expression_table.unknown.self import unknown;
 from expression_table.constant.self import constant;
+from expression_table.parameter.self import parameter;
 from expression_table.expression.self import expression;
 
 from .common import load_literal;
@@ -24,8 +27,12 @@ def optimize_testge_vr(stuff, ivn, out = None):
 					assert(not "TODO");
 				case (_, constant(value = 0)):
 					assert(not "TODO");
-				case _:
+				case (expression(op = "mod"), constant()):
 					valnum = consider(stuff, "cmp_LE", (Y, X), out = out);
+				case (unknown() | phi() | parameter(), unknown() | constant()):
+					valnum = consider(stuff, "cmp_LE", (Y, X), out = out);
+				case _:
+					assert(not "TODO");
 		
 		# default:
 		case (iex):

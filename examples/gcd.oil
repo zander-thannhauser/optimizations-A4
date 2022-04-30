@@ -10,47 +10,48 @@
 	   .global          main_fp, 4, 4
 .text
 	.frame main, 12 
+		# block.rpo = 1:
 		# block.rpo = 2:
-		  loadI   main_fp             -> %vr4
-		  store   %vr0         => %vr4
-		  addI    %vr0, -4     => %vr6
-		  iread   %vr6              
-		  addI    %vr0, -8     => %vr8
-		  iread   %vr8              
-		  loadAI  %vr0, -4     => %vr9
-		  loadAI  %vr0, -8     => %vr12
-		  or      %vr9, %vr12 => %vr14
-		  cbrne   %vr14         -> .return1
+		  loadI main_fp => %vr4
+		  store %vr0 => %vr4
+		  addI %vr0, -4 -> %vr6
+		  iread %vr6
+		  addI %vr0, -8 -> %vr7
+		  iread %vr7
+		  loadAI %vr0, -4 -> %vr5
+		  loadAI %vr0, -8 -> %vr4
+		  or %vr5, %vr4 => %vr4
+		  cbrne %vr4 -> .return
 		# block.rpo = 3:
 		.L1:
-		  icall   gcd, %vr6, %vr8 => %vr17
-		  iwrite  %vr17              
-		  iread   %vr6              
-		  iread   %vr8              
-		  loadAI  %vr0, -4     => %vr18
-		  loadAI  %vr0, -8     => %vr20
-		  or      %vr18, %vr20 => %vr22
-		  cbr     %vr22         -> .L1
+		  icall gcd, %vr6, %vr7 => %vr4
+		  iwrite %vr4
+		  iread %vr6
+		  iread %vr7
+		  loadAI %vr0, -4 -> %vr5
+		  loadAI %vr0, -8 -> %vr4
+		  or %vr5, %vr4 => %vr4
+		  cbr %vr4 -> .L1
 		# block.rpo = 5:
-		.return1:
+		.return:
 		  ret
-	.frame gcd, 8 , %vr4, %vr5
+	.frame gcd, 8 , %vr5, %vr6
+		# block.rpo = 1:
 		# block.rpo = 2:
-		  load    %vr5         => %vr6
-		  cbr     %vr6         -> .L2
+		  load %vr6 -> %vr4
+		  cbr %vr4 -> .L2
 		# block.rpo = 3:
-		  load    %vr4         => %vr10
-		  iret    %vr10              
+		  load %vr5 -> %vr4
+		  iret %vr4
 		# block.rpo = 7:
-		.return2:
 		  ret
 		# block.rpo = 4:
 		.L2:
-		  load    %vr4         => %vr11
-		  load    %vr5         => %vr12
-		  mod     %vr11, %vr12 => %vr13
-		  addI    %vr0, -4     => %vr15
-		  storeAI %vr13         => %vr0,     -4
-		  icall   gcd, %vr5, %vr15 => %vr16
-		  iret    %vr16              
-		  jumpI -> .return2
+		  load %vr5 -> %vr5
+		  load %vr6 -> %vr4
+		  mod %vr5, %vr4 => %vr4
+		  addI %vr0, -4 -> %vr5
+		  storeAI %vr4 => %vr0, -4
+		  icall gcd, %vr6, %vr5 => %vr4
+		  iret %vr4
+		  ret

@@ -65,6 +65,7 @@ def dead_code_phase_process(self, start, all_blocks, phase_counters, **_):
 		if child.phase_counters["dead-code"] < phase_counters["dead-code"]:
 			todo.append(dead_code_phase(child));
 	
+	
 	exit(f"return {[str(t) for t in todo]}");
 	return todo;
 

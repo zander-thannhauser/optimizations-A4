@@ -3,7 +3,7 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	
 	# used during reading assembly:
 	self.label = label;
-	self.instructions = instructions;
+	self.original_instructions = instructions;
 	self.jump = jump;
 	self.children_labels = children_labels;
 	self.order_sensitive_instructions = [];
@@ -11,8 +11,8 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	# after reading assembly:
 	self.predecessors = [];
 	self.successors = [];
-	self.edges_from_start = None;
-	self.edges_from_end = None;
+	self.edges_from_start = 1000;
+	self.edges_from_end = 1000;
 	self.po  = 0;
 	self.rpo = 0;
 	self.hue = 0;

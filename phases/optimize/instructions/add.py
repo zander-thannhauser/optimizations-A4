@@ -35,7 +35,7 @@ def optimize_add_vr(stuff, lvn, rvn, out = None):
 		
 		# X + X => (2 * X)
 		case (_, _) if lvn == rvn:
-			assert(not "TODO");
+			valnum = consider(stuff, "multI", ins = (lvn, ), const = 2, out = out);
 		
 		# (X + a) + (Y + -a) => (X + Y)
 		# (X + a) + (Y +  b) => (X + Y) + (a + b)
@@ -84,13 +84,13 @@ def optimize_add_vr(stuff, lvn, rvn, out = None):
 		case (phi() | parameter() | unknown(), constant(value = a)):
 			valnum = consider(stuff, "addI", ins = (lvn, ), const = a, out = out);
 		
-		case (constant(value = a), phi() | parameter()):
+		case (constant(value = a), phi() | parameter() | expression(op = "mod")):
 			valnum = consider(stuff, "addI", ins = (rvn, ), const = a, out = out);
 		
 		case (expression(op = "multI"), constant(value = a)):
 			valnum = consider(stuff, "addI", ins = (lvn, ), const = a, out = out);
 		
-		case (expression(op = "multI"), phi()):
+		case (phi() | expression(op = "multI"), phi()):
 			valnum = consider(stuff, "add", ins = (min(lvn, rvn), max(lvn, rvn)), out = out);
 		
 		case (lex, rex):

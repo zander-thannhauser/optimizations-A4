@@ -1,7 +1,10 @@
 
 from debug import *;
 
+from expression_table.phi.self import phi;
+from expression_table.unknown.self import unknown;
 from expression_table.constant.self import constant;
+from expression_table.parameter.self import parameter;
 from expression_table.expression.self import expression;
 
 from .common import load_literal;
@@ -25,8 +28,10 @@ def optimize_testlt_vr(stuff, ivn, out = None):
 					assert(not "TODO");
 				case (_, constant(value = 0)):
 					assert(not "TODO");
-				case _:
+				case (phi() | unknown() | parameter(), constant() | unknown() | phi()):
 					valnum = consider(stuff, "cmp_LT", (X, Y), out = out);
+				case _:
+					assert(not "TODO");
 		
 		# default:
 		case (iex):
