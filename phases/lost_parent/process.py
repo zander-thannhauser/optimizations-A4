@@ -39,6 +39,8 @@ def lost_parent_phase_process(self, start, all_blocks, **_):
 				dprint(f"{str(child)}.predecessors = {[p.po for p in child.predecessors]}");
 				child.predecessors.remove(block);
 				dprint(f"{str(child)}.predecessors = {[p.po for p in child.predecessors]}");
+				# rerun inheritance on the child?
+				assert(not "TODO");
 				todo.append(lost_parent_phase(child));
 			
 			all_blocks.remove(block);

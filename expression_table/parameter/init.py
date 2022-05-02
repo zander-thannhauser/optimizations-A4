@@ -1,3 +1,3 @@
 
-def parameter_init(self, register):
-	self.register = register;
+def parameter_init(self, vr):
+	self.vr = vr;

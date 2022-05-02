@@ -1,6 +1,8 @@
 
 def instruction_newerdotout(self, stream, denominator = None):
 
+	assert(not "TODO");
+	
 	name  = f"{id(self)}";
 	color =  "white";
 	

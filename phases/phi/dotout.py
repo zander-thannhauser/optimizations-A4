@@ -5,18 +5,22 @@ from expression_table.phi.self import phi;
 
 from phases.self import phase;
 
-def phi_phase_dotout(self, all_blocks, expression_table, **_):
+def phi_phase_dotout(self, all_blocks, expression_table, all_dots, **_):
 	
 	enter("phi_phase_dotout()");
 	
-	dprint(f"phase.frame_counter = {phase.frame_counter}")
+	filename = f"dot/{phase.frame_counter}-phi.dot";
 	
-	stream = open(f"dot/{phase.frame_counter}-phi.dot", "w");
+	print(f"all_dots += {filename}", file = all_dots);
+	
+	stream = open(filename, "w");
 	
 	def draw_phi(valnum, reg):
 		hue = valnum / expression_table.valcounter;
 		exp = expression_table.vntoex(valnum);
+		
 		assert(type(exp) is phi);
+		
 		print(f"""
 			"{valnum}" [
 				label="𝜙"

@@ -11,6 +11,14 @@ def build_interference_phase_dotout(self, all_blocks, all_liveranges, interferen
 	
 	stream = open(f"dot/{phase.frame_counter}-build_interference.dot", "w");
 	
+	assert(not "TODO");
+	
+	filename = f"dot/{phase.frame_counter}-inout.dot";
+	
+	print(f"all_dots += {filename}", file = all_dots);
+	
+	stream = open(filename, "w");
+	
 	print("""
 digraph mygraph {
 

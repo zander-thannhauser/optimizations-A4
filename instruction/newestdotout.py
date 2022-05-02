@@ -2,7 +2,9 @@
 from debug import *;
 
 def instruction_newestdotout(self, stream, denominator = None):
-
+	
+	assert(not "TODO");
+	
 	name  = f"{id(self)}";
 	color =  "white";
 	

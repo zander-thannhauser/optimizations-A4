@@ -3,7 +3,9 @@ from expression_table.self import expression_table;
 
 def instruction_newdotout(self, stream, valnum_names = True, draw_lines = True, constraint = False):
 	denominators = expression_table.valcounter;
-
+	
+	assert(not "TODO");
+	
 	name  = f"{id(self)}";
 	color =  "white";
 	

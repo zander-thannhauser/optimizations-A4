@@ -3,10 +3,9 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	
 	# used during reading assembly:
 	self.label = label;
-	self.original_instructions = instructions;
+	self.instructions = instructions;
 	self.jump = jump;
 	self.children_labels = children_labels;
-	self.order_sensitive_instructions = [];
 	
 	# after reading assembly:
 	self.predecessors = [];
@@ -34,28 +33,19 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	# lost_parent phase:
 	self.is_reachable = True;
 	
-	# available phase:
-	self.avin = None;
-	self.avloc = set();
-	self.avout = set();
-	self.avkill = set();
+	# dominator phase:
+	self.dominators = set();
+	self.immediate_dominator = None;
 	
-	# anticipation phase:
-	self.antin = None;
-	self.antout = set();
-	self.antloc = set();
-	self.antkill = set();
-	
-	# later phase:
-	self.laterin = None;
-	self.delete = set();
-	
-	# insert & delete:
-	self.subparent_po = 1;
-	self.subchild_rpo = 1;
+	# post dominator phase:
+	self.post_dominators = set();
+	self.post_immediate_dominator = None;
+	self.post_dominance_frontier = set();
+	self.reverse_post_dominance_frontier = set();
 	
 	# in-out phase:
-	self.ins = None; # set of registers
+	self.ins = None; # set of needed virtual registers
+	self.loc = set(); # set of locally-needed virtual registers
 	self.outs = list(); # (register, instruction) tuples in *original* order
 	
 	# inheritance phase:
@@ -70,16 +60,6 @@ def block_init(self, label, instructions, children_labels, jump = None):
 	self.avin = None;   # set of available valnums
 	self.new_instructions = None;
 	self.new_jump = None;
-	
-	# dominator phase:
-	self.dominators = set();
-	self.immediate_dominator = None;
-	
-	# post dominator phase:
-	self.post_dominators = set();
-	self.post_immediate_dominator = None;
-	self.post_dominance_frontier = set();
-	self.reverse_post_dominance_frontier = set();
 	
 	# critical phase:
 	self.is_critical = False;

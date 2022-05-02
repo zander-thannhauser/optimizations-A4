@@ -90,6 +90,8 @@ lookup = {
 def optimize_phase_process(self, start, expression_table, parameters, **_):
 	enter(f"optimize_phase_process(block.rpo = {self.block.rpo})");
 	
+	assert(not "TODO");
+	
 	todo = [];
 	
 	vrtovn = dict();

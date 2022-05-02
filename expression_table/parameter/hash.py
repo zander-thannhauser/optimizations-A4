@@ -1,5 +1,5 @@
 
 def parameter_hash(self):
-	return hash(("parameter", self.register));
+	return hash(("parameter", self.vr));
 
 

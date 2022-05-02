@@ -2,6 +2,7 @@
 from debug import *;
 
 from phases.in_out.self import in_out_phase;
+from phases.inheritance.self import inheritance_phase;
 
 def in_out_phase_process(self, start, parameters, **_):
 	enter(f"in_out_phase.process(block.rpo = {self.block.rpo})");
@@ -9,6 +10,7 @@ def in_out_phase_process(self, start, parameters, **_):
 	block = self.block;
 	
 	ins = set();
+	loc = set();
 	outs = list();
 	
 	# union children's needs
@@ -19,39 +21,29 @@ def in_out_phase_process(self, start, parameters, **_):
 	todo = [];
 	
 	dprint(f"ins = {ins}");
+	dprint(f"loc = {loc}");
 	dprint(f"outs = {outs}");
 	
 	# the last instruction might need something too (conditional branch):
 	if block.jump:
-		ins.update(block.jump.ins);
+		loc.update(block.jump.vr_ins);
 	
-	new_instructions = [];
-	
-	for inst in block.original_instructions[::-1]:
+	for inst in block.instructions[::-1]:
 		dprint(f"inst = {inst}");
 		
-		if (inst.out in ins) or inst.op in \
-				["iwrite", "iread", "store", "assert", "ret", "swrite", "call", "putchar"]:
-			# (either it's useful or protected)
-			
-			# is it publishing something?
-			if inst.out is not None and inst.out not in outs:
-				outs.insert(0, inst.out);
-			
-			ins.discard(inst.out);
-			ins.update(inst.ins);
-			
-			new_instructions.insert(0, inst);
-		elif inst.op not in ["add", "i2i", "loadI", "testge", "testgt", "testle", "comp", "load"]:
-			assert(not "TODO");
-	
-	block.instructions = new_instructions;
+		# is it publishing something?
+		if inst.vr_out is not None and inst.vr_out not in outs:
+			outs.insert(0, inst.vr_out);
+		
+		ins.discard(inst.vr_out);
+		loc.discard(inst.vr_out);
+		loc.update(inst.vr_ins);
 	
 	if block == start:
 		# I'm the start block
 		# so I should look like I produce the parameter's registers:
 		
-		outs = [p.register for p in parameters];
+		outs = [p.vr for p in parameters];
 		
 		ins.difference_update(outs);
 		
@@ -59,14 +51,28 @@ def in_out_phase_process(self, start, parameters, **_):
 			dprint(f"ins = {ins}")
 			assert(not "undefined register used!");
 	
-	dprint(f"ins = {ins}, outs = {outs}");
+	ins.update(loc);
+	
+	dprint(f"ins = {ins}");
+	dprint(f"loc = {loc}");
+	dprint(f"outs = {outs}");
+	
+	# do we no longer need something we used to?
+	if set.difference(block.loc, loc):
+		# send a reset-runner upstream
+		assert(not "TODO");
 	
 	if block.ins != ins:
 		for parent in block.predecessors:
 			todo.append(in_out_phase(parent));
-		block.ins = ins;
-		
+		todo.append(inheritance_phase(block));
+	
+	if block.outs != outs:
+		# invoke inheritance on children
+		assert(not "TODO");
+	
 	block.ins = ins;
+	block.loc = loc;
 	block.outs = outs;
 	
 	exit(f"return {[str(t) for t in todo]}");

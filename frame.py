@@ -15,14 +15,6 @@ from expression_table.parameter.self import parameter;
 # remove unreachable:
 from phases.lost_parent.self           import lost_parent_phase;
 
-# code motion:
-from phases.syntax_lookup.self         import syntax_lookup_phase;
-from phases.available.self             import available_phase;
-from phases.anticipation.self          import anticipation_phase;
-from phases.earliest.self              import earliest_phase;
-from phases.later.self                 import later_phase;
-from phases.insert_delete.self         import insert_delete_phase;
-
 # SSA-redundancy elmination:
 from phases.reset_dominators.self      import reset_dominators_phase;
 from phases.dominators.self            import dominators_phase;
@@ -135,7 +127,7 @@ def postorder_rank(b, x):
 	b.po = 1;
 	for c in sorted(b.successors, key = lambda s: s.edges_from_end):
 		x = postorder_rank(c, x);
-	b.po = (x, 0);
+	b.po = x;
 	x += 1;
 	return x;
 
@@ -144,7 +136,7 @@ def reverse_postorder_rank(b, x, n):
 	b.rpo = 1;
 	for c in sorted(b.predecessors, key = lambda s: s.edges_from_start):
 		x = reverse_postorder_rank(c, x, n);
-	b.rpo = (x, 0);
+	b.rpo = x;
 	b.hue = (x - 1) / n;
 	x += 1;
 	return x;
@@ -176,7 +168,7 @@ def assign_ranks(start, end, all_blocks):
 		dprint(f"{b}, {b.edges_from_start}, {b.edges_from_end}")
 	
 
-def process_frame(t, p, num_registers):
+def process_frame(t, p, all_dots, num_registers):
 	
 	enter("process_frame");
 	
@@ -194,108 +186,9 @@ def process_frame(t, p, num_registers):
 	
 	assign_ranks(start, end, all_blocks)
 	
-	todo = [
-		# call lost_parent_phase on all blocks:
-		lost_parent_phase(block) for block in all_blocks
-	] + [
-#		# code motion:
-#		syntax_lookup_phase(start),         # top-down
-#		available_phase(start),             # top-down
-#		anticipation_phase(end),            # bottom-up
-#		earliest_phase(start),              # top-down
-#		later_phase(start),                 # top-down
-#		insert_delete_phase(start),         # top-down
-		
-		# SSA-redundancy elmination:
-		reset_dominators_phase(start),      # top-down*
-		dominators_phase(start),            # top-down
-		reset_post_dominators_phase(end),   # bottom-up*
-		post_dominators_phase(end),         # bottom-up
-		## reset_in_out_phase(end),         # bottom-up
-		in_out_phase(end),                  # bottom-up
-		inheritance_phase(start),           # top-down
-		## phi_phase(start),                # top-down*
-		optimize_phase(start),              # top-down
-		
-		# dead-code elmination:
-		superfical_critical_phase(start),   # top-down
-		## critical(),  # bottom-up
-		dead_code_phase(start),             # top-down*
-		
-		loop_depth_phase(start),            # top-down?
-		
-		# register allocation:
-		valnum_singleton_sets_phase(start), # top-down*:
-			# create singleton sets of each valnum used/defined
-			# create mapping valnum -> valnum-set
-		
-		union_valnum_sets_phase(start), # top-down*:
-			# for every phi node: get the valnums that feed it
-			# get the sets of those valnums
-			# union them togteher
-			# update mapping
-		
-		rename_valnums_to_liveids_phase(start), # top-down:
-			# assign valnum-sets live range ids
-			# rename all valnums to the live-range id
-		
-		# repeat point:
-		
-		live_in_out_phase(end), # bottom-up:
-			# ids used but not defined in this block
-			# ids defined and set([last instruction that defined it])
-			# defines -> set of unique numbers (instruction id?)
-				# (initalized to singltions)
-		
-		live_inheritance_phase(start), # top-down:
-			# pass downwards a set of live-range id -> set of definers
-			# every live-in:
-				# if there's more than one definer:
-					# union all their definers-sets together
-					# update the mapping
-			# every live-out:
-				# sets the downwards-dict make to the singleton
-		
-		live_instances_phase(start), # top-down*:
-			# create dict(): define-sets -> liverange instances
-			# for every instruction:
-				# if it's a usage:
-					# store in it the instance it should introduce
-				# if you see a define:
-					# lookup mapping, create if None
-					# update mapping with define's instance
-			# pass downwards a liverange id -> instance
-			# the bottom of every block should remember outgoing mapping
-		
-		build_interference_phase(end), # bottom-up:
-			# recall above outgoing mapping
-			# for every instruction[::-1]:
-				# if you see a definition:
-					# remove instance from mapping
-					# mark this instance as iterfering with
-					# all other instances in current mapping
-					# calculate cost
-				# if you see a usage:
-					# introduce instance into mapping
-		
-		## calculate_cost_phase(liverange), # top-down*
-		
-		## allocate_register(liverange), # expensive-cheap:
-			# otherwise: push to spill-over phase
-		
-		## spill-over phase: # expensive-cheap:
-			# given a live-range, insert loads and stores
-			# invoke live-range in/out reset on start again.
-		
-		## liveids_to_register_phase(liverange) # top-down*
-			# registers should take the form: f"%vr{}"
-			# to avoid confusion with other live ranges
-		
-		remove_i2is_phase(start), # top-down:
-			# only the ones that say: `i2i same => same`
-	];
-	
 	args = {
+		"all_dots": all_dots,
+		
 		"all_blocks": all_blocks,
 		
 		"frame": {
@@ -306,17 +199,6 @@ def process_frame(t, p, num_registers):
 		"start": start,
 		
 		"end": end,
-		
-		# code motion:
-		"syntax_lookup": dict(), # destination -> instruction
-		
-		"usage": dict(), # this valnum is used by -> these valnums (kill them)
-		
-		"earliest": dict(), # (p, s) -> set of instructions
-		
-		"later": dict(), # (p, s) -> set of instructions
-		
-		"insert": dict(), # (p, s) -> set of instructions
 		
 		# SSA redundancy elmination:
 		"parameters": parameters,
@@ -355,6 +237,99 @@ def process_frame(t, p, num_registers):
 		},
 	};
 	
+	todo = [
+		# call lost_parent_phase on all blocks:
+		lost_parent_phase(block) for block in all_blocks
+	] + [
+		# SSA-redundancy elmination:
+		reset_dominators_phase(start),      # top-down*
+		dominators_phase(start),            # top-down
+		reset_post_dominators_phase(end),   # bottom-up*
+		post_dominators_phase(end),         # bottom-up
+		## reset_in_out_phase(end),         # bottom-up
+		in_out_phase(end),                  # bottom-up
+		inheritance_phase(start),           # top-down
+#		## phi_phase(start),                # top-down*
+#		optimize_phase(start),              # top-down
+		
+#		# dead-code elmination:
+#		superfical_critical_phase(start),   # top-down
+#		## critical(),  # bottom-up
+#		dead_code_phase(start),             # top-down*
+#		
+#		loop_depth_phase(start),            # top-down?
+#		
+#		# register allocation:
+#		valnum_singleton_sets_phase(start), # top-down*:
+#			# create singleton sets of each valnum used/defined
+#			# create mapping valnum -> valnum-set
+#		
+#		union_valnum_sets_phase(start), # top-down*:
+#			# for every phi node: get the valnums that feed it
+#			# get the sets of those valnums
+#			# union them togteher
+#			# update mapping
+#		
+#		rename_valnums_to_liveids_phase(start), # top-down:
+#			# assign valnum-sets live range ids
+#			# rename all valnums to the live-range id
+#		
+#		# repeat point:
+#		
+#		live_in_out_phase(end), # bottom-up:
+#			# ids used but not defined in this block
+#			# ids defined and set([last instruction that defined it])
+#			# defines -> set of unique numbers (instruction id?)
+#				# (initalized to singltions)
+#		
+#		live_inheritance_phase(start), # top-down:
+#			# pass downwards a set of live-range id -> set of definers
+#			# every live-in:
+#				# if there's more than one definer:
+#					# union all their definers-sets together
+#					# update the mapping
+#			# every live-out:
+#				# sets the downwards-dict make to the singleton
+#		
+#		live_instances_phase(start), # top-down*:
+#			# create dict(): define-sets -> liverange instances
+#			# for every instruction:
+#				# if it's a usage:
+#					# store in it the instance it should introduce
+#				# if you see a define:
+#					# lookup mapping, create if None
+#					# update mapping with define's instance
+#			# pass downwards a liverange id -> instance
+#			# the bottom of every block should remember outgoing mapping
+#		
+#		build_interference_phase(end), # bottom-up:
+#			# recall above outgoing mapping
+#			# for every instruction[::-1]:
+#				# if you see a definition:
+#					# remove instance from mapping
+#					# mark this instance as iterfering with
+#					# all other instances in current mapping
+#					# calculate cost
+#				# if you see a usage:
+#					# introduce instance into mapping
+#		
+#		## calculate_cost_phase(liverange), # top-down*
+#		
+#		## allocate_register(liverange), # expensive-cheap:
+#			# otherwise: push to spill-over phase
+#		
+#		## spill-over phase: # expensive-cheap:
+#			# given a live-range, insert loads and stores
+#			# invoke live-range in/out reset on start again.
+#		
+#		## liveids_to_register_phase(liverange) # top-down*
+#			# registers should take the form: f"%vr{}"
+#			# to avoid confusion with other live ranges
+#		
+#		remove_i2is_phase(start), # top-down:
+#			# only the ones that say: `i2i same => same`
+	];
+	
 	if len(todo):
 		todo[0].dotout(**args);
 	
@@ -367,7 +342,7 @@ def process_frame(t, p, num_registers):
 			if me not in todo:
 				heappush(todo, me);
 	
-	print_asm(p, **args);
+#	print_asm(p, **args);
 	
 	exit("process_frame");
 	

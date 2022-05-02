@@ -11,6 +11,14 @@ def calculate_cost_phase_dotout(self, all_blocks, vnsets_to_liveid, all_liverang
 	
 	stream = open(f"dot/{phase.frame_counter}-calculate_cost.dot", "w");
 	
+	assert(not "TODO");
+	
+	filename = f"dot/{phase.frame_counter}-inout.dot";
+	
+	print(f"all_dots += {filename}", file = all_dots);
+	
+	stream = open(filename, "w");
+	
 	print("""
 digraph mygraph {
 

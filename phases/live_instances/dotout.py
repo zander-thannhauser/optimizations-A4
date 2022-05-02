@@ -11,6 +11,14 @@ def live_instances_phase_dotout(self, all_blocks, all_liveranges, vnsets_to_live
 	
 	stream = open(f"dot/{phase.frame_counter}-live_instances.dot", "w");
 	
+	assert(not "TODO");
+	
+	filename = f"dot/{phase.frame_counter}-inout.dot";
+	
+	print(f"all_dots += {filename}", file = all_dots);
+	
+	stream = open(filename, "w");
+	
 	print("""
 digraph mygraph {
 
