@@ -3,11 +3,15 @@ from debug import *;
 
 from phases.self import phase;
 
-def lost_parent_phase_dotout(self, all_blocks, **_):
+def lost_parent_phase_dotout(self, all_dots, all_blocks, **_):
 	
 	enter("lost_parent_phase_dotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}-lost-parent.txt", "w");
+	filename = f"dot/{phase.frame_counter}-lostparent.dot";
+	
+	print(f"all_dots += {filename}", file = all_dots);
+	
+	stream = open(filename, "w");
 	
 	print("""
 digraph mygraph {

@@ -33,6 +33,7 @@ from .instructions.testge  import optimize_testge;
 from .instructions.testgt  import optimize_testgt;
 from .instructions.testle  import optimize_testle;
 from .instructions.testlt  import optimize_testlt;
+from .instructions.testne  import optimize_testne;
 
 from instruction.self import instruction;
 
@@ -59,9 +60,10 @@ lookup = {
 	"testgt": optimize_testgt,
 	"testle": optimize_testle,
 	"testlt": optimize_testlt,
+	"testne": optimize_testne,
 };
 
-def optimize_phase_process(self, start, expression_table, parameters, **_):
+def optimize_phase_process(self, all_dots, start, expression_table, parameters, **_):
 	enter(f"optimize_phase_process(block.rpo = {self.block.rpo})");
 	
 	todo = [];
@@ -106,7 +108,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				const = inst.const,
 				label = inst.label,
 				id = inst.id);
-			self.subdotout(vrtovn, inst, order_sensitive_instructions, expression_table);
+			self.subdotout(all_dots, vrtovn, inst, order_sensitive_instructions, expression_table);
 		
 		volatile = set();
 		
@@ -125,6 +127,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 					phi.feeders[block] = i2i;
 					order_sensitive_instructions.append(i2i);
 					volatile.add(dst_valnum);
+					self.subdotout(all_dots, vrtovn, i2i, order_sensitive_instructions, expression_table);
 		
 		if block.jump is not None:
 			before = block.jump
@@ -142,7 +145,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 				const = before.const,
 				label = before.label,
 				volatile = volatile);
-			self.subdotout(vrtovn, before, order_sensitive_instructions + jump, expression_table);
+			self.subdotout(all_dots, vrtovn, before, order_sensitive_instructions + jump, expression_table);
 			
 			if len(jump):
 				after, = jump
@@ -153,7 +156,7 @@ def optimize_phase_process(self, start, expression_table, parameters, **_):
 					
 					case _ if before.op == after.op: pass;
 					
-					case ('cbr' | 'cbrne', 'cbr_GT' | 'cbr_GE'):
+					case ('cbr' | 'cbrne', 'cbr_GT' | 'cbr_GE' | 'cbr_EQ'):
 						pass;
 					
 					case ('cbr', 'storeAI'):

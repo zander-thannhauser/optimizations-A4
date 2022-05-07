@@ -15,11 +15,6 @@ def block_init(self, label, original_instructions, children_labels, jump = None)
 	self.rpo = 0;
 	self.hue = 0;
 	
-	# all phases:
-	self.phase_counters = {
-		"dead-code": 0,
-	}
-	
 	# lost_parent phase:
 	self.is_reachable = True;
 	

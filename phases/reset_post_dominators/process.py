@@ -4,7 +4,7 @@ from debug import *;
 from phases.post_dominators.self import post_dominators_phase;
 from phases.reset_post_dominators.self import reset_post_dominators_phase;
 
-def reset_post_dominators_phase_process(self, all_blocks, phase_counters, **_):
+def reset_post_dominators_phase_process(self, all_blocks, **_):
 	enter(f"reset_post_dominators_phase_process(block.po = {self.block.po})");
 	
 	todo = [];

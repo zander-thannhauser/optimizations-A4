@@ -7,6 +7,14 @@ def critical_phase_dotout(self, all_blocks, parameters, expression_table, **_):
 	
 	enter("critical_phase_dotout()");
 	
+	assert(not "TODO");
+	
+	filename = f"dot/{phase.frame_counter}-inout.dot";
+	
+	print(f"all_dots += {filename}", file = all_dots);
+	
+	stream = open(filename, "w");
+	
 	dprint(f"phase.frame_counter = {phase.frame_counter}")
 	
 	stream = open(f"dot/{phase.frame_counter}.txt", "w");

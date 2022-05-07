@@ -4,7 +4,7 @@ from debug import *;
 from phases.optimize.self import optimize_phase;
 from phases.dominators.self import dominators_phase;
 
-def dominators_phase_process(self, all_blocks, phase_counters, **_):
+def dominators_phase_process(self, all_blocks, **_):
 	enter(f"dominators_phase_process(block.po = {self.block.po})");
 	
 	block = self.block;

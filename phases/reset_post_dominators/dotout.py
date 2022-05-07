@@ -3,11 +3,15 @@ from debug import *;
 
 from phases.self import phase;
 
-def reset_post_dominators_phase_dotout(self, all_blocks, **_):
+def reset_post_dominators_phase_dotout(self, all_dots, all_blocks, **_):
 	
 	enter("reset_post_dominators_phase_dotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}.reset-post-dominators.txt", "w");
+	filename = f"dot/{phase.frame_counter}-postdominators.dot";
+	
+	print(f"all_dots += {filename}", file = all_dots);
+	
+	stream = open(filename, "w");
 	
 	print("""
 digraph mygraph {

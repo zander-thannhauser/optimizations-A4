@@ -123,7 +123,7 @@ def reverse_postorder_rank(b, x, n):
 	x += 1;
 	return x;
 
-def process_frame(t, p):
+def process_frame(t, p, all_dots):
 	
 	enter("process_frame");
 	
@@ -199,15 +199,18 @@ def process_frame(t, p):
 	];
 	
 	args = {
+		"all_dots": all_dots,
+		
 		"all_blocks": all_blocks,
+		
 		"start": start,
 		"end": end,
+		
 		"expression_table": et,
+		
 		"parameters": parameters,
+		
 		"phis": list(),
-		"phase_counters": {
-			"dead-code": 1,
-		},
 	};
 	
 	if len(todo):

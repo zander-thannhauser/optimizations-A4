@@ -23,8 +23,7 @@ def optimize_load(ops, vrtovn, ins, out, expression_table, id, **_):
 	match (expression_table.vntoex(ivn)):
 		# load X, (Y + c) => loadAI X -> Y, c
 		case expression(op = "addI", ins = [X], const = c):
-			# load = instruction("loadAI", [ivn, X], const = c, out = ovn);
-			assert(not "TODO");
+			load = instruction("loadAI", ins = (X, ), const = c, out = ovn);
 		
 		# load X, (Y + c) => loadAI X -> Y, c
 		case multiplicity(op = "sum", ins = ins) if len(ins) == 2:
@@ -33,12 +32,12 @@ def optimize_load(ops, vrtovn, ins, out, expression_table, id, **_):
 			et = expression_table;
 			lvn = optimize_mult_vr(vrtovn, et, sublvn, load_literal(vrtovn, et, sublfactor));
 			rvn = optimize_mult_vr(vrtovn, et, subrvn, load_literal(vrtovn, et, subrfactor));
-			load = instruction("loadAO", [lvn, rvn], out = ovn);
+			load = instruction("loadAO", ins = (min(lvn, rvn), max(lvn, rvn)), out = ovn);
 		
 		# default:
 		case (oexp):
 			dprint(f"oexp == {oexp}");
-			load = instruction("load", [ivn], out = ovn);
+#			load = instruction("load", [ivn], out = ovn);
 			assert(not "TODO");
 	
 	loadex.instruction = load;

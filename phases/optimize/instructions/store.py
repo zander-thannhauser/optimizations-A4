@@ -18,7 +18,7 @@ def optimize_store(ops, vrtovn, ins, out, expression_table, **_):
 	match (expression_table.vntoex(ovn)):
 		# store X, (Y + c) => storeAI X -> Y, c
 		case expression(op = "addI", ins = [X], const = c):
-			store = instruction("storeAI", [ivn, X], const = c);
+			store = instruction("storeAI", ins = (ivn, X), const = c);
 		
 		# store X, (Y + c) => storeAI X -> Y, c
 		case multiplicity(op = "sum", ins = ins) if len(ins) == 2:
@@ -27,7 +27,7 @@ def optimize_store(ops, vrtovn, ins, out, expression_table, **_):
 			et = expression_table;
 			lvn = optimize_mult_vr(vrtovn, et, sublvn, load_literal(vrtovn, et, sublfactor));
 			rvn = optimize_mult_vr(vrtovn, et, subrvn, load_literal(vrtovn, et, subrfactor));
-			store = instruction("storeAO", [ivn, lvn, rvn]);
+			store = instruction("storeAO", [ivn, min(lvn, rvn), max(lvn, rvn)]);
 		
 		# default:
 		case (oexp):

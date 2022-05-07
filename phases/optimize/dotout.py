@@ -5,13 +5,15 @@ from phases.self import phase;
 
 from instruction.self import instruction;
 
-def optimize_phase_dotout(self, all_blocks, expression_table, **_):
+def optimize_phase_dotout(self, all_dots, all_blocks, expression_table, **_):
 	
 	enter("optimize_phase_dotout()");
 	
-	dprint(f"phase.frame_counter = {phase.frame_counter}");
+	filename = f"dot/{phase.frame_counter}-optimize.dot";
 	
-	stream = open(f"dot/{phase.frame_counter}-optimize.txt", "w");
+	print(f"all_dots += {filename}", file = all_dots);
+	
+	stream = open(filename, "w");
 	
 	print("""
 digraph mygraph {

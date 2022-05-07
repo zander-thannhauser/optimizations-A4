@@ -31,22 +31,10 @@ def optimize_or_vr(vrtovn, et, lvn, rvn, out = None):
 			else:
 				assert(not "TODO");
 		
-		case (unordered(op = "or", ins = A), unordered(op = "or", ins = B)):
-			assert(not "TODO");
-		
-		case (unordered(op = "or", ins = A), _):
-			together = set.union(A, set([rvn]));
-			retval = consider_un(vrtovn, et, "or", together, out);
-			# for each element:
-				# check that not(element) isn't also in the union
-			assert(not "TODO");
-		
-		case (_, unordered(op = "or", ins = B)):
-			assert(not "TODO");
-		
 		# default:
 		case (_, _):
-			retval = consider_un(vrtovn, et, "or", set([lvn, rvn]), out);
+			# retval = consider_un(vrtovn, et, "or", set([lvn, rvn]), out);
+			assert(not "TODO");
 	
 	exit(f"return {retval};");
 	return retval;
@@ -63,6 +51,19 @@ def optimize_or(vrtovn, expression_table, ins, out, label, **_):
 
 
 
+#		case (unordered(op = "or", ins = A), unordered(op = "or", ins = B)):
+#			assert(not "TODO");
+#		
+#		case (unordered(op = "or", ins = A), _):
+#			together = set.union(A, set([rvn]));
+#			retval = consider_un(vrtovn, et, "or", together, out);
+#			# for each element:
+#				# check that not(element) isn't also in the union
+#			assert(not "TODO");
+#		
+#		case (_, unordered(op = "or", ins = B)):
+#			assert(not "TODO");
+#		
 
 
 

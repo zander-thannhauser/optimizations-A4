@@ -3,11 +3,15 @@ from debug import *;
 
 from phases.self import phase;
 
-def optimize_phase_subdotout(self, vrtovn, instruction, order_sensitive_instructions, expression_table):
+def optimize_phase_subdotout(self, all_dots, vrtovn, instruction, order_sensitive_instructions, expression_table):
 	
 	enter("optimize_phase_subdotout()");
 	
-	stream = open(f"dot/{phase.frame_counter}-optimize.txt", "w");
+	filename = f"dot/{phase.frame_counter}-suboptimize.dot";
+	
+	print(f"all_dots += {filename}", file = all_dots);
+	
+	stream = open(filename, "w");
 	
 	print("""
 digraph mygraph {

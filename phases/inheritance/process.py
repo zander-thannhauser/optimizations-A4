@@ -4,18 +4,10 @@ from debug import *;
 from phases.phi.self import phi_phase;
 from phases.inheritance.self import inheritance_phase;
 
-def inheritance_phase_process(self, all_blocks, phase_counters, **_):
+def inheritance_phase_process(self, all_blocks, **_):
 	enter(f"inheritance_phase.process(block.rpo = {self.block.rpo})");
 	
 	block = self.block;
-	
-	# this needs to be changed into having the children
-	# get from their parents, instead of parents giving to their
-	# children. if the inheritance is different (different phi nodes,
-	# or maybe no phi nodes at all:
-		# add this block to be re-optimized
-		# add this block's children for their inheritance to be
-			# recalculated.
 	
 	given = dict();
 	
