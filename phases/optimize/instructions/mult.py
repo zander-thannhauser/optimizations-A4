@@ -44,6 +44,11 @@ def optimize_mult_vr(vrtovn, et, lvn, rvn, out = None):
 			subvn = optimize_mult_vr(vrtovn, et, X, rvn);
 			valnum = consider_exp(vrtovn, et, "addI", ins = (subvn, ), const = (a * b), out = out);
 		
+		# a * (X + b) => X * a + (a * b):
+		case (constant(value = a), expression(op = "addI", ins = (X, ), const = b)):
+			subvn = optimize_mult_vr(vrtovn, et, X, lvn);
+			valnum = consider_exp(vrtovn, et, "addI", ins = (subvn, ), const = (a * b), out = out);
+		
 		# (X * a) * b => X * (a * b):
 		case (expression(op = "multI", ins = (X, ), const = a), constant(value = b)):
 			valnum = consider_exp(vrtovn, et, "multI", ins = (X, ), const = (a * b), out = out);

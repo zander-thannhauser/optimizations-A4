@@ -148,9 +148,9 @@ def process_frame(t, p, all_dots):
 		lost_parent_phase(block) for block in all_blocks
 	] + [
 		reset_dominators_phase(start),    # top-down*
-		dominators_phase(start),          # top-down
+		## dominators_phase(start),       # top-down
 		reset_post_dominators_phase(end), # bottom-up*
-		post_dominators_phase(end),       # bottom-up
+		## post_dominators_phase(end),    # bottom-up
 		## reset_in_out_phase(end),       # bottom-up
 		in_out_phase(end),                # bottom-up
 		inheritance_phase(start),         # top-down

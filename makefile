@@ -30,7 +30,7 @@ eog-all: $(all_pngs)
 mpv-all: $(all_pngs)
 	mpv $(all_pngs) --no-save-position-on-quit --pause
 
-lost_parent_pngs = $(filter %-lost_parent_phase.png,$(all_pngs))
+lost_parent_pngs = $(filter %-lostparent.png,$(all_pngs))
 
 gimp-lost_parent: $(lost_parent_pngs)
 	gimp $(lost_parent_pngs)
@@ -40,6 +40,28 @@ eog-lost_parent: $(lost_parent_pngs)
 
 mpv-lost_parent: $(lost_parent_pngs)
 	mpv $(lost_parent_pngs) --no-save-position-on-quit --pause
+
+dominators_pngs = $(filter %-dominators.png,$(all_pngs))
+
+gimp-dominators: $(dominators_pngs)
+	gimp $(dominators_pngs)
+
+eog-dominators: $(dominators_pngs)
+	eog $(dominators_pngs)
+
+mpv-dominators: $(dominators_pngs)
+	mpv $(dominators_pngs) --no-save-position-on-quit --pause
+
+postdominators_pngs = $(filter %-postdominators.png,$(all_pngs))
+
+gimp-postdominators: $(postdominators_pngs)
+	gimp $(postdominators_pngs)
+
+eog-postdominators: $(postdominators_pngs)
+	eog $(postdominators_pngs)
+
+mpv-postdominators: $(postdominators_pngs)
+	mpv $(postdominators_pngs) --no-save-position-on-quit --pause
 
 inout_pngs = $(filter %-inout.png,$(all_pngs))
 

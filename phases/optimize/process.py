@@ -176,9 +176,9 @@ def optimize_phase_process(self, all_dots, start, expression_table, parameters, 
 				# maybe it's unreachable now?
 				todo.append(lost_parent_phase(lose));
 				# for sure it's dominators have changed, reset and redo:
-				todo.append(reset_dominators_phase(lose));
+				todo.append(reset_dominators_phase(lose, target = lose));
 				# same with post-dominators:
-				todo.append(reset_post_dominators_phase(block));
+				todo.append(reset_post_dominators_phase(block, target = block));
 				# the things the parent needs to provide for it's children
 				# might have changed:
 				todo.append(reset_in_out_phase(block));

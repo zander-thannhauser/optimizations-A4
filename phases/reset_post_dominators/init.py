@@ -1,6 +1,7 @@
 
 from phases.self import phase;
 
-def reset_post_dominators_phase_init(self, block):
+def reset_post_dominators_phase_init(self, block, target = None):
 	phase.__init__(self, phase.RESET_POST_DOMINATORS);
 	self.block = block;
+	self.target = target;
