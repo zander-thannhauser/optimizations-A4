@@ -30,10 +30,11 @@ digraph mygraph {
 		bid = id(block);
 		
 		ins = "None" if block.ins is None else " | ".join(block.ins);
+		loc = " | ".join(block.loc);
 		label = f"rpo = {block.rpo}";
 		outs = " | ".join(block.outs);
 		
-		label = "{ { " + ins + "} | " + label + " | { " + outs + " } }"
+		label = "{ { " + ins + "} | {" + loc + "} | " + label + " | { " + outs + " } }"
 		
 		print(f"""
 			"{bid}" [
@@ -44,7 +45,11 @@ digraph mygraph {
 		""", file = stream);
 		
 		for c in block.successors:
-			print(f"\"{bid}\":s -> \"{id(c)}\":n [style=bold]", file = stream);
+			print(f"""
+				"{bid}":s -> "{id(c)}":n [
+					style = bold
+				]
+			""", file = stream);
 		
 	print("""
 }

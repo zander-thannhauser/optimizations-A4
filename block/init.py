@@ -30,6 +30,7 @@ def block_init(self, label, original_instructions, children_labels, jump = None)
 	
 	# in-out phase:
 	self.ins = None; # set of registers
+	self.loc = set();
 	self.outs = list(); # (register, instruction) tuples in *original* order
 	
 	# inheritance phase:

@@ -185,7 +185,7 @@ def optimize_phase_process(self, all_dots, start, expression_table, parameters, 
 				# the things the child can get from it's parent
 				# might have changed:
 				todo.append(inheritance_phase(lose));
-				todo.append(phi_phase(lose));
+				## todo.append(phi_phase(lose));
 		
 		block.order_sensitive_instructions = order_sensitive_instructions;
 	
